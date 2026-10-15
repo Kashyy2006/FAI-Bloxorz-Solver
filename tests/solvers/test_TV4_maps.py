@@ -18,11 +18,7 @@ LAYOUTS = {
     "basic_unsolvable_01": ((".........", ".FFFF..G.", "........."), [1, 1], False),
 }
 TILES = {".": "void", "F": "floor", "G": "goal"}
-UPSTREAM = (
-    "https://github.com/matuneville/bloxorz-pathfinding/blob/"
-    "6af854a88ac3983ffed2ee12a9e26c4cc338aa76/"
-    "bloxorz-solver/tests/levels_testing.rs"
-)
+UPSTREAM = "https://github.com/matuneville/bloxorz-pathfinding/blob/6af854a88ac3983ffed2ee12a9e26c4cc338aa76/bloxorz-solver/tests/levels_testing.rs"
 
 
 class TestTV4Maps(unittest.TestCase):
