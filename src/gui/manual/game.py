@@ -1,13 +1,20 @@
 """Manual Pygame interface: menu, settings, level selection and basic play."""
 
 import json
+import sys
 from pathlib import Path
+
+
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+    __package__ = "src.gui.manual"
 
 import pygame
 
 from .camera import Camera
 from .renderer import draw_animated_block, draw_block, draw_map
 from .settings import BACKGROUND_COLOR, FPS, HEIGHT, WIDTH
+from ..solver.controller import SolverController
 
 ROOT = Path(__file__).resolve().parents[3]
 MAPS_DIR = ROOT / "data" / "maps"
@@ -112,6 +119,7 @@ def main():
     maps = _load_maps()
     if not maps:
         print(f"No playable map JSON files found in {MAPS_DIR}")
+    solver = SolverController(move_fn=_move)
 
     page = "menu"
     selected_map = 0
@@ -150,22 +158,31 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     if page == "game":
+                        solver.reset()
                         page = "menu"
                     elif page != "menu":
                         page = "menu"
                     else:
                         running = False
                 elif page == "game" and event.key == pygame.K_r and maps:
+                    solver.reset()
                     state = _initial_state(maps[selected_map][1])
                     motion = None
                     message = ""
                 elif page == "game" and event.key == pygame.K_l:
+                    solver.reset()
                     page = "levels"
                 elif page == "game" and event.key == pygame.K_q and camera:
                     camera.rotate(-1)
                 elif page == "game" and event.key == pygame.K_e and camera:
                     camera.rotate(1)
-                elif page == "game" and state and not message:
+                elif (page == "game" and maps and state
+                      and solver.handle_key(event.key, maps[selected_map][1], state,
+                                            ready=motion is None)):
+                    restore = solver.take_restore_state()
+                    if restore is not None:
+                        state, motion, message = restore, None, ""
+                elif page == "game" and state and not message and not solver.busy:
                     action = {
                         pygame.K_UP: "UP", pygame.K_w: "UP",
                         pygame.K_DOWN: "DOWN", pygame.K_s: "DOWN",
@@ -173,6 +190,7 @@ def main():
                         pygame.K_RIGHT: "RIGHT", pygame.K_d: "RIGHT",
                     }.get(event.key)
                     if action and motion is None and camera and not camera.rotating:
+                        solver.on_manual_move()
                         game_map = maps[selected_map][1]
                         moved = _move(state, action, game_map["grid"])
                         if moved is None:
@@ -186,6 +204,7 @@ def main():
                     elif event.key in (pygame.K_DOWN, pygame.K_RIGHT):
                         selected_map = (selected_map + 1) % len(maps)
                     elif event.key == pygame.K_RETURN:
+                        solver.reset()
                         game_map = maps[selected_map][1]
                         state = _initial_state(game_map)
                         camera = Camera(len(game_map["grid"][0]), len(game_map["grid"]), *screen.get_size())
@@ -227,6 +246,7 @@ def main():
                     for index in range(page_start, page_start + page_count):
                         rect = pygame.Rect(w // 2 - 250, list_top + (index - page_start) * 48, 500, 42)
                         if rect.collidepoint(event.pos):
+                            solver.reset()
                             selected_map = index
                             game_map = maps[selected_map][1]
                             state = _initial_state(game_map)
@@ -238,15 +258,34 @@ def main():
                     if pygame.Rect(w // 2 - 120, h - 75, 240, 48).collidepoint(event.pos):
                         page = "menu"
                 elif page == "game":
-                    if pygame.Rect(12, 12, 150, 42).collidepoint(event.pos):
+                    if (maps and state
+                            and solver.handle_click(event.pos, (w, h), maps[selected_map][1], state,
+                                                    ready=motion is None)):
+                        restore = solver.take_restore_state()
+                        if restore is not None:
+                            state, motion, message = restore, None, ""
+                    elif pygame.Rect(12, 12, 150, 42).collidepoint(event.pos):
+                        solver.reset()
                         page = "levels"
                     elif pygame.Rect(172, 12, 120, 42).collidepoint(event.pos):
+                        solver.reset()
                         state = _initial_state(maps[selected_map][1])
                         motion = None
                         message = ""
 
         if camera:
             camera.update(dt)
+        if page == "game" and maps and state and camera:
+            # Replay function.
+            ready = motion is None and not message and not camera.rotating
+            action = solver.update(dt, ready)
+            if action:
+                moved = _move(state, action, maps[selected_map][1]["grid"])
+                if moved is None:
+                    message = "Replay fell! Press R to restart."
+                else:
+                    motion = {"start": state, "end": moved,
+                              "action": action, "elapsed": 0.0}
         if motion:
             motion["elapsed"] += dt
             if motion["elapsed"] >= 0.24:
@@ -302,6 +341,7 @@ def main():
                 draw_block(screen, state, camera)
             _button(screen, small_font, "Levels", (12, 12, 150, 42), mouse)
             _button(screen, small_font, "Restart", (172, 12, 120, 42), mouse)
+            solver.draw(screen, small_font)
             _text(screen, small_font, f"{game_map.get('name', game_map.get('id', 'Level'))}  |  Arrows/WASD move  |  Q/E rotate  |  R restart  |  Esc menu", (w // 2, h - 24))
             if message:
                 banner = pygame.Surface((w, 66), pygame.SRCALPHA)
@@ -318,6 +358,7 @@ def main():
             screen.blit(shade, (0, 0))
         pygame.display.flip()
 
+    solver.reset()
     pygame.quit()
 
 

@@ -2,6 +2,10 @@
 
 Chạy từ thư mục gốc của dự án bằng lệnh `python -m src.gui.manual.game`.
 
+Cũng có thể chạy trực tiếp `python src/gui/manual/game.py` hoặc dùng nút Run
+trong IDE. Khi chạy từ thư mục khác, truyền đường dẫn tuyệt đối tới `game.py`;
+map và nhạc vẫn được tìm theo thư mục dự án.
+
 - Menu chính có các nút Chơi, Cài đặt và Thoát.
 - Chọn **Chơi** để mở danh sách màn. Danh sách được đọc từ các tệp JSON trong `data/maps/`.
 - Trong màn chơi: dùng phím mũi tên hoặc WASD để di chuyển; Q/E xoay bàn chơi mượt; R chơi lại; L quay về danh sách màn; Esc quay về menu. Khối có hoạt ảnh khi lăn.
