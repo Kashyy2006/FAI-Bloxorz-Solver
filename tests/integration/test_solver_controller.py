@@ -182,12 +182,96 @@ class ControllerTest(unittest.TestCase):
         self.assertTrue(self.controller.solving)
 
     def test_disabled_click_cannot_change_state(self):
+        self.controller.panel_open = True
+        self.controller.update(1, False)
         self.controller.replay.load([])
         for cmd, _, rect in self.controller._layout(900, 600):
             if cmd == "STEP":
                 self.controller.handle_click(rect.center, (900, 600),
                                              self.game_map, self.state)
         self.assertFalse(self.controller.busy)
+
+    def test_drawer_starts_closed_and_hidden_controls_ignore_clicks(self):
+        self.assertFalse(self.controller.panel_open)
+        _, _, button = self.controller._layout(900, 600)[0]
+        self.assertFalse(self.controller.handle_click(
+            button.center, (900, 600), self.game_map, self.state))
+        self.assertFalse(self.controller.solving)
+        for size in ((900, 600), (1200, 800)):
+            toggle = self.controller._toggle_rect(*size)
+            self.assertEqual(toggle.right, size[0])
+            self.assertEqual(toggle.centery, size[1] // 4)
+            self.assertTrue(self.controller.handle_click(
+                toggle.center, size, self.game_map, self.state))
+            self.assertTrue(self.controller.panel_open)
+            toggle = self.controller._toggle_rect(*size)
+            self.assertEqual(toggle.right, self.controller._panel_rect(*size).left)
+            self.controller.handle_click(toggle.center, size, self.game_map, self.state)
+            self.assertFalse(self.controller.panel_open)
+
+    def test_drawer_slides_reverses_and_tracks_resize(self):
+        controller = self.controller
+        controller.handle_click(controller._toggle_rect(900, 600).center,
+                                (900, 600), self.game_map, self.state)
+        self.assertEqual(controller._panel_rect(900, 600).left, 900)
+        controller.update(0.13, False)
+        halfway = controller._panel_rect(900, 600).left
+        self.assertGreater(halfway, 650)
+        self.assertLess(halfway, 900)
+        self.assertEqual(controller._panel_rect(1200, 800).left, halfway + 300)
+        velocity = controller._panel_velocity
+        controller.handle_click(controller._toggle_rect(900, 600).center,
+                                (900, 600), self.game_map, self.state)
+        self.assertEqual(controller._panel_rect(900, 600).left, halfway)
+        self.assertEqual(controller._panel_velocity, velocity)
+        controller.update(0.001, False)
+        self.assertGreater(controller._panel_velocity, 0)
+        controller.update(0.13, False)
+        self.assertGreater(controller._panel_rect(900, 600).left, halfway)
+        controller.update(1, False)
+        self.assertEqual(controller._panel_rect(900, 600).left, 900)
+        controller.panel_open = True
+        controller.update(1, False)
+        self.assertEqual(controller._panel_rect(900, 600).left, 650)
+
+    def test_drawer_motion_is_consistent_across_frame_rates(self):
+        positions = []
+        for fps in (30, 60, 120):
+            controller = SolverController(_move)
+            controller.worker = StubWorker()
+            controller.panel_open = True
+            for _ in range(fps // 2):
+                controller.update(1 / fps, False)
+                self.assertGreaterEqual(controller._panel_progress, 0)
+                self.assertLessEqual(controller._panel_progress, 1)
+            positions.append(controller._panel_progress)
+            controller.update(1, False)
+            self.assertEqual(controller._panel_progress, 1)
+            controller.panel_open = False
+            controller.update(1, False)
+            self.assertEqual(controller._panel_progress, 0)
+        self.assertAlmostEqual(positions[0], positions[1])
+        self.assertAlmostEqual(positions[1], positions[2])
+
+    def test_moving_drawer_consumes_clicks_without_starting_solver(self):
+        self.controller.panel_open = True
+        self.controller.update(0.195, False)
+        _, _, button = self.controller._layout(900, 600)[0]
+        self.assertTrue(self.controller.handle_click(
+            button.center, (900, 600), self.game_map, self.state))
+        self.assertFalse(self.controller.solving)
+
+    def test_closing_drawer_keeps_solution_and_replay_running(self):
+        self.loaded()
+        self.controller.panel_open = True
+        self.run_command("PLAY")
+        result = self.controller.result
+        self.controller.handle_click(self.controller._toggle_rect(900, 600).center,
+                                     (900, 600), self.game_map, self.state)
+        self.assertFalse(self.controller.panel_open)
+        self.assertIs(self.controller.result, result)
+        self.assertTrue(self.controller.replay.playing)
+        self.assertEqual(self.controller.update(0, True), "RIGHT")
 
     def test_first_action_is_immediate_at_every_speed_and_pause_is_stable(self):
         for index, speed in enumerate(SPEEDS):
@@ -311,6 +395,8 @@ class RealSolverReplayTest(unittest.TestCase):
             controller.run("BFS", game_map, start_of(game_map))
             controller.worker.result = "invalid JSON"
             controller.update(0, False)
+            controller.panel_open = True
+            controller.update(1, False)
             controller.draw(screen, pygame.font.Font(None, 25))
             self.assertEqual(controller.result["status"], "ERROR")
         finally:

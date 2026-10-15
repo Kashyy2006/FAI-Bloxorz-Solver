@@ -10,6 +10,7 @@ Usage from the game loop (see src/gui/manual/game.py):
 
 import copy
 import functools
+import math
 
 import pygame
 
@@ -19,6 +20,9 @@ from .result import make_result, validate_result
 from .worker import SolverWorker
 
 PANEL_W = 250
+TOGGLE_W = 36
+TOGGLE_H = 48
+PANEL_SPRING_RATE = 16.0
 ALGORITHMS = ("BFS", "DFS", "UCS", "ASTAR")
 ALGO_LABELS = {"BFS": "1  BFS", "DFS": "2  DFS", "UCS": "3  UCS", "ASTAR": "4  A*"}
 KEYS = {
@@ -66,6 +70,9 @@ class SolverController:
         self._cancel_requested = False
         self._restore = None
         self._pending_step = False
+        self.panel_open = False
+        self._panel_progress = 0.0
+        self._panel_velocity = 0.0
 
     # ----- state -----------------------------------------------------------
     @property
@@ -151,6 +158,14 @@ class SolverController:
         return True
 
     def handle_click(self, pos, screen_size, game_map, state, ready=True):
+        if self._toggle_rect(*screen_size).collidepoint(pos):
+            self.panel_open = not self.panel_open
+            return True
+        if self._panel_progress <= 0.0:
+            return False
+        # Moving controls cannot be clicked accidentally while the drawer slides.
+        if not self.panel_open or self._panel_progress < 1.0:
+            return self._panel_rect(*screen_size).collidepoint(pos)
         for command, _, rect in self._layout(*screen_size):
             if rect.collidepoint(pos):
                 self.run(command, game_map, state, ready)
@@ -159,6 +174,7 @@ class SolverController:
 
     def update(self, dt, ready):
         """Collect finished results; return the next replay action, if any."""
+        self._update_panel(max(0.0, dt))
         result = self.worker.poll()
         if result is not None and self.solving:
             try:
@@ -188,9 +204,33 @@ class SolverController:
         return self.replay.update(dt, ready)
 
     # ----- drawing ---------------------------------------------------------
-    @staticmethod
-    def _panel_rect(w, h):
-        return pygame.Rect(w - PANEL_W - 12, 64, PANEL_W, 470)
+    def _update_panel(self, dt):
+        """Exact critically damped spring: preserve velocity on direction changes.
+
+        Solving analytically keeps the same motion at different frame rates,
+        including a delayed frame, without overshoot or integration substeps.
+        """
+        target = float(self.panel_open)
+        offset = self._panel_progress - target
+        rate = PANEL_SPRING_RATE
+        momentum = self._panel_velocity + rate * offset
+        decay = math.exp(-rate * dt)
+        self._panel_progress = target + (offset + momentum * dt) * decay
+        self._panel_velocity = (self._panel_velocity - rate * momentum * dt) * decay
+        # Finish only once the remaining travel and speed are imperceptible.
+        if (abs(self._panel_progress - target) < 0.0004
+                and abs(self._panel_velocity) < 0.002):
+            self._panel_progress = target
+            self._panel_velocity = 0.0
+
+    def _panel_rect(self, w, h):
+        return pygame.Rect(w - round(PANEL_W * self._panel_progress),
+                           64, PANEL_W, 470)
+
+    def _toggle_rect(self, w, h):
+        right = self._panel_rect(w, h).left
+        return pygame.Rect(right - TOGGLE_W, h // 4 - TOGGLE_H // 2,
+                           TOGGLE_W, TOGGLE_H)
 
     def _layout(self, w, h):
         panel = self._panel_rect(w, h)
@@ -212,6 +252,15 @@ class SolverController:
 
     def draw(self, screen, font):
         w, h = screen.get_size()
+        mouse = pygame.mouse.get_pos()
+        toggle = self._toggle_rect(w, h)
+        pygame.draw.rect(screen, (91, 123, 168) if toggle.collidepoint(mouse)
+                         else (63, 83, 115), toggle,
+                         border_top_left_radius=9, border_bottom_left_radius=9)
+        label = font.render(">>" if self.panel_open else "<<", True, (240, 243, 250))
+        screen.blit(label, label.get_rect(center=toggle.center))
+        if self._panel_progress <= 0.0:
+            return
         panel = self._panel_rect(w, h)
         box = pygame.Surface(panel.size, pygame.SRCALPHA)
         box.fill((14, 20, 32, 215))
@@ -219,7 +268,6 @@ class SolverController:
         pygame.draw.rect(screen, (70, 90, 125), panel, 1, border_radius=8)
         self._text(screen, font, "AUTO SOLVER", (panel.x + 12, panel.y + 9))
 
-        mouse = pygame.mouse.get_pos()
         for command, label, rect in self._layout(w, h):
             active = (command == self.algorithm and self.solving) or \
                      (command == "PLAY" and self.replay.playing)

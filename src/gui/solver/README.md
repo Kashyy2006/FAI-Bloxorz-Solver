@@ -6,6 +6,13 @@
 
 ## Vòng đời giải và phát lại
 
+- Panel Solver mặc định thu gọn. Bấm `<<` sát cạnh phải, ở 1/4 chiều cao
+  cửa sổ để mở; bấm `>>` để đóng. Thu gọn vẫn giữ kết quả và tiếp tục phát lại.
+  Các phím tắt solver vẫn dùng được khi panel đang ẩn.
+  Panel trượt theo chuyển động lò xo có giảm chấn, dừng mềm trong khoảng 0,6 giây
+  và giữ quán tính khi bấm đảo chiều. Chuyển động nhất quán giữa các tốc độ khung
+  hình. Nút đóng/mở luôn đi theo mép panel.
+
 - `worker.py`: chụp riêng map/state; chỉ chạy một solver, giữ yêu cầu thay thế
   mới nhất. `poll()` được gọi mỗi frame để nhận kết quả và khởi động lượt đang chờ
   sau khi thread cũ đã thoát. Không chờ thread đang chạy trên luồng GUI.
