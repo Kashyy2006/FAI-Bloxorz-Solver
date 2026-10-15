@@ -1,0 +1,2 @@
+data/maps/*.json text eol=lf
+data/references/matuneville-LICENSE.txt -text

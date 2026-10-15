@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "id": "basic_turn_01",
+  "name": "Turning across the goal",
+  "difficulty": "easy",
+  "rows": 4,
+  "cols": 4,
+  "grid": [
+    ["void", "floor", "floor", "floor"],
+    ["void", "floor", "floor", "floor"],
+    ["floor", "floor", "floor", "goal"],
+    ["floor", "floor", "floor", "void"]
+  ],
+  "start": [
+    0,
+    2
+  ],
+  "bridges": [],
+  "switches": [],
+  "source": {
+    "kind": "adapted",
+    "reference": "https://github.com/matuneville/bloxorz-pathfinding/blob/6af854a88ac3983ffed2ee12a9e26c4cc338aa76/bloxorz-solver/tests/levels_testing.rs",
+    "conversion_notes": "data/references/basic_turn_01.md"
+  },
+  "expected_solvable": true
+}
