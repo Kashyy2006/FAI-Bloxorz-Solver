@@ -2,9 +2,11 @@ import unittest
 from collections import deque
 from copy import deepcopy
 from dataclasses import dataclass, replace
+from threading import Event
 from unittest.mock import Mock, patch
 
 from src.solvers.bfs.solver import _search
+from src.solvers.common.runtime import SearchRuntime, SearchStopped
 
 
 @dataclass(frozen=True)
@@ -32,7 +34,7 @@ class TestTV4BFS(unittest.TestCase):
             FakeState("UPRIGHT", ((0, col),)) for col in range(5)
         )
 
-    def search(self, graph, start, goal):
+    def search(self, graph, start, goal, *, runtime=None):
         expanded = []
 
         def successors(game_map, state):
@@ -46,7 +48,7 @@ class TestTV4BFS(unittest.TestCase):
 
         result = _search(
             graph, start, state_key=fake_key,
-            is_goal=is_goal, successors=successors,
+            is_goal=is_goal, successors=successors, runtime=runtime,
         )
         return result, expanded
 
@@ -227,6 +229,102 @@ class TestTV4BFS(unittest.TestCase):
                 )
                 with self.assertRaisesRegex(RuntimeError, "Engine failed"):
                     _search({}, self.s, **callbacks)
+
+    def controlled_runtime(self, event=None):
+        self.now = 0.0
+        self.enterContext(patch(
+            "src.solvers.common.runtime.perf_counter", side_effect=lambda: self.now,
+        ))
+        tracer = self.enterContext(patch("src.solvers.common.runtime.tracemalloc"))
+        tracer.is_tracing.return_value = False
+        tracer.get_traced_memory.return_value = (10, 100)
+        runtime = SearchRuntime(1, event)
+        self.addCleanup(runtime.finish)
+        return runtime
+
+    def test_cancel_before_queue_or_key_does_not_expand(self):
+        event = Event()
+        event.set()
+        runtime = self.controlled_runtime(event)
+        key, successors = Mock(), Mock()
+        with patch("src.solvers.bfs.solver.deque") as queue:
+            with self.assertRaises(SearchStopped) as stopped:
+                _search({}, self.s, state_key=key,
+                        is_goal=lambda *_: False, successors=successors,
+                        runtime=runtime)
+        self.assertEqual(stopped.exception.status, "CANCELLED")
+        self.assertEqual(runtime.metrics.expanded_nodes, 0)
+        key.assert_not_called()
+        successors.assert_not_called()
+        queue.assert_not_called()
+
+    def test_stop_inside_duplicate_successors_keeps_partial_expansions(self):
+        for status in ("CANCELLED", "TIMEOUT"):
+            with self.subTest(status=status):
+                event = Event()
+                runtime = self.controlled_runtime(event)
+                seen_edges = []
+
+                def successors(*_):
+                    for _ in range(5):
+                        seen_edges.append(1)
+                        yield FakeSuccessor("UP", self.s)
+
+                def key(state):
+                    if seen_edges:
+                        if status == "CANCELLED":
+                            event.set()
+                        self.now = 1.0
+                    return fake_key(state)
+
+                with self.assertRaises(SearchStopped) as stopped:
+                    _search({}, self.s, state_key=key, is_goal=lambda *_: False,
+                            successors=successors, runtime=runtime)
+                self.assertEqual(stopped.exception.status, status)
+                self.assertEqual(runtime.metrics.expanded_nodes, 1)
+                self.assertLess(len(seen_edges), 5)
+                runtime.finish()
+
+    def test_empty_successors_stop_is_not_unsolvable(self):
+        event = Event()
+        runtime = self.controlled_runtime(event)
+
+        def successors(*_):
+            event.set()
+            self.now = 1
+            return []
+
+        with self.assertRaises(SearchStopped) as stopped:
+            _search({}, self.s, state_key=fake_key, is_goal=lambda *_: False,
+                    successors=successors, runtime=runtime)
+        self.assertEqual(stopped.exception.status, "CANCELLED")
+        self.assertEqual(runtime.metrics.expanded_nodes, 1)
+
+    def test_runtime_counts_failing_successors_call(self):
+        runtime = self.controlled_runtime()
+        with self.assertRaisesRegex(RuntimeError, "engine failed"):
+            _search({}, self.s, state_key=fake_key, is_goal=lambda *_: False,
+                    successors=Mock(side_effect=RuntimeError("engine failed")),
+                    runtime=runtime)
+        self.assertEqual(runtime.metrics.expanded_nodes, 1)
+
+    def test_goal_callback_over_deadline_does_not_report_solved(self):
+        runtime = self.controlled_runtime()
+        calls = 0
+
+        def goal(*_):
+            nonlocal calls
+            calls += 1
+            if calls > 1:
+                self.now = 1
+                return True
+            return False
+
+        with self.assertRaises(SearchStopped) as stopped:
+            _search({}, self.s, state_key=fake_key, is_goal=goal,
+                    successors=Mock(), runtime=runtime)
+        self.assertEqual(stopped.exception.status, "TIMEOUT")
+        self.assertEqual(runtime.metrics.expanded_nodes, 0)
 
 
 if __name__ == "__main__":

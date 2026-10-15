@@ -146,6 +146,43 @@ class TestTV4Common(unittest.TestCase):
                 self.assertEqual(payload["algorithm"], algorithm)
                 self.assertEqual(payload["heuristic"], heuristic)
 
+    def test_error_can_represent_unvalidated_envelope_fields_as_null(self):
+        result = SolverResult(
+            map_id=None, algorithm="BFS", status="ERROR", start_state=None,
+            actions=None, metrics=SolverMetrics(), timeout_s=None,
+            error="timeout_s: invalid input",
+        )
+        payload = json.loads(json.dumps(result.to_dict(), allow_nan=False))
+        self.assertIsNone(payload["map_id"])
+        self.assertIsNone(payload["start_state"])
+        self.assertIsNone(payload["timeout_s"])
+        self.assertEqual(len(payload), 11)
+
+    def test_non_error_results_require_valid_envelope_fields(self):
+        good = self.solved_result()
+        for fields in (
+            {"map_id": None}, {"map_id": " "}, {"map_id": 1},
+            {"start_state": None}, {"start_state": []},
+            {"timeout_s": None}, {"timeout_s": True}, {"timeout_s": "60"},
+            {"timeout_s": 0}, {"timeout_s": -1},
+            {"timeout_s": float("nan")}, {"timeout_s": float("inf")},
+            {"timeout_s": 10 ** 1000},
+        ):
+            with self.subTest(field=next(iter(fields))):
+                with self.assertRaises(ValueError):
+                    replace(good, **fields).to_dict()
+
+    def test_error_does_not_allow_invalid_non_null_envelope_values(self):
+        result = replace(
+            self.solved_result(), status="ERROR", actions=None,
+            metrics=SolverMetrics(), error="Invalid input",
+        )
+        for fields in ({"timeout_s": float("nan")}, {"timeout_s": 0},
+                       {"map_id": []}, {"start_state": object()}):
+            with self.subTest(field=next(iter(fields))):
+                with self.assertRaises(ValueError):
+                    replace(result, **fields).to_dict()
+
     def test_json_output_does_not_share_mutable_data(self):
         result = self.solved_result()
         payload = result.to_dict()
