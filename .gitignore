@@ -1,4 +1,8 @@
 __pycache__/
+<<<<<<< HEAD
 *.py[cod]
 .venv/
 venv/
+=======
+*.pyc
+>>>>>>> origin/feature/TV4-search-and-evaluation

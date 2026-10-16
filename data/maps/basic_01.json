@@ -10,9 +10,22 @@
     ["void", "floor", "floor", "floor", "goal", "void", "void"],
     ["void", "void", "void", "void", "void", "void", "void"]
   ],
+<<<<<<< HEAD
   "start": [1, 1],
   "bridges": [],
   "switches": [],
   "source": {"kind": "original", "reference": "Team-created"},
+=======
+  "start": [
+    1,
+    1
+  ],
+  "bridges": [],
+  "switches": [],
+  "source": {
+    "kind": "original",
+    "reference": "Team-created"
+  },
+>>>>>>> origin/feature/TV4-search-and-evaluation
   "expected_solvable": true
 }
