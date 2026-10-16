@@ -1,5 +1,6 @@
 # Nguồn map và ghi chú chuyển đổi
 
+<<<<<<< HEAD
 **Phụ trách:** Thành viên 4 ghi nguồn; thành viên 5 tổng hợp tài liệu. Khảo sát ngày **15/10/2026** qua trang repo, GitHub API và nội dung raw tại các commit dưới đây. Chỉ lấy dữ liệu map và giấy phép; không tải/chạy thuật toán giải của nguồn.
 
 ## Truy xuất bộ cơ bản
@@ -27,3 +28,8 @@
 - Giữ notice/giấy phép của dữ liệu đã tiếp nhận; [matuneville-LICENSE.txt](matuneville-LICENSE.txt) là bản byte nguyên gốc từ commit được ghim. Không sao chép giấy phép này thành giấy phép cho toàn repo.
 - Map original ghi nguồn nội bộ đúng thực tế. Không gắn URL ngoài vào map tự thiết kế để gọi là adapted.
 - Lời giải và chứng cứ thuộc [danh mục map](../maps/README.md), không thêm trường ngoài schema vào JSON. Trạng thái load/replay engine vẫn đang chờ; nguồn có test không chứng minh engine nhóm đã chạy.
+=======
+**Nội dung:** Nguồn màn chơi, URL, tác giả và ghi chú chuyển đổi các màn tham khảo; cùng những tài liệu liên quan.
+
+**Phụ trách:** Thành viên 4 ghi nguồn màn chơi; thành viên 5 tổng hợp tài liệu.
+>>>>>>> origin/feature/TV3-solve-button
