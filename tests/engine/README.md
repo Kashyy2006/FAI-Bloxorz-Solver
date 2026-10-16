@@ -1,5 +1,9 @@
-# tests/engine
+# Kiểm thử Engine — Thành viên 1
 
-**Lưu gì / làm gì:** Kiểm thử chuyển hướng, biên map, thắng/thua và cơ chế đặc biệt.
+`test_basic_engine.py` kiểm tra hình học State, đủ 12 chuyển động khối nguyên, rơi khỏi map, goal/fragile, thứ tự successors, chi phí fragile và lỗi validator JSON.
 
-**Phụ trách:** Thành viên 1.
+Chạy từ thư mục gốc project:
+
+```text
+python -m unittest discover -s tests/engine -v
+```

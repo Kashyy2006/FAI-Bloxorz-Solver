@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "id": "basic_01",
+  "name": "Two rolls",
+  "difficulty": "easy",
+  "rows": 3,
+  "cols": 7,
+  "grid": [
+    ["void", "void", "void", "void", "void", "void", "void"],
+    ["void", "floor", "floor", "floor", "goal", "void", "void"],
+    ["void", "void", "void", "void", "void", "void", "void"]
+  ],
+  "start": [1, 1],
+  "bridges": [],
+  "switches": [],
+  "source": {"kind": "original", "reference": "Team-created"},
+  "expected_solvable": true
+}
