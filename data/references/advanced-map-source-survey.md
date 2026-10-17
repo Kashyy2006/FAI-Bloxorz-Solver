@@ -2,6 +2,8 @@
 
 **TV4, ngày 17/10/2026.** Căn cứ: [map schema v1](../../docs/contracts/map-format.md) và [luật nhóm](../../docs/contracts/engine.md). Dữ liệu và catalog được đối chiếu trực tiếp với source nhóm sau lần sửa `basic_01` tại commit `e79f416115ee98513e9b8f037185f66d8f0c8ff1`.
 
+Hồ sơ này ghi kết quả khảo sát nguồn. Danh sách lựa chọn hiện tại nằm ở [catalog map](../maps/README.md#danh-sách-18-map-mục-tiêu), kèm [nhật ký nguồn](README.md#nguồn-cho-danh-sách-18-map); các câu chưa chọn/chưa chuyển dưới đây mô tả thời điểm hoàn thành khảo sát. Chưa chuyển JSON hoặc xác nhận engine cho các map mới.
+
 Đã hoàn thành phần khảo sát, **không phải nghiệm thu bộ map**. Chưa chốt danh sách map bổ sung hoặc chuyển đổi theo lô. Các mẫu dưới đây ở trong tài liệu, không nằm trong `data/maps`, `prepared` hoặc inventory. Không chạy ứng dụng, script chuyển đổi hay solver của nguồn; chỉ đọc dữ liệu, notice và phần parser/luật cần để hiểu mã ô. Script nguồn được đọc như văn bản/literal, không `exec`/import.
 
 ## 1. Nguồn, phiên bản và quyết định
@@ -101,7 +103,7 @@ Nguồn 6 × 17; giữ layout/start/goal. A ở [2,3], 1 ở [1,9]; cầu a=[3,5
 
 ## 5. Kiểm tra thêm metadata split: FrankBuss `levelss`
 
-Chuyển start [x1,y4]→[4,1], goal [x12,y4]→[4,12], split [x4,y4]→[4,4]. destinations `[[1,10],[7,10]]` đều là b→floor, khác nhau và không kề cạnh. active_destination=0 điều khiển ô [1,10], sau sort active vẫn 0. Với `levelre`, destinations giữ `[[4,12],[4,2]]`; sau sort cells thành `[[4,2],[4,12]]`, active phải là 1 để giữ điều khiển [4,12]. Đây là đối chiếu metadata, chưa chạy transition/SWITCH/merge.
+Chuyển start [x1,y4]→[4,1], goal [x13,y4]→[4,13], split [x4,y4]→[4,4]. destinations `[[1,10],[7,10]]` đều là b→floor, khác nhau và không kề cạnh. active_destination=0 điều khiển ô [1,10], sau sort active vẫn 0. Với `levelre`, destinations giữ `[[4,12],[4,2]]`; sau sort cells thành `[[4,2],[4,12]]`, active phải là 1 để giữ điều khiển [4,12]. Đây là đối chiếu metadata, chưa chạy transition/SWITCH/merge.
 
 ```json
 {

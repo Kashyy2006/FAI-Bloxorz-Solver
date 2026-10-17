@@ -154,8 +154,7 @@ python -m unittest discover -s tests/solvers -p 'test_*.py' -v
 
 Đã xác nhận test bắt được hai mutation trong bộ nhớ: `pop()` thành `pop(0)`
 và bỏ `reversed`. Không sửa byte source để chạy mutation. Chưa có engine thật
-hoặc test tích hợp bị skip để tạo kết quả xanh. Đồ thị tri thức ngoài repo cần
-cập nhật sau thay đổi này; không dùng graph cũ để kết luận DFS vẫn chưa có.
+hoặc test tích hợp bị skip để tạo kết quả xanh.
 
 ## Tích hợp với engine và GUI
 
