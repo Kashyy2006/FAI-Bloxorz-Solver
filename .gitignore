@@ -1,11 +1,4 @@
 __pycache__/
-<<<<<<< HEAD
-<<<<<<< HEAD
-*.py[cod]
 .venv/
 venv/
-=======
-*.pyc
->>>>>>> origin/feature/TV4-search-and-evaluation
-=======
->>>>>>> origin/feature/TV3-solve-button
+*.py[cod]
