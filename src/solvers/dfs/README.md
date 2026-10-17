@@ -6,17 +6,17 @@
 
 ## Trạng thái triển khai
 
-**Đã hoàn thành độc lập ngày 15/10/2026:** lõi DFS iterative, lớp bọc
-runtime/kết quả và kiểm thử trên đồ thị hữu hạn. **Tích hợp chờ engine TV1**:
-chưa load/replay map thật, xác thực snapshot theo luật hoặc nối public dispatcher.
+Đã có callable `solve_dfs`, lõi DFS iterative, runtime/kết quả và kiểm thử
+trên đồ thị hữu hạn. Chưa load/replay map thật, xác thực snapshot theo luật
+hoặc nối dispatcher chung.
 Không dùng kết quả đồ thị kiểm thử làm bằng chứng engine/game hoặc benchmark.
 
-## Cách gọi nội bộ
+## Callable công khai
 
 ```python
-from src.solvers.dfs.solver import _solve_dfs
+from src.solvers.dfs.solver import solve_dfs
 
-result = _solve_dfs(
+result = solve_dfs(
     game_map, current_state,
     map_id=map_id, bridge_ids=bridge_ids,
     state_key=state_key, is_goal=is_goal, successors=successors,
@@ -25,6 +25,20 @@ result = _solve_dfs(
 )
 payload = result.to_dict()
 ```
+
+Chữ ký đầy đủ:
+
+```python
+solve_dfs(
+    game_map, start_state, *, map_id, bridge_ids,
+    state_key, is_goal, successors, validate_start_state,
+    timeout_s=60.0, cancel_event=None,
+) -> SolverResult
+```
+
+Các keyword trước `timeout_s` đều bắt buộc; thiếu đối số gây `TypeError` tại
+điểm gọi. Giá trị được truyền nhưng sai hoặc callback ném `Exception` trả
+`SolverResult` với status `ERROR`. `_solve_dfs` được giữ làm alias tương thích.
 
 Đoạn trên minh họa điểm nối; caller phải cung cấp map, state, callback và
 metadata. Khi engine được bàn giao, lấy chúng từ API thật, không giả định
@@ -35,18 +49,61 @@ metadata. Khi engine được bàn giao, lấy chúng từ API thật, không gi
 - `is_goal(game_map, state)` xác định goal theo engine.
 - `successors(game_map, state)` trả **list** các phần tử có `action/state/cost`,
   chỉ gồm bước OK/WON, theo thứ tự UP, DOWN, LEFT, RIGHT, SWITCH của contract.
+  `cost` là số nguyên ≥ 1; DFS cộng chi phí được cung cấp trên đường đã chọn.
 - `validate_start_state(game_map, state)` trả bình thường khi hợp lệ, ném lỗi
   có lý do khi sai. Serializer không thay validator; callback test không chứng
   minh luật game thật. Snapshot hiện tại có thể khác initial state của map.
-- `map_id` là chuỗi không rỗng; `bridge_ids` là tuple ID theo thứ tự từ điển
-  engine, khớp tuple bool của snapshot. Không reset cầu về initial_open.
+  Khi tích hợp phải cung cấp validator ngữ nghĩa của engine; không dùng no-op.
+  Giá trị trả về của validator không được sử dụng.
+- `map_id` là chuỗi không rỗng; `bridge_ids` là tuple ID chuỗi không rỗng,
+  duy nhất, theo thứ tự từ điển của map, khớp tuple bool của snapshot.
+  Dùng `()` chỉ khi map thật không có cầu; không reset cầu về initial_open.
+  Callable kiểm tra kiểu/độ dài/thứ tự; bên tích hợp phải bảo đảm đúng ID của map.
 - Timeout nhận int/float hữu hạn >0, loại bool; event là None hoặc có `is_set()`.
 
 Lõi `_search(game_map, start_state, *, state_key, is_goal, successors, runtime=None)`
 trả `(actions, solution_cost, expanded_nodes)`. Với stack cạn, hai trường đầu
 là None; start đã thắng trả `([], 0, 0)`. Lõi trực tiếp truyền lỗi callback ra
-ngoài; lớp bọc `_solve_dfs` chuyển Exception thành ERROR. Nếu truyền runtime
+ngoài; lớp bọc `solve_dfs` chuyển Exception thành ERROR. Nếu truyền runtime
 trực tiếp cho lõi, caller phải gọi `runtime.finish()` trong finally.
+
+### Ví dụ fixture chạy độc lập
+
+Chạy từ gốc repo. Tọa độ là nhãn node của đồ thị kiểm thử, không mô phỏng luật
+cầu/split hoặc xác nhận lời giải Bloxorz:
+
+```python
+import json
+from collections import namedtuple
+from types import SimpleNamespace
+from src.solvers.dfs.solver import solve_dfs
+
+State = namedtuple("State", "mode cells active bridges")
+start = State("SPLIT", ((1, 1), (3, 3)), 0, (True, False))
+switched = start._replace(active=1)
+goal = State("UPRIGHT", ((4, 4),), None, (True, False))
+
+graph = {
+    start: [SimpleNamespace(action="SWITCH", state=switched, cost=1)],
+    switched: [SimpleNamespace(action="DOWN", state=goal, cost=3)],
+    goal: [],
+}
+
+def validate_start_state(game_map, state):
+    if state not in game_map:
+        raise ValueError("snapshot is not in the fixture graph")
+
+result = solve_dfs(
+    graph, start, map_id="snapshot_fixture", bridge_ids=("b01", "b02"),
+    state_key=tuple, is_goal=lambda game_map, state: state == goal,
+    successors=lambda game_map, state: game_map[state],
+    validate_start_state=validate_start_state,
+)
+assert result.status == "SOLVED"
+assert result.actions == ["SWITCH", "DOWN"]
+assert result.metrics.solution_cost == 4
+print(json.dumps(result.to_dict(), ensure_ascii=False, allow_nan=False))
+```
 
 ## Quy tắc DFS
 
@@ -140,21 +197,38 @@ Từ repo root, không cần dependency mới:
 
 ```powershell
 python -m unittest discover -s tests/solvers -p 'test_TV4_dfs.py' -v
+python -m unittest discover -s tests/solvers -p 'test_TV4_dfs_contract.py' -v
 python -m unittest discover -s tests/solvers -p 'test_TV4_dfs_runtime.py' -v
 python -m unittest discover -s tests/solvers -p 'test_*.py' -v
 ```
 
-Đã đạt **104/104 test, 0 skip**, gồm 70 test cũ và 34 test DFS mới:
+Kết quả ngày 17/10/2026, Python 3.12.10: **87/87 test liên quan đạt, không skip**
+qua `python -m unittest tests.solvers.test_TV4_dfs_contract tests.solvers.test_TV4_dfs tests.solvers.test_TV4_dfs_runtime tests.solvers.test_TV4_common tests.solvers.test_TV4_runtime -q`.
+Gồm 39 test DFS, 17 common và 31 runtime/kết quả dùng chung với BFS:
 
 - 10 test lõi: thứ tự/độ sâu, goal lúc pop, parent khi push, chu trình/diamond,
   full key, deep chain vượt recursion limit, chi phí, bất biến và lỗi callback.
 - 21 test lớp bọc: validation, năm status/JSON, snapshot round-trip bằng kiểu
   test, guard tại deadline/successor trùng/goal/rỗng, metrics và cleanup/lỗi.
 - 3 smoke test tracing thật: chạy lặp, lỗi callback và giữ nguyên tracer ngoài.
+- 5 test hợp đồng callable: alias tương thích, metadata/callback bắt buộc,
+  đường từ snapshot giữ nhánh cầu/active và round-trip full key, validator
+  từ chối snapshot sai, metadata cầu sai kể cả khi snapshot đã goal.
 
-Đã xác nhận test bắt được hai mutation trong bộ nhớ: `pop()` thành `pop(0)`
-và bỏ `reversed`. Không sửa byte source để chạy mutation. Chưa có engine thật
-hoặc test tích hợp bị skip để tạo kết quả xanh.
+Các test runtime/kết quả và smoke test tracing gọi `solve_dfs` công khai;
+giữ nguyên assertion cũ. Đường trả về được phát lại trên graph fixture để
+kiểm tra từng action và goal. Ví dụ fixture trong README đã chạy độc lập,
+trả `SOLVED`, hai action, cost 4 và JSON schema v1.
+
+Kiểm tra mở rộng: **145/145 test solver**, **12/12 test engine cơ bản** đạt,
+không skip, qua discovery riêng từng thư mục. Lệnh discovery từ `tests`
+hiện chỉ phát hiện nhóm tích hợp: 23 mục đạt, hai test khởi chạy GUI thất bại
+và một module controller không nạp được do môi trường thiếu `pygame`.
+Chưa xác nhận DFS nối engine nâng cao, GUI hoặc replay map thật.
+
+Kiểm tra trước đây đã xác nhận test bắt được hai mutation trong bộ nhớ:
+`pop()` thành `pop(0)` và bỏ `reversed`; không chạy lại mutation trong lượt này.
+Không sửa byte source để chạy mutation hoặc skip test tích hợp.
 
 ## Tích hợp với engine và GUI
 
