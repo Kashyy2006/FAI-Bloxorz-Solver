@@ -1,0 +1,328 @@
+{
+  "schema_version": 1,
+  "id": "combined_01",
+  "name": "Combined 01 (levelht)",
+  "difficulty": "hard",
+  "rows": 10,
+  "cols": 15,
+  "grid": [
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor"
+    ],
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "bridge",
+      "bridge",
+      "floor",
+      "floor",
+      "floor",
+      "bridge",
+      "bridge",
+      "heavy",
+      "floor",
+      "floor"
+    ],
+    [
+      "floor",
+      "floor",
+      "bridge",
+      "bridge",
+      "floor",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor"
+    ],
+    [
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "soft",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void"
+    ],
+    [
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "split",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void"
+    ],
+    [
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "soft",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "bridge",
+      "bridge",
+      "floor",
+      "goal",
+      "floor",
+      "void"
+    ],
+    [
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "soft",
+      "floor",
+      "floor",
+      "void"
+    ]
+  ],
+  "start": [
+    8,
+    1
+  ],
+  "bridges": [
+    {
+      "id": "b01",
+      "cells": [
+        [
+          1,
+          5
+        ],
+        [
+          1,
+          6
+        ]
+      ],
+      "initial_open": true
+    },
+    {
+      "id": "b02",
+      "cells": [
+        [
+          1,
+          10
+        ],
+        [
+          1,
+          11
+        ]
+      ],
+      "initial_open": false
+    },
+    {
+      "id": "b03",
+      "cells": [
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ]
+      ],
+      "initial_open": false
+    },
+    {
+      "id": "b04",
+      "cells": [
+        [
+          8,
+          9
+        ],
+        [
+          8,
+          10
+        ]
+      ],
+      "initial_open": true
+    }
+  ],
+  "switches": [
+    {
+      "id": "s01",
+      "cell": [
+        1,
+        12
+      ],
+      "type": "heavy",
+      "effect": {
+        "mode": "toggle",
+        "targets": [
+          "b01",
+          "b03"
+        ]
+      }
+    },
+    {
+      "id": "s02",
+      "cell": [
+        3,
+        8
+      ],
+      "type": "soft",
+      "effect": {
+        "mode": "toggle",
+        "targets": [
+          "b01",
+          "b02"
+        ]
+      }
+    },
+    {
+      "id": "s03",
+      "cell": [
+        5,
+        7
+      ],
+      "type": "split",
+      "destinations": [
+        [
+          1,
+          13
+        ],
+        [
+          8,
+          1
+        ]
+      ],
+      "active_destination": 0
+    },
+    {
+      "id": "s04",
+      "cell": [
+        7,
+        11
+      ],
+      "type": "soft",
+      "effect": {
+        "mode": "permanent",
+        "targets": [
+          "b04"
+        ],
+        "open": false
+      }
+    },
+    {
+      "id": "s05",
+      "cell": [
+        9,
+        11
+      ],
+      "type": "soft",
+      "effect": {
+        "mode": "permanent",
+        "targets": [
+          "b04"
+        ],
+        "open": false
+      }
+    }
+  ],
+  "source": {
+    "kind": "adapted",
+    "reference": "https://github.com/FrankBuss/bloxorz/blob/775d5fa64d77b5d1793ef9e5e3bc9cce56ed5562/Vide/levels.py",
+    "conversion_notes": "data/references/frank-map-conversion.md"
+  }
+}

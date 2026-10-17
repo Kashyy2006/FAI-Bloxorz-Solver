@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "id": "soft_toggle_01",
+  "name": "Soft Toggle 01 (level4)",
+  "difficulty": "medium",
+  "rows": 6,
+  "cols": 17,
+  "grid": [
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "heavy",
+      "floor",
+      "void",
+      "void",
+      "floor",
+      "goal",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "floor",
+      "soft",
+      "floor",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "bridge",
+      "bridge",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "bridge",
+      "bridge",
+      "floor",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void"
+    ]
+  ],
+  "start": [
+    3,
+    1
+  ],
+  "bridges": [
+    {
+      "id": "b01",
+      "cells": [
+        [
+          3,
+          5
+        ],
+        [
+          3,
+          6
+        ]
+      ],
+      "initial_open": false
+    },
+    {
+      "id": "b02",
+      "cells": [
+        [
+          4,
+          11
+        ],
+        [
+          4,
+          12
+        ]
+      ],
+      "initial_open": false
+    }
+  ],
+  "switches": [
+    {
+      "id": "s01",
+      "cell": [
+        1,
+        9
+      ],
+      "type": "heavy",
+      "effect": {
+        "mode": "toggle",
+        "targets": [
+          "b02"
+        ]
+      }
+    },
+    {
+      "id": "s02",
+      "cell": [
+        2,
+        3
+      ],
+      "type": "soft",
+      "effect": {
+        "mode": "toggle",
+        "targets": [
+          "b01"
+        ]
+      }
+    }
+  ],
+  "source": {
+    "kind": "adapted",
+    "reference": "https://github.com/AchrafMez/bloxorz/blob/898188ed31cf31d4ce4c39fec3e3846ed037eee9/levels/level4.txt",
+    "conversion_notes": "data/references/achraf-map-conversion.md"
+  }
+}

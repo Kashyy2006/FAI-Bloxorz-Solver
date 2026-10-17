@@ -1,4 +1,6 @@
 data/maps/*.json text eol=lf
+data/maps/prepared/*.json text eol=lf
+data/references/map_sources/*.txt -text
 data/references/matuneville-LICENSE.txt -text
 data/references/AchrafMez-LICENSE.txt -text
 data/references/FrankBuss-license.txt -text

@@ -1,6 +1,8 @@
-# Bộ map cơ bản
+# Bộ map
 
 **Phụ trách:** Thành viên 4, phối hợp thành viên 1 về schema/engine. Chuẩn bị ngày 15/10/2026 theo [schema v1](../../docs/contracts/map-format.md).
+
+**Dữ liệu hiện có ngày 17/10/2026:** 4 map basic ở root và **13 map adapted trong `prepared/`**, tổng **17 JSON**. Xem [danh mục dữ liệu đã chuyển đổi](#dữ-liệu-đã-chuyển-đổi), [ghi chú Achraf](../references/achraf-map-conversion.md) và [ghi chú Frank](../references/frank-map-conversion.md). Các map prepared đạt kiểm tra dữ liệu, chưa xác nhận engine/replay/solver; chưa đưa vào menu game. Map vô nghiệm nâng cao còn ở dạng blueprint, bộ 18 map chưa khóa.
 
 Bộ khởi tạo có 4 map dùng chung cho GUI và các solver. Chỉ có `floor`, `void`, `goal`; tất cả ở mức `easy`, `bridges=[]`, `switches=[]`. Đây chưa phải bộ benchmark cuối kỳ: còn cần map fragile, cầu/công tắc, split và nhiều mức khó.
 
@@ -119,13 +121,13 @@ Lượt kiểm tra dữ liệu chưa tiếp nhận hoặc tự thiết kế map 
 
 ## Danh sách 18 map mục tiêu
 
-**Chốt ngày 17/10/2026, tại HEAD nền `53623791166261f234ceeae5b05c463ded9c397e`.** Chọn **18 map = 4 map hiện có + 13 map sẽ chuyển từ nguồn ngoài + 1 map original bù vô nghiệm nâng cao**. Bộ tối thiểu là 15 dòng đánh dấu **15**; ba dòng **+3** nâng lên 18. Không đổi tên/xoay/đối xứng một màn để tăng số lượng. **Inventory dữ liệu thực tế vẫn chỉ có bốn JSON basic**; các map mới còn phải chuyển đổi, bổ sung witness, hash JSON và kiểm tra dữ liệu.
+**Chốt lựa chọn ngày 17/10/2026, tại HEAD nền `53623791166261f234ceeae5b05c463ded9c397e`.** Chọn **18 map = 4 map cũ + 13 map chuyển từ nguồn ngoài + 1 map original bù vô nghiệm nâng cao**. Bộ tối thiểu là 15 dòng đánh dấu **15**; ba dòng **+3** nâng lên 18. Không đổi tên/xoay/đối xứng một màn để tăng số lượng. Sau chuyển đổi, **inventory có 17 JSON**, gồm 13 adapted mới đã kiểm dữ liệu và hash. Còn phải tạo map original, bổ sung witness/phân tích và khóa bộ đủ nhóm; không coi số lượng 17 là đã hoàn tất mọi điều kiện bộ map.
 
 Nguồn **A** = AchrafMez, commit `898188ed31cf31d4ce4c39fec3e3846ed037eee9`, MIT; **F** = FrankBuss/Damien Clarke, commit `775d5fa64d77b5d1793ef9e5e3bc9cce56ed5562`, chỉ chọn trong phạm vi bài học phi thương mại và giữ notice. URL từng level, hash nguồn và quyết định loại ở [nhật ký nguồn](../references/README.md#nguồn-cho-danh-sách-18-map). Không lấy code game hoặc solver nguồn.
 
 ### Danh sách 4 + 14
 
-Mỗi dòng tính đúng một nhóm chính, kể cả khi có cơ chế phụ. Difficulty dưới đây là **dự kiến**, chưa đo solver. ID mới là tên file dự kiến `data/maps/prepared/<id>.json`, chưa phải file tồn tại; bốn ID basic giữ đường dẫn hiện tại.
+Mỗi dòng tính đúng một nhóm chính, kể cả khi có cơ chế phụ. Difficulty dưới đây là **dự kiến**, chưa đo solver. 13 ID adapted mới đã có file `data/maps/prepared/<id>.json`; ID original vô nghiệm nâng cao vẫn là dự kiến. Bốn ID basic giữ đường dẫn hiện tại.
 
 | Bộ | ID | Nguồn / level | Nhóm chính | Difficulty | Chuyển đổi và vai trò kiểm tra |
 | --- | --- | --- | --- | --- | --- |
@@ -197,7 +199,7 @@ Start [1,1], goal [1,7]; b01=[[1,4],[1,5]], initial_open=false; s01 tại [2,3],
 - Loại các bản GBA cùng level với F: `ub`, `dw`, `sc`, `ss`, `re`, `ht`, `tb`; cả `kn`, `hg` dự phòng cũng trùng. Đã đối chiếu layout, spawn, switch effect và split destinations; không đếm thành nguồn map mới. Các basic A `level0`–`2` và ba ma trận Matías còn lại không chọn vì basic đã đủ.
 - Không chọn F `levelpp` nguyên trạng (đích split trỏ vào split, trái yêu cầu floor); `leveltw`, `leveldd`, `levelmp`, `levelgv` có effect hỗn hợp trên cùng switch, không biểu diễn trực tiếp. Không bỏ effect để lách schema. Các nguồn thiếu quyền tiếp nhận rõ vẫn bị loại theo hồ sơ khảo sát.
 - **Tối đa hai mở rộng, chưa tính vào 18:** `combined_03` từ F 24 `levelkn` (088198), hard, permanent mở + split; `combined_04` từ F 26 `levelhg` (426329), hard, soft đóng/heavy mở + split. Đã kiểm metadata/đích floor và khác 18 ứng viên. Chỉ triển khai sau bộ 18 đạt dữ liệu; không dùng để lấp một nhóm bắt buộc bị thiếu. Nếu cần thay ứng viên khi chuyển đổi phát hiện lỗi, giữ đúng nhóm và cập nhật lựa chọn, không cộng cả bản cũ lẫn bản thay.
-- Không còn nhóm **chưa chọn ứng viên**; còn phải tạo fixture vô nghiệm, chuyển 13 map, thu witness, hash và kiểm tra dữ liệu. Không tuyên bố đã có 15/18 map bàn giao.
+- Không còn nhóm **chưa chọn ứng viên**; 13 map adapted đã chuyển và kiểm dữ liệu, xem [hash/trạng thái](#dữ-liệu-đã-chuyển-đổi). Còn phải tạo fixture vô nghiệm nâng cao, hoàn thiện witness và khóa inventory đủ nhóm. Chưa tuyên bố bộ map đã bàn giao đủ điều kiện.
 - Kiểm tra lựa chọn dùng script tạm đọc literal bằng AST/JSON, không chạy code nguồn ngoài hoặc thêm converter/validator game vào repo. Hai notice khớp raw từng byte. Lệnh test và kết quả được ghi ở nhật ký nguồn.
 
 AI hỗ trợ đối chiếu đề bài/contract, chọn map, rà trùng và viết blueprint/lập luận tay; chưa chạy game hoặc đo hiệu năng.
@@ -210,3 +212,35 @@ AI hỗ trợ đối chiếu đề bài/contract, chọn map, rà trùng và vi�
 4. Sau khi API solver hoàn chỉnh, kiểm tra 3 kết quả SOLVED và 1 UNSOLVABLE, rồi ghi ngày/commit/số test của lần nghiệm thu. GUI và benchmark dùng cùng dữ liệu sau đó.
 
 Lượt chuẩn bị có AI hỗ trợ khảo sát nguồn, chuyển dữ liệu, viết test và tài liệu. Chưa chạy benchmark hoặc tạo số liệu hiệu năng; nhóm có thể dùng ghi nhận này khi tổng hợp phụ lục AI.
+
+## Dữ liệu đã chuyển đổi
+
+Ngày 17/10/2026, chuyển từng lô nhỏ, kiểm dữ liệu draft rồi mới đưa vào `prepared/`. Chỉ là kiểm tra schema/liên kết/đối chiếu nguồn; engine, replay và solver thật **chưa chạy**. Không dùng nhãn khả giải cho các map adapted mới. Bốn basic ở root giữ nguyên.
+
+| Lô | ID / JSON | Nguồn | Kích thước | SHA256 byte | Dữ liệu | Engine | Replay/solver thật |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | [`fragile_01`](prepared/fragile_01.json) | achraf `level3` | 9 × 17 | `f0c9f597865d873be0dfdb637b233e6f5864d173c0e6142cd1fa2d5910880065` | Đạt | Chưa chạy | Chưa chạy |
+| 1 | [`fragile_02`](prepared/fragile_02.json) | achraf `level7` | 12 × 17 | `52a1d57f1ff29d43b9c192b394da1b4a34600c615faa289a5f57bd927af11c22` | Đạt | Chưa chạy | Chưa chạy |
+| 1 | [`soft_toggle_01`](prepared/soft_toggle_01.json) | achraf `level4` | 6 × 17 | `2477fa5f52803460ff8312c48cb6e7cde0f9f450a35bc1c8b2edf5760cba8724` | Đạt | Chưa chạy | Chưa chạy |
+| 2 | [`soft_toggle_02`](prepared/soft_toggle_02.json) | achraf `level6` | 10 × 17 | `6df8ab61461472229b9b67103b9a67023b596fdea2122549668c5855b7edae52` | Đạt | Chưa chạy | Chưa chạy |
+| 2 | [`heavy_01`](prepared/heavy_01.json) | achraf `level5` | 9 × 17 | `ed524df786d5a45de4327eb547efd3bc1b82d27aaa5c486942cd0ec368f71301` | Đạt | Chưa chạy | Chưa chạy |
+| 2 | [`heavy_02`](prepared/heavy_02.json) | achraf `level10` | 10 × 17 | `bf316e8d374073a2db4680b78fd4727b15a9c38ead94241c167ac10125dabae7` | Đạt | Chưa chạy | Chưa chạy |
+| 3 | [`bridge_01`](prepared/bridge_01.json) | frank `levelub` | 10 × 15 | `5193bb461a7428daa4f80e75feaff6d81d77ad2357f0cf220d06f5cfa7d2f2d0` | Đạt | Chưa chạy | Chưa chạy |
+| 3 | [`permanent_open_01`](prepared/permanent_open_01.json) | frank `levelsc` | 10 × 15 | `ec414b321005d459073f0c17e3e9d3aaa2ca33ced426a698bc72dd5e6745312d` | Đạt | Chưa chạy | Chưa chạy |
+| 3 | [`permanent_close_01`](prepared/permanent_close_01.json) | frank `leveldw` | 10 × 15 | `061efc9ed735a294918e9fc7556cad82a2048d61fe22b415cbfb40cc3425ec47` | Đạt | Chưa chạy | Chưa chạy |
+| 4 | [`split_merge_01`](prepared/split_merge_01.json) | frank `levelss` | 10 × 15 | `d32867d120508c26d643b8395f7aafcbe5d08441ce8b6c4a752875e0eb3fb0b2` | Đạt | Chưa chạy | Chưa chạy |
+| 4 | [`split_merge_02`](prepared/split_merge_02.json) | frank `levelre` | 10 × 15 | `d3c32d97f35785bf096c7c2030bdd2acb807631e318b5dd3623b8dae98bc2304` | Đạt | Chưa chạy | Chưa chạy |
+| 5 | [`combined_01`](prepared/combined_01.json) | frank `levelht` | 10 × 15 | `4be3878b39afcf4b0f6543cb6a19a1ab87a5a2205dfdeb85b0d364d73ff7152a` | Đạt | Chưa chạy | Chưa chạy |
+| 5 | [`combined_02`](prepared/combined_02.json) | frank `leveltb` | 10 × 15 | `6b8db0b63676c886b8f0021a8d24dc4fe5f35058bf7e63b50a0939b569b69b41` | Đạt | Chưa chạy | Chưa chạy |
+
+Đã đối chiếu dữ liệu **trước khi chuyển từng lô**: lô 1 gồm 3 map (đại diện `fragile_01` được kiểm trước), lô 2 gồm 3 map, lô 3 gồm 3 map (đại diện `bridge_01` được kiểm trước), lô 4 và 5 mỗi lô 2 map. Mỗi lần kiểm theo lô chạy **9/9 test chuyển đổi đạt**; sau cùng bổ sung kiểm toàn bộ ánh xạ Achraf, hash/catalog/notes/notice. Không giữ JSON draft chưa đạt trong inventory.
+
+Kiểm tra cuối ngày 17/10/2026, Python 3.12.10, HEAD nền `19d13998cd3d477a9f7cd66e7bf4354d75e0b607`:
+
+```powershell
+python -m unittest discover -s tests/solvers -p 'test_TV4_*.py' -v
+```
+
+**115/115 test đạt, không skip**, gồm 11 test chuyển đổi mới và 104 test cũ (trong đó có 7 test bốn map basic). Kiểm tra mới bao gồm schema v1, integer/bool/tọa độ/ID, toàn bộ ô/liên kết cầu/công tắc, permanent/split, đối chiếu nguồn độc lập, source SHA256, notice nguyên byte, hash JSON/catalog, notes/link, input sai và CLI không ghi đè. Không chạy engine/GUI/replay/benchmark hoặc solver ngoài.
+
+Chưa tạo map vô nghiệm nâng cao, chưa khóa manifest/độ phủ bộ cuối và chưa thu witness qua engine. Không gắn kết quả tìm kiếm hoặc lời giải vào JSON. AI hỗ trợ chuyển dữ liệu, viết converter/test và tài liệu; không có số đo hiệu năng trong lượt chuẩn bị này.

@@ -2,6 +2,8 @@
 
 **Phụ trách:** Thành viên 4 ghi nguồn; thành viên 5 tổng hợp tài liệu. Khảo sát ngày **15/10/2026** qua trang repo, GitHub API và nội dung raw tại các commit dưới đây. Chỉ lấy dữ liệu map và giấy phép; không tải/chạy thuật toán giải của nguồn.
 
+**Cập nhật chuyển đổi 17/10/2026:** đã chuyển 6 map AchrafMez và 7 map Frank Buss / Damien Clarke vào `data/maps/prepared/` qua 5 lô kiểm tra dữ liệu. Có [dữ liệu nguồn ngoại tuyến](map_sources/README.md), [converter](convert_maps.py), [ghi chú Achraf](achraf-map-conversion.md), [ghi chú Frank](frank-map-conversion.md) và [hash/trạng thái từng map](../maps/README.md#dữ-liệu-đã-chuyển-đổi). Tổng dữ liệu là 17 map tính cả 4 basic cũ. Chưa xác nhận engine/replay/solver, chưa tạo map vô nghiệm nâng cao hoặc khóa bộ cuối. Các mục khảo sát dưới đây ghi bằng chứng tại thời điểm khảo sát/lựa chọn.
+
 ## Truy xuất bộ cơ bản
 
 | Map ID                | Loại nguồn | Tác giả / nguồn cụ thể                                                                                                                                                                                        | Xử lý                                                                                                                                  |
@@ -19,7 +21,7 @@
 | AchrafMez / [bloxorz: level0.txt](https://github.com/AchrafMez/bloxorz/blob/898188ed31cf31d4ce4c39fec3e3846ed037eee9/levels/level0.txt)                                                    | Commit `898188ed31cf31d4ce4c39fec3e3846ed037eee9`; text 6 × 5; [MIT](https://github.com/AchrafMez/bloxorz/blob/898188ed31cf31d4ce4c39fec3e3846ed037eee9/LICENSE.md), Copyright 2026 AchrafMez | Không tiếp nhận: đã chọn nguồn ma trận nhỏ có kỳ vọng độ dài cụ thể. Lưu làm ứng viên, chưa kiểm tra khả năng giải theo engine nhóm                                  |
 | ooodnakov / [bloxorz_PAAI: level/1.json](https://github.com/ooodnakov/bloxorz_PAAI/blob/7a1ec2bfb97d66edc867ce17e208697b922fd38a/level/1.json)                                             | Commit `7a1ec2bfb97d66edc867ce17e208697b922fd38a`; JSON với size/maps/box/swX/swQ/swO, khác schema nhóm                                                                                       | Không tiếp nhận: JSON không dùng trực tiếp được; GitHub metadata trả license=null và tree không có file LICENSE. Không suy đoán quyền sử dụng; có nguồn MIT thay thế |
 
-Đó là kết quả vòng khởi tạo ngày 15/10; bộ đang có vẫn gồm bốn map. Vòng khảo sát ngày 17/10 bên dưới mở rộng sang cơ chế nâng cao, chưa bổ sung map vào inventory.
+Đó là kết quả vòng khởi tạo ngày 15/10, khi bộ dữ liệu gồm bốn map. Vòng khảo sát ngày 17/10 bên dưới mở rộng sang cơ chế nâng cao; kết quả chuyển đổi sau khảo sát được ghi ở đầu tài liệu.
 
 ## Khảo sát nguồn nâng cao ngày 17/10/2026
 
@@ -41,11 +43,11 @@ Notice lưu nguyên byte cho hai nguồn dùng trong mẫu khảo sát: [AchrafM
 
 ## Nguồn cho danh sách 18 map
 
-**Ngày 17/10/2026.** Danh sách có ID, nhóm chính, difficulty dự kiến, bộ tối thiểu 15, ba map bổ sung và hai mở rộng nằm ở [catalog map](../maps/README.md#danh-sách-18-map-mục-tiêu). Chọn **13 map adapted mới và một fixture original vô nghiệm nâng cao**, giữ nguyên bốn map cũ (3 original, 1 adapted). Tổng dự kiến sau chuyển đổi: 18 map, 14 adapted + 4 original. Hiện repo vẫn bốn JSON; không ghi danh sách lựa chọn thành manifest dữ liệu đã đạt.
+**Ngày 17/10/2026.** Danh sách có ID, nhóm chính, difficulty dự kiến, bộ tối thiểu 15, ba map bổ sung và hai mở rộng nằm ở [catalog map](../maps/README.md#danh-sách-18-map-mục-tiêu). Chọn **13 map adapted mới và một fixture original vô nghiệm nâng cao**, giữ nguyên bốn map cũ (3 original, 1 adapted). Tổng dự kiến cuối cùng: 18 map, 14 adapted + 4 original. Hiện đã có 17 JSON; blueprint original chưa thành file, danh sách lựa chọn không thay cho manifest bộ cuối.
 
 ### Nguồn đã chọn và byte kiểm tra lại
 
-AchrafMez: giữ layout/start/goal, pad cuối hàng ngắn bằng void; bỏ dòng rỗng cuối file không chứa ô. Mã ô và liên kết theo [ánh xạ nguồn](advanced-map-source-survey.md#2-ánh-xạ-achrafmez-và-ứng-viên), giữ [MIT nguyên byte](AchrafMez-LICENSE.txt). File tải từ các URL ghim dưới đây, không tải hoặc chạy solver nguồn.
+AchrafMez: giữ layout/start/goal và số hàng, pad cuối hàng ngắn bằng void; hàng rỗng cuối `level7` được giữ thành 17 void theo parser nguồn (JSON 12 × 17). Mã ô và liên kết theo [ánh xạ nguồn](advanced-map-source-survey.md#2-ánh-xạ-achrafmez-và-ứng-viên), giữ [MIT nguyên byte](AchrafMez-LICENSE.txt). File tải từ các URL ghim dưới đây, không tải hoặc chạy solver nguồn.
 
 | ID dự kiến | File nguồn tại commit `898188ed31cf31d4ce4c39fec3e3846ed037eee9` | Byte raw | SHA256 raw |
 | --- | --- | ---: | --- |
@@ -85,7 +87,7 @@ Tọa độ bảng dưới đã đổi thành [row,col]. Nhóm cầu tách theo 
 - Đối chiếu trực tiếp catalog, dữ liệu nguồn và contract map-format/engine với yêu cầu cơ chế của đề bài.
 - Script tạm chỉ đọc AST/literal/JSON và chuẩn hóa dữ liệu; không đưa code ngoài vào source, không gọi game/solver ngoài. Kiểm start trên floor, đúng một goal, target bridge, effect đồng nhất mỗi switch, split destinations floor/khác nhau/không kề cạnh; đếm nhóm theo toàn bộ liên kết.
 - So 153 cặp của 18 ứng viên theo layout/start/goal/cơ chế sau bỏ viền void, chuẩn hóa tịnh tiến, tám phép quay/đối xứng, bỏ tên ID nhóm và giữ active destination. Không trùng cả khi kiểm thêm hình học/start/goal mà bỏ phân biệt loại ô. Blueprint original cũng nằm trong phép so. Đây không phải test chuẩn JSON đã chuyển hoặc xác minh luật nâng cao.
-- Hai notice khớp raw từng byte; sáu hash A và hai hash dữ liệu F ở trên khớp byte tải lại. Chưa có hash JSON prepared vì chưa chuyển đổi.
+- Hai notice khớp raw từng byte; sáu hash A và hai hash dữ liệu F ở trên khớp byte tải lại. Tại lúc chốt lựa chọn chưa có JSON prepared; hash đầu ra sau chuyển đổi nằm ở [catalog](../maps/README.md#dữ-liệu-đã-chuyển-đổi).
 - Đối chiếu bảng lựa chọn: 18 ID duy nhất; bộ 15 và bộ 18 khớp bảng phân bố nhóm, permanent có mở/đóng; ba map +3 đúng vai trò soft/heavy/split. Link và anchor nội bộ tồn tại, hash nguồn trong nhật ký khớp raw, bốn JSON cũ và các notice giữ nguyên byte.
 - `python -m unittest discover -s tests/solvers -p 'test_TV4_*.py' -v`: **104/104 đạt, không skip**, gồm bảy test map cũ. `git diff --check` đạt với các thay đổi tài liệu. Không thêm test/game validator mới cho bước chọn danh sách; kiểm tra lựa chọn dùng assert trong script tạm, dữ liệu prepared còn phải kiểm sau chuyển đổi. Chưa chạy engine nâng cao, GUI, replay hoặc benchmark.
 
