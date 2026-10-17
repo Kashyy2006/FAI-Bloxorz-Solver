@@ -12,7 +12,7 @@
 | solution_cost | Tổng step_cost của lời giải. |
 | peak_memory_bytes | Đỉnh bộ nhớ Python do tracemalloc theo dõi trong solve; không phải RSS. |
 
-Làm rõ tại T4 (15/10/2026): validation/chuyển snapshot ở trước đo; timer dừng khi xác định goal/cạn frontier/dừng tìm kiếm, trước dựng actions. Tracemalloc tiếp tục theo dõi qua dựng actions, lấy peak và dọn trước xuất JSON. Start hợp lệ đã thắng không khởi động tìm kiếm, cả năm chỉ số bằng 0. Các solver cần dùng cùng mốc đo này khi tích hợp; không so thời gian có/không bật tracemalloc như cùng một điều kiện.
+Làm rõ mốc đo ngày 15/10/2026: validation/chuyển snapshot ở trước đo; timer dừng khi xác định goal/cạn frontier/dừng tìm kiếm, trước dựng actions. Tracemalloc tiếp tục theo dõi qua dựng actions, lấy peak và dọn trước xuất JSON. Start hợp lệ đã thắng không khởi động tìm kiếm, cả năm chỉ số bằng 0. Các solver cần dùng cùng mốc đo này khi tích hợp; không so thời gian có/không bật tracemalloc như cùng một điều kiện.
 
 ## Quy trình
 

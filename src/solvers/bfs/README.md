@@ -6,7 +6,7 @@
 
 ## Lõi BFS độc lập
 
-Đã triển khai lõi tìm kiếm và runtime T4 trên đồ thị giả hữu hạn, không cần engine
+Đã triển khai lõi tìm kiếm và runtime trên đồ thị giả hữu hạn, không cần engine
 hoặc thư viện ngoài. Dùng deque FIFO; membership trong `parent` là visited,
 đánh dấu ngay khi enqueue. Giữ nguyên thứ tự successors, kiểm tra goal khi lấy
 nút ra và trước mở rộng. Dùng lại `reconstruct_actions` của common.
@@ -48,7 +48,7 @@ Không đổi parent khi gặp lại key qua đường rẻ hơn. `expanded_node
 lần gọi successors, không tính goal. Bộ nhớ O(V), thời gian trung bình O(V+E)
 theo số state key/cạnh; không lưu bản sao toàn bộ đường đi cho mỗi nút.
 
-## Lớp bọc kết quả T4
+## Lớp bọc kết quả
 
 ```python
 from src.solvers.bfs.solver import _solve_bfs
@@ -66,7 +66,7 @@ payload = result.to_dict()
 Đây là chữ ký nội bộ thật; ví dụ cần được truyền các biến/callback tương ứng.
 Không giả định thuộc tính của GameMap hay import engine chưa có. Validator
 `validate_start_state(game_map, start_state)` phải ném lỗi có lý do khi snapshot
-sai; T5 thay callback test bằng validator thật của TV1. Bridge IDs là tuple ID
+sai; khi tích hợp, thay callback test bằng validator thật của TV1. Bridge IDs là tuple ID
 theo thứ tự từ điển dùng để chuyển tuple bool của State sang object JSON.
 
 Lớp bọc xác thực map ID/timeout/event/callback, gọi validator và chuyển snapshot
@@ -129,7 +129,7 @@ python -m unittest discover -s tests/solvers -p 'test_*.py' -v
 
 Kết quả ngày 15/10/2026, Python 3.12.10: **70/70 test đạt, không skip**,
 gồm 16 BFS, 16 common, 31 runtime/result/tracing và 7 map. Giữ toàn bộ 31 test
-cũ, thêm 39 test cho T4. Test timeout dùng clock giả; ba smoke test dùng
+cũ, thêm 39 test runtime/kết quả. Test timeout dùng clock giả; ba smoke test dùng
 tracemalloc thật để kiểm tra chạy lặp, cleanup sau lỗi và giữ phiên ngoài.
 
 Đã kiểm tra khả năng bắt hồi quy: tạm đổi điều kiện deadline `>=` thành `>`,
@@ -142,10 +142,10 @@ xác nhận enqueue mỗi key một lần, kể cả hai object khác nhau cùng
 
 ### Giới hạn và tích hợp
 
-T4 có runtime, kết quả chuẩn và điểm nối validation nội bộ; chưa có API công
-khai `solve(game_map, start_state, algorithm, ...)` hoặc engine thật. T5 cần
+Lõi BFS có runtime, kết quả chuẩn và điểm nối validation nội bộ; chưa có API công
+khai `solve(game_map, start_state, algorithm, ...)` hoặc engine thật. Khi tích hợp cần
 gắn state_key/is_goal/successors/validator, lấy metadata thật và replay trên
-bộ map T3, đối chiếu step_cost và vô nghiệm. TV3 nối worker/GUI và run_id;
+bộ map cơ bản, đối chiếu step_cost và vô nghiệm. TV3 nối worker/GUI và run_id;
 TV5 dùng lại runtime cho UCS/A*. Không tạo vòng BFS thứ hai trong wrapper.
 
 Timeout là hợp tác, không dừng callback đang chặn. Tracemalloc theo tiến trình:

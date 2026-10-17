@@ -4,10 +4,10 @@
 
 **Phụ trách:** Thành viên 4.
 
-## Trạng thái T6
+## Trạng thái triển khai
 
-**T6-A đã hoàn thành độc lập ngày 15/10/2026:** lõi DFS iterative, lớp bọc
-runtime/kết quả và kiểm thử trên đồ thị hữu hạn. **T6-B chờ engine TV1**:
+**Đã hoàn thành độc lập ngày 15/10/2026:** lõi DFS iterative, lớp bọc
+runtime/kết quả và kiểm thử trên đồ thị hữu hạn. **Tích hợp chờ engine TV1**:
 chưa load/replay map thật, xác thực snapshot theo luật hoặc nối public dispatcher.
 Không dùng kết quả đồ thị kiểm thử làm bằng chứng engine/game hoặc benchmark.
 
@@ -28,7 +28,7 @@ payload = result.to_dict()
 
 Đoạn trên minh họa điểm nối; caller phải cung cấp map, state, callback và
 metadata. Khi engine được bàn giao, lấy chúng từ API thật, không giả định
-đường import hoặc thuộc tính GameMap chưa có. T6-A chưa cung cấp
+đường import hoặc thuộc tính GameMap chưa có. Thành phần DFS chưa cung cấp
 `solve(game_map, start_state, algorithm, ...)` chung cho bốn thuật toán.
 
 - `state_key(state)` trả khóa hashable đầy đủ `(mode, cells, active, bridges)`.
@@ -93,7 +93,7 @@ Thời gian tìm kiếm có overhead tracemalloc; không so với lượt đo kh
 Chỉ đo tuần tự một solver mỗi tiến trình. Nếu tracer ngoài đang bật, lượt
 cần search trả ERROR trước đo, không reset/stop tracer ngoài. Timeout/hủy là
 hợp tác, không ngắt callback đang chặn. KeyboardInterrupt/SystemExit truyền
-ra sau cleanup; lỗi cleanup không che lỗi gốc. Worker/T7 phụ trách cách ly
+ra sau cleanup; lỗi cleanup không che lỗi gốc. Worker/bộ chạy benchmark phụ trách cách ly
 tiến trình; GUI quản lý run_id ngoài JSON chuẩn.
 
 ## JSON từ lượt chạy đồ thị kiểm thử thật
@@ -157,7 +157,7 @@ và bỏ `reversed`. Không sửa byte source để chạy mutation. Chưa có e
 hoặc test tích hợp bị skip để tạo kết quả xanh. Đồ thị tri thức ngoài repo cần
 cập nhật sau thay đổi này; không dùng graph cũ để kết luận DFS vẫn chưa có.
 
-## Tiếp nối T6-B
+## Tích hợp với engine và GUI
 
 Khi TV1 bàn giao, nối callback/metadata/validator thật và điểm gọi nhóm đã
 thống nhất; chạy bốn map cố định, replay từng action bằng transition, đối
@@ -165,7 +165,7 @@ chiếu step_cost và full state_key. Kiểm tra snapshot giữa ván/đã thắ
 input bất biến và map vô nghiệm cạn đúng ba state. Bộ cơ bản có cầu rỗng,
 chưa chứng minh cơ chế nâng cao, SPLIT hoặc cấu hình cầu thực đã đúng.
 
-TV3 nhận điểm gọi/status/JSON và giới hạn runtime để nối worker/GUI; T7 nhận
+TV3 nhận điểm gọi/status/JSON và giới hạn runtime để nối worker/GUI; bộ chạy benchmark nhận
 DFS có cùng quy ước đo để chạy benchmark. Không nhận thay engine, GUI,
-UCS/A*, không tự reset snapshot hiện tại. Phần triển khai/test/tài liệu T6-A
+UCS/A*, không tự reset snapshot hiện tại. Phần triển khai/test/tài liệu DFS
 có AI hỗ trợ; giữ ghi nhận này cho phụ lục báo cáo của nhóm.

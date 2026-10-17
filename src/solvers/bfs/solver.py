@@ -61,7 +61,7 @@ def _solve_bfs(
     state_key, is_goal, successors, validate_start_state,
     timeout_s=60.0, cancel_event=None,
 ) -> SolverResult:
-    """Internal T4 boundary; T5 supplies real engine callbacks and metadata."""
+    """Solve BFS using caller-supplied engine callbacks and metadata."""
     metrics = SolverMetrics()
     result = SolverResult(
         map_id=None, algorithm="BFS", status="ERROR", start_state=None,

@@ -103,9 +103,9 @@
 - `run_id` do lớp GUI/worker quản lý ngoài JSON chuẩn để loại kết quả cũ.
 - Đây là hợp đồng phối hợp; thành viên 4/5 vẫn tự triển khai thuật toán.
 
-## Làm rõ kết quả ERROR và runtime T4 (15/10/2026)
+## Làm rõ kết quả ERROR và runtime (15/10/2026)
 
-Quy ước triển khai theo kế hoạch T4; cần dùng cùng quy tắc khi TV1/TV3/TV5 tích hợp. Không thay các key hoặc `schema_version=1`: JSON có **11 trường gốc**, metrics có 5 trường.
+Quy ước triển khai runtime/kết quả; cần dùng cùng quy tắc khi TV1/TV3/TV5 tích hợp. Không thay các key hoặc `schema_version=1`: JSON có **11 trường gốc**, metrics có 5 trường.
 
 - Chỉ với `ERROR`, `map_id`, `start_state`, `timeout_s` được là null nếu sai hoặc chưa xác thực được do validation dừng sớm. Giữ các trường đã xác thực; `error` ghi trường/giai đoạn, loại lỗi và lý do. Không dùng initial state/timeout mặc định để thay đầu vào hỏng.
 - Các status khác bắt buộc map_id là chuỗi không rỗng, start_state là object snapshot, timeout_s hữu hạn > 0. Timeout nhận int/float, loại bool; NaN/Infinity không xuất vào JSON.
@@ -114,4 +114,4 @@ Quy ước triển khai theo kế hoạch T4; cần dùng cùng quy tắc khi TV
 - expanded_nodes tăng ngay trước mỗi lời gọi successors, kể cả lời gọi ném lỗi; không đếm goal. Lỗi sau đo phải giữ tiến độ.
 - Nếu tracemalloc đã bật trước lượt tìm kiếm, trả ERROR trước đo; không reset/stop phiên ngoài. Chạy đo tuần tự; cách ly tiến trình thuộc worker/benchmark khi tích hợp.
 - Cleanup trong finally; lỗi cleanup không che lỗi gốc. KeyboardInterrupt/SystemExit vẫn truyền ra ngoài sau cleanup.
-- T4 hiện có `_solve_bfs` nội bộ nhận callback/metadata rõ ràng; chưa phải dispatcher solve công khai hoặc bằng chứng validator/engine thật đã chạy.
+- BFS hiện có `_solve_bfs` nội bộ nhận callback/metadata rõ ràng; chưa phải dispatcher solve công khai hoặc bằng chứng validator/engine thật đã chạy.
