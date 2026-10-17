@@ -154,7 +154,7 @@ class TestTV4BFSResult(unittest.TestCase):
             successors=self.successors, validate_start_state=self.validator,
         )
         args.update(overrides)
-        return bfs._solve_bfs(**args)
+        return bfs.solve_bfs(**args)
 
     def payload(self, result, status):
         payload = json.loads(json.dumps(result.to_dict(), allow_nan=False))
@@ -405,7 +405,7 @@ class TestTV4RealTracing(unittest.TestCase):
         self.assertFalse(tracemalloc.is_tracing(), "Run this smoke test without an external profiler")
         state = FakeState("UPRIGHT", ((0, 0),))
         for _ in range(2):
-            result = bfs._solve_bfs(
+            result = bfs.solve_bfs(
                 {}, state, map_id="fake_graph", bridge_ids=(), state_key=fake_key,
                 is_goal=lambda *_: False, successors=lambda *_: [],
                 validate_start_state=lambda *_: None,
@@ -422,7 +422,7 @@ class TestTV4RealTracing(unittest.TestCase):
         import tracemalloc
 
         self.assertFalse(tracemalloc.is_tracing())
-        result = bfs._solve_bfs(
+        result = bfs.solve_bfs(
             {}, FakeState("UPRIGHT", ((0, 0),)), map_id="fake_graph", bridge_ids=(),
             state_key=fake_key, is_goal=lambda *_: False,
             successors=Mock(side_effect=ValueError("engine failed")),
@@ -442,7 +442,7 @@ class TestTV4RealTracing(unittest.TestCase):
             allocation = bytearray(256 * 1024)
             del allocation
             previous_peak = tracemalloc.get_traced_memory()[1]
-            result = bfs._solve_bfs(
+            result = bfs.solve_bfs(
                 {}, FakeState("UPRIGHT", ((0, 0),)), map_id="fake_graph", bridge_ids=(),
                 state_key=fake_key, is_goal=lambda *_: False, successors=lambda *_: [],
                 validate_start_state=lambda *_: None,

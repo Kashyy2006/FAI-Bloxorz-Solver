@@ -85,6 +85,8 @@ class SolverResult:
         return asdict(self)
 
 def snapshot_to_dict(state, bridge_ids: tuple[str, ...]) -> dict:
+    if any(not isinstance(bid, str) or not bid.strip() for bid in bridge_ids):
+        raise ValueError("bridge_ids must contain non-empty strings")
     if bridge_ids != tuple(sorted(bridge_ids)):
         raise ValueError("bridge_ids must follow engine lexicographic order")
     if len(set(bridge_ids)) != len(bridge_ids):

@@ -114,4 +114,4 @@ Quy ước triển khai runtime/kết quả; cần dùng cùng quy tắc khi TV1
 - expanded_nodes tăng ngay trước mỗi lời gọi successors, kể cả lời gọi ném lỗi; không đếm goal. Lỗi sau đo phải giữ tiến độ.
 - Nếu tracemalloc đã bật trước lượt tìm kiếm, trả ERROR trước đo; không reset/stop phiên ngoài. Chạy đo tuần tự; cách ly tiến trình thuộc worker/benchmark khi tích hợp.
 - Cleanup trong finally; lỗi cleanup không che lỗi gốc. KeyboardInterrupt/SystemExit vẫn truyền ra ngoài sau cleanup.
-- BFS hiện có `_solve_bfs` nội bộ nhận callback/metadata rõ ràng; chưa phải dispatcher solve công khai hoặc bằng chứng validator/engine thật đã chạy.
+- BFS cung cấp `src.solvers.bfs.solver.solve_bfs`, nhận map/state cùng các keyword bắt buộc `map_id`, `bridge_ids`, `state_key`, `is_goal`, `successors`, `validate_start_state`; `timeout_s=60.0`, `cancel_event=None`. `_solve_bfs` là alias tương thích. Xem [hướng dẫn và ví dụ fixture](../../src/solvers/bfs/README.md). Callable này chưa phải dispatcher chung hoặc bằng chứng validator/engine thật đã chạy.
