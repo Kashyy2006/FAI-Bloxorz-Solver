@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "id": "advanced_unsolvable_01",
+  "name": "Permanently closed crossing",
+  "difficulty": "easy",
+  "rows": 5,
+  "cols": 10,
+  "grid": [
+    ["void", "void", "void", "void", "void", "void", "void", "void", "void", "void"],
+    ["void", "floor", "floor", "floor", "bridge", "bridge", "floor", "goal", "floor", "void"],
+    ["void", "floor", "floor", "soft", "void", "void", "floor", "floor", "floor", "void"],
+    ["void", "floor", "floor", "floor", "void", "void", "floor", "floor", "floor", "void"],
+    ["void", "void", "void", "void", "void", "void", "void", "void", "void", "void"]
+  ],
+  "start": [1, 1],
+  "bridges": [
+    {"id": "b01", "cells": [[1, 4], [1, 5]], "initial_open": false}
+  ],
+  "switches": [
+    {"id": "s01", "cell": [2, 3], "type": "soft",
+     "effect": {"mode": "permanent", "targets": ["b01"], "open": false}}
+  ],
+  "source": {"kind": "original", "reference": "Team-created"},
+  "expected_solvable": false
+}

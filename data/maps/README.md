@@ -2,9 +2,9 @@
 
 **Phụ trách:** Thành viên 4, phối hợp thành viên 1 về schema/engine. Chuẩn bị ngày 15/10/2026 theo [schema v1](../../docs/contracts/map-format.md).
 
-**Dữ liệu hiện có ngày 17/10/2026:** 4 map basic ở root và **13 map adapted trong `prepared/`**, tổng **17 JSON**. Xem [danh mục dữ liệu đã chuyển đổi](#dữ-liệu-đã-chuyển-đổi), [ghi chú Achraf](../references/achraf-map-conversion.md) và [ghi chú Frank](../references/frank-map-conversion.md). Các map prepared đạt kiểm tra dữ liệu, chưa xác nhận engine/replay/solver; chưa đưa vào menu game. Map vô nghiệm nâng cao còn ở dạng blueprint, bộ 18 map chưa khóa.
+**Dữ liệu đã khóa ngày 17/10/2026:** 4 map basic ở root và **14 map nâng cao trong `prepared/`**, tổng **18 JSON** (14 adapted + 4 original). [Manifest](../map_bundle.json) khóa inventory, nguồn/hash và trạng thái riêng từng map; [hồ sơ kiểm tra](../references/map-bundle-evidence.md) ghi mục đích, witness/phân tích và mức tin cậy. Xem thêm [hash chuyển đổi](#dữ-liệu-đã-chuyển-đổi), [ghi chú Achraf](../references/achraf-map-conversion.md) và [ghi chú Frank](../references/frank-map-conversion.md). Dữ liệu đạt kiểm tra; engine/replay/solver chưa xác nhận, map nâng cao chưa đưa vào menu.
 
-Bộ khởi tạo có 4 map dùng chung cho GUI và các solver. Chỉ có `floor`, `void`, `goal`; tất cả ở mức `easy`, `bridges=[]`, `switches=[]`. Đây chưa phải bộ benchmark cuối kỳ: còn cần map fragile, cầu/công tắc, split và nhiều mức khó.
+Bộ khởi tạo có 4 map dùng chung cho GUI và các solver. Chỉ có `floor`, `void`, `goal`; tất cả ở mức `easy`, `bridges=[]`, `switches=[]`. Phần nâng cao đã được bổ sung trong prepared; bộ dữ liệu chưa có số đo benchmark cuối kỳ.
 
 **Trạng thái:** JSON và test dữ liệu đã được chuẩn bị. Lời giải, chu trình và tập trạng thái dưới đây là oracle đối chiếu từ contract/nguồn và rà luật bằng tay; **chưa nghiệm thu replay bằng engine thật**. Lượt kiểm tra ngày 17/10 chỉ kiểm tra dữ liệu và test thành phần TV4. Nhãn `expected_solvable` không phải kết quả solver và không được dùng để quyết định status.
 
@@ -121,13 +121,13 @@ Lượt kiểm tra dữ liệu chưa tiếp nhận hoặc tự thiết kế map 
 
 ## Danh sách 18 map mục tiêu
 
-**Chốt lựa chọn ngày 17/10/2026, tại HEAD nền `53623791166261f234ceeae5b05c463ded9c397e`.** Chọn **18 map = 4 map cũ + 13 map chuyển từ nguồn ngoài + 1 map original bù vô nghiệm nâng cao**. Bộ tối thiểu là 15 dòng đánh dấu **15**; ba dòng **+3** nâng lên 18. Không đổi tên/xoay/đối xứng một màn để tăng số lượng. Sau chuyển đổi, **inventory có 17 JSON**, gồm 13 adapted mới đã kiểm dữ liệu và hash. Còn phải tạo map original, bổ sung witness/phân tích và khóa bộ đủ nhóm; không coi số lượng 17 là đã hoàn tất mọi điều kiện bộ map.
+**Chốt lựa chọn ngày 17/10/2026, tại HEAD nền `53623791166261f234ceeae5b05c463ded9c397e`.** Chọn **18 map = 4 map cũ + 13 map chuyển từ nguồn ngoài + 1 map original bù vô nghiệm nâng cao**. Bộ tối thiểu là 15 dòng đánh dấu **15**; ba dòng **+3** nâng lên 18. Không đổi tên/xoay/đối xứng một màn để tăng số lượng. Sau bổ sung fixture original, **inventory có đủ 18 JSON**, manifest khóa file/hash/nguồn/trạng thái và hồ sơ từng ID có witness hoặc phân tích tay cùng mức tin cậy. Kiểm dữ liệu không chứng minh engine hoặc khả giải của map adapted.
 
 Nguồn **A** = AchrafMez, commit `898188ed31cf31d4ce4c39fec3e3846ed037eee9`, MIT; **F** = FrankBuss/Damien Clarke, commit `775d5fa64d77b5d1793ef9e5e3bc9cce56ed5562`, chỉ chọn trong phạm vi bài học phi thương mại và giữ notice. URL từng level, hash nguồn và quyết định loại ở [nhật ký nguồn](../references/README.md#nguồn-cho-danh-sách-18-map). Không lấy code game hoặc solver nguồn.
 
 ### Danh sách 4 + 14
 
-Mỗi dòng tính đúng một nhóm chính, kể cả khi có cơ chế phụ. Difficulty dưới đây là **dự kiến**, chưa đo solver. 13 ID adapted mới đã có file `data/maps/prepared/<id>.json`; ID original vô nghiệm nâng cao vẫn là dự kiến. Bốn ID basic giữ đường dẫn hiện tại.
+Mỗi dòng tính đúng một nhóm chính, kể cả khi có cơ chế phụ. Difficulty dưới đây là **dự kiến**, chưa đo solver. 14 ID nâng cao đã có file `data/maps/prepared/<id>.json`, gồm 13 adapted và một original vô nghiệm. Bốn ID basic giữ đường dẫn hiện tại.
 
 | Bộ | ID | Nguồn / level | Nhóm chính | Difficulty | Chuyển đổi và vai trò kiểm tra |
 | --- | --- | --- | --- | --- | --- |
@@ -148,7 +148,7 @@ Mỗi dòng tính đúng một nhóm chính, kể cả khi có cơ chế phụ. 
 | +3 | `split_merge_02` | F 9 `levelre` (074355) | Split/merge | hard | Split [4,13]→[[4,12],[4,2]], active_destination=0; sau sort active=1, đường nối khác `levelss` |
 | 15 | `combined_01` | F 15 `levelht` (098598) | Kết hợp | hard | Giữ soft/heavy, toggle/off, cầu mở/đóng và split [5,7]→[[1,13],[8,1]]; kiểm khối nhỏ không nhấn heavy |
 | 15 | `combined_02` | F 20 `leveltb` (543019) | Kết hợp | hard | Giữ soft toggle/off, cầu và split [4,7]→[[1,13],[7,13]]; khối nhỏ nhấn soft và giữ đè khi đổi điều khiển |
-| 15 | `advanced_unsolvable_01` | Original, blueprint bên dưới | Vô nghiệm nâng cao | easy | Cầu luôn đóng và soft chỉ đặt đóng; chứng cứ bất biến cầu, khác goal cô lập basic |
+| 15 | `advanced_unsolvable_01` | Original, JSON và phân tích bên dưới | Vô nghiệm nâng cao | easy | Cầu luôn đóng và soft chỉ đặt đóng; chứng cứ bất biến cầu, khác goal cô lập basic |
 
 ### Kiểm độ phủ và bộ tối thiểu
 
@@ -165,15 +165,15 @@ Mỗi dòng tính đúng một nhóm chính, kể cả khi có cơ chế phụ. 
 | Vô nghiệm nâng cao | 1 | 1 | Bất biến cầu luôn đóng, không dùng timeout làm chứng minh |
 | **Tổng** | **15** | **18** | Mỗi ID chỉ tính một nhóm chính |
 
-Đủ mọi loại ô và cơ chế trong đề mục 2.5/3.1 của đề bài, contract và phân công 19/10 ở **mức kế hoạch chọn map**. Không đồng nghĩa các witness hoặc engine đã đạt. Ba map +3 thêm tình huống khác biệt cụ thể; không cần thêm basic hoặc nhiều bản cùng một level chỉ để đủ 18.
+Đủ mọi loại ô và cơ chế trong đề mục 2.5/3.1 của đề bài và contract ở **mức dữ liệu và hồ sơ phân tích tay**. Không đồng nghĩa các witness hoặc engine đã đạt. Ba map +3 thêm tình huống khác biệt cụ thể; không cần thêm basic hoặc nhiều bản cùng một level chỉ để đủ 18.
 
-### Witness phải thu khi chuyển đổi
+### Kịch bản tham chiếu và xác minh tiếp theo
 
 - `soft_toggle_01`: từ start [3,1], dự kiến `RIGHT, UP` tới H [[2,2],[2,3]] nhấn A; `RIGHT` rời A và `LEFT` nhấn lại. Phải đối chiếu bridge bits và trạng thái sau từng action bằng luật nhóm khi kiểm chứng map.
 - Khối nguyên lăn rời các ô cũ, nên ca **giữ đè** dành cho khối SPLIT: trong `combined_02`, sau tách, SWITCH sang khối [7,13], `LEFT, UP` tới soft [6,12] (toggle cầu [6,10],[6,11]); SWITCH sang khối [1,13] rồi LEFT. Soft vẫn bị khối không active đè, không được toggle lần hai. Sau đó SWITCH, DOWN, UP để rời/nhấn lại. Đây là kịch bản sau tách dự kiến, còn phải ghi đường từ initial tới split và kiểm full key.
 - `combined_01`: sau split, khối active ở [1,13], LEFT tới heavy [1,12] không được kích hoạt. Khối còn lại ở [8,1], SWITCH rồi RIGHT ×10, UP tới soft [7,11] phải đặt đóng cầu [8,9],[8,10]; khối nhỏ không thắng khi đi qua goal. Các chuỗi này phải được kiểm theo snapshot/bridge bits thực tế, không thay nghiệm thu bằng metadata.
 - `permanent_open_01`/`permanent_close_01`: chỉ rõ switch và nhóm cầu trong bảng, thu lần nhấn đầu/lần nhấn lại, trạng thái trước/sau. `split_merge_01`/`02`: thu đủ tách, SWITCH, đổi active sau sort và nhập; không chỉ chụp đích teleport. Khác thứ tự xử lý của app nguồn được giải theo contract nhóm.
-- Toàn bộ map mới chưa có nhãn `expected_solvable`; không suy khả giải từ level được phát hành. Riêng map vô nghiệm có phân tích tay bên dưới để dự kiến false khi triển khai; chỉ xác nhận engine sau duyệt cạn thật.
+- 13 map adapted mới không có nhãn `expected_solvable`; không suy khả giải từ level được phát hành. Map original vô nghiệm có phân tích tay bên dưới cho nhãn kỳ vọng false; chỉ xác nhận engine sau duyệt cạn thật.
 
 ### Blueprint original cho khoảng trống vô nghiệm nâng cao
 
@@ -191,7 +191,7 @@ Blueprint 5 × 10, tọa độ từ 0. `.`=void, F=floor, S=floor+start, G=goal,
 
 Start [1,1], goal [1,7]; b01=[[1,4],[1,5]], initial_open=false; s01 tại [2,3], effect permanent, targets=[b01], open=false. Không fragile, heavy, split hoặc switch khác. `RIGHT, DOWN` dự kiến nhấn soft bằng khối nằm; cầu vẫn đóng.
 
-**Lập luận tay:** b01 ban đầu false và mọi kích hoạt chỉ đặt false, nên luôn là void. Không có teleport. Tập ô đỡ có hai thành phần không nối cạnh: trái (hàng 1–3, cột 1–3) chứa start, phải (hàng 1–3, cột 6–8) chứa goal; mọi nước lăn hợp lệ từ bên trái vẫn ở bên trái. Goal không tới được. Đây là kỳ vọng theo blueprint và contract, chưa phải JSON đạt kiểm tra hoặc chứng minh bằng engine. Bốn trạng thái dữ liệu/engine/replay/solver của map này đều chưa kiểm.
+**Lập luận tay:** b01 ban đầu false và mọi kích hoạt chỉ đặt false, nên luôn là void. Không có teleport. Tập ô đỡ có hai thành phần không nối cạnh: trái (hàng 1–3, cột 1–3) chứa start, phải (hàng 1–3, cột 6–8) chứa goal; mọi nước lăn hợp lệ từ bên trái vẫn ở bên trái. Goal không tới được. Đã hiện thực thành [advanced_unsolvable_01.json](prepared/advanced_unsolvable_01.json) và kiểm dữ liệu. [Hồ sơ bất biến và witness](../references/map-bundle-evidence.md#advanced_unsolvable_01) giữ mức tin cậy manual_invariant; engine/replay/solver đều chưa chạy.
 
 ### Loại trùng, dự phòng và bằng chứng kiểm tra
 
@@ -199,7 +199,7 @@ Start [1,1], goal [1,7]; b01=[[1,4],[1,5]], initial_open=false; s01 tại [2,3],
 - Loại các bản GBA cùng level với F: `ub`, `dw`, `sc`, `ss`, `re`, `ht`, `tb`; cả `kn`, `hg` dự phòng cũng trùng. Đã đối chiếu layout, spawn, switch effect và split destinations; không đếm thành nguồn map mới. Các basic A `level0`–`2` và ba ma trận Matías còn lại không chọn vì basic đã đủ.
 - Không chọn F `levelpp` nguyên trạng (đích split trỏ vào split, trái yêu cầu floor); `leveltw`, `leveldd`, `levelmp`, `levelgv` có effect hỗn hợp trên cùng switch, không biểu diễn trực tiếp. Không bỏ effect để lách schema. Các nguồn thiếu quyền tiếp nhận rõ vẫn bị loại theo hồ sơ khảo sát.
 - **Tối đa hai mở rộng, chưa tính vào 18:** `combined_03` từ F 24 `levelkn` (088198), hard, permanent mở + split; `combined_04` từ F 26 `levelhg` (426329), hard, soft đóng/heavy mở + split. Đã kiểm metadata/đích floor và khác 18 ứng viên. Chỉ triển khai sau bộ 18 đạt dữ liệu; không dùng để lấp một nhóm bắt buộc bị thiếu. Nếu cần thay ứng viên khi chuyển đổi phát hiện lỗi, giữ đúng nhóm và cập nhật lựa chọn, không cộng cả bản cũ lẫn bản thay.
-- Không còn nhóm **chưa chọn ứng viên**; 13 map adapted đã chuyển và kiểm dữ liệu, xem [hash/trạng thái](#dữ-liệu-đã-chuyển-đổi). Còn phải tạo fixture vô nghiệm nâng cao, hoàn thiện witness và khóa inventory đủ nhóm. Chưa tuyên bố bộ map đã bàn giao đủ điều kiện.
+- Không còn nhóm **chưa chọn ứng viên**; 13 map adapted đã chuyển và kiểm dữ liệu, xem [hash/trạng thái](#dữ-liệu-đã-chuyển-đổi). Fixture vô nghiệm nâng cao đã có; manifest khóa đủ 18 map và hồ sơ từng ID. Các snapshot cục bộ chưa chứng minh đường đi từ start, không thay bằng chứng engine.
 - Kiểm tra lựa chọn dùng script tạm đọc literal bằng AST/JSON, không chạy code nguồn ngoài hoặc thêm converter/validator game vào repo. Hai notice khớp raw từng byte. Lệnh test và kết quả được ghi ở nhật ký nguồn.
 
 AI hỗ trợ đối chiếu đề bài/contract, chọn map, rà trùng và viết blueprint/lập luận tay; chưa chạy game hoặc đo hiệu năng.
@@ -243,4 +243,21 @@ python -m unittest discover -s tests/solvers -p 'test_TV4_*.py' -v
 
 **115/115 test đạt, không skip**, gồm 11 test chuyển đổi mới và 104 test cũ (trong đó có 7 test bốn map basic). Kiểm tra mới bao gồm schema v1, integer/bool/tọa độ/ID, toàn bộ ô/liên kết cầu/công tắc, permanent/split, đối chiếu nguồn độc lập, source SHA256, notice nguyên byte, hash JSON/catalog, notes/link, input sai và CLI không ghi đè. Không chạy engine/GUI/replay/benchmark hoặc solver ngoài.
 
-Chưa tạo map vô nghiệm nâng cao, chưa khóa manifest/độ phủ bộ cuối và chưa thu witness qua engine. Không gắn kết quả tìm kiếm hoặc lời giải vào JSON. AI hỗ trợ chuyển dữ liệu, viết converter/test và tài liệu; không có số đo hiệu năng trong lượt chuẩn bị này.
+Bộ cuối đã bổ sung map vô nghiệm nâng cao và khóa manifest/độ phủ ở mục dưới; chưa thu witness qua engine. Không gắn kết quả tìm kiếm hoặc lời giải vào JSON. AI hỗ trợ chuyển dữ liệu, viết converter/test và tài liệu; không có số đo hiệu năng trong lượt chuẩn bị này.
+
+## Bộ dữ liệu đã khóa
+
+Ngày 17/10/2026, tại HEAD nền `c85494fcac8fa0836e914f0cc7d9f39a4565e78c`, giữ nguyên byte bốn basic và 13 bản chuyển đổi, bổ sung duy nhất fixture original. Tổng 18 map đủ chín nhóm chính theo bảng độ phủ; draft và bản trùng không được tính. [Manifest](../map_bundle.json) chứa đường dẫn từ repo root, source, notice, nhóm, difficulty dự kiến, SHA256, hồ sơ/mức tin cậy và trạng thái riêng từng map. Manifest nằm ngoài thư mục maps để GUI quét JSON root không nhầm thành màn chơi.
+
+| ID / JSON | Nguồn | Kích thước | SHA256 byte | Dữ liệu | Engine | Replay/solver thật |
+| --- | --- | --- | --- | --- | --- | --- |
+| [`advanced_unsolvable_01`](prepared/advanced_unsolvable_01.json) | original, Team-created | 5 × 10 | `4694347ec1e0ef173df856b2f559df26ec59d963b25847475c5ce6d0682c9de9` | Đạt | Chưa chạy | Chưa chạy |
+
+[Hồ sơ kiểm tra](../references/map-bundle-evidence.md) ghi nguồn đã xem/lý do tự tạo, witness hoặc phân tích theo từng ID và giới hạn reachability. Nhãn false của fixture mới dựa trên bất biến cầu luôn đóng, chưa phải kết quả solver. Chống trùng kiểm cả tám phép quay/đối xứng, tịnh tiến và padding, giữ hình học/start/goal kể cả khi bỏ khác biệt loại ô phụ.
+
+```powershell
+python -m unittest discover -s tests/solvers -p 'test_TV4_map_bundle.py' -v
+python -m unittest discover -s tests/solvers -p 'test_TV4_*.py' -v
+```
+
+Kiểm tra bằng Python 3.12.10: **123/123 test thành phần đạt, không skip**, gồm 8 test bundle mới và 115 test hiện có. Giữ nguyên bảy test bốn map basic; dùng chung assertion schema mà vẫn yêu cầu đúng source adapted và không có nhãn khả giải cho 13 bản chuyển đổi. Không chạy engine, GUI, replay hoặc benchmark; dữ liệu đã khóa không đồng nghĩa luật nâng cao đã được nghiệm thu.

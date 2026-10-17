@@ -116,12 +116,7 @@ class TestMapConversion(unittest.TestCase):
             self.assertEqual(path.read_bytes(), before)
 
 
-class TestConvertedMapData(unittest.TestCase):
-    def files(self):
-        return [ROOT / "data/maps" / stage / f"{map_id}.json"
-                for stage in ("prepared", "drafts") for map_id in EXPECTED_IDS
-                if (ROOT / "data/maps" / stage / f"{map_id}.json").exists()]
-
+class MapDataAssertions:
     def coordinate(self, data, cell):
         self.assertIsInstance(cell, list)
         self.assertEqual(len(cell), 2)
@@ -132,8 +127,10 @@ class TestConvertedMapData(unittest.TestCase):
         return data["grid"][cell[0]][cell[1]]
 
     def check_schema(self, data):
-        self.assertEqual(set(data), {"schema_version", "id", "name", "difficulty", "rows", "cols",
+        self.assertEqual(set(data) - {"expected_solvable"}, {"schema_version", "id", "name", "difficulty", "rows", "cols",
                                      "grid", "start", "bridges", "switches", "source"})
+        if "expected_solvable" in data:
+            self.assertIs(type(data["expected_solvable"]), bool)
         self.assertIs(type(data["schema_version"]), int)
         self.assertEqual(data["schema_version"], 1)
         for key in ("id", "name"):
@@ -203,11 +200,20 @@ class TestConvertedMapData(unittest.TestCase):
                 self.assertEqual(len(effect["targets"]), len(set(effect["targets"])))
                 self.assertLessEqual(set(effect["targets"]), ids)
         self.assertEqual(covered, set().union(*(cells.get(tile, set()) for tile in ("soft", "heavy", "split"))))
-        self.assertEqual(set(data["source"]), {"kind", "reference", "conversion_notes"})
-        self.assertEqual(data["source"]["kind"], "adapted")
-        for key in ("reference", "conversion_notes"):
+        source = data["source"]
+        self.assertIn(source["kind"], {"original", "adapted"})
+        self.assertEqual(set(source), {"kind", "reference"} |
+                         ({"conversion_notes"} if source["kind"] == "adapted" else set()))
+        for key in set(source) - {"kind"}:
             self.assertIsInstance(data["source"][key], str)
             self.assertTrue(data["source"][key].strip())
+
+
+class TestConvertedMapData(MapDataAssertions, unittest.TestCase):
+    def files(self):
+        return [ROOT / "data/maps" / stage / f"{map_id}.json"
+                for stage in ("prepared", "drafts") for map_id in EXPECTED_IDS
+                if (ROOT / "data/maps" / stage / f"{map_id}.json").exists()]
 
     def test_existing_conversions_match_sources_and_schema(self):
         files = self.files()
@@ -220,6 +226,8 @@ class TestConvertedMapData(unittest.TestCase):
                 data = json.loads(path.read_text(encoding="utf-8"))
                 self.assertEqual(data["id"], path.stem)
                 self.check_schema(data)
+                self.assertEqual(data["source"]["kind"], "adapted")
+                self.assertNotIn("expected_solvable", data)
                 self.assertEqual(data, convert(path.stem))
 
     def test_achraf_grid_and_switch_links_preserve_source(self):

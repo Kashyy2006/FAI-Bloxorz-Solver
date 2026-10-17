@@ -1,0 +1,381 @@
+{
+  "version": 1,
+  "prepared_at": "2026-10-17",
+  "map_count": 18,
+  "maps": [
+    {
+      "id": "basic_01",
+      "path": "data/maps/basic_01.json",
+      "group": "basic",
+      "difficulty": "easy",
+      "sha256": "104bf008099b4a760cf79acdcf29ae9caf0b0d7c9c33df42286d7371f4236e58",
+      "source": {
+        "kind": "original",
+        "reference": "Team-created"
+      },
+      "notice": null,
+      "evidence": "data/references/map-bundle-evidence.md#basic_01",
+      "confidence": "manual_reference",
+      "status": {
+        "data": "passed",
+        "engine": "not_run",
+        "replay": "not_run",
+        "solver": "not_run"
+      }
+    },
+    {
+      "id": "basic_turn_01",
+      "path": "data/maps/basic_turn_01.json",
+      "group": "basic",
+      "difficulty": "easy",
+      "sha256": "aad9c38aae3c630ac3e9d4f36cc1d8a91bf4440505e7082b94a0fda2b95bb2d3",
+      "source": {
+        "kind": "adapted",
+        "reference": "https://github.com/matuneville/bloxorz-pathfinding/blob/6af854a88ac3983ffed2ee12a9e26c4cc338aa76/bloxorz-solver/tests/levels_testing.rs",
+        "conversion_notes": "data/references/basic_turn_01.md"
+      },
+      "notice": "data/references/matuneville-LICENSE.txt",
+      "evidence": "data/references/map-bundle-evidence.md#basic_turn_01",
+      "confidence": "manual_reference",
+      "status": {
+        "data": "passed",
+        "engine": "not_run",
+        "replay": "not_run",
+        "solver": "not_run"
+      }
+    },
+    {
+      "id": "basic_cycle_01",
+      "path": "data/maps/basic_cycle_01.json",
+      "group": "basic",
+      "difficulty": "easy",
+      "sha256": "6054d54a00890ac32d90886e5125e4cd0d80b9312d72e1fd64c1b04c7428f82f",
+      "source": {
+        "kind": "original",
+        "reference": "Team-created by TV4 on 2026-10-15"
+      },
+      "notice": null,
+      "evidence": "data/references/map-bundle-evidence.md#basic_cycle_01",
+      "confidence": "manual_reference",
+      "status": {
+        "data": "passed",
+        "engine": "not_run",
+        "replay": "not_run",
+        "solver": "not_run"
+      }
+    },
+    {
+      "id": "basic_unsolvable_01",
+      "path": "data/maps/basic_unsolvable_01.json",
+      "group": "basic",
+      "difficulty": "easy",
+      "sha256": "4d515ea5ea56accfe9f4199fea96100eb8d2582df0c63187c81ca8170ab1b6ae",
+      "source": {
+        "kind": "original",
+        "reference": "Team-created by TV4 on 2026-10-15"
+      },
+      "notice": null,
+      "evidence": "data/references/map-bundle-evidence.md#basic_unsolvable_01",
+      "confidence": "manual_invariant",
+      "status": {
+        "data": "passed",
+        "engine": "not_run",
+        "replay": "not_run",
+        "solver": "not_run"
+      }
+    },
+    {
+      "id": "fragile_01",
+      "path": "data/maps/prepared/fragile_01.json",
+      "group": "fragile",
+      "difficulty": "medium",
+      "sha256": "f0c9f597865d873be0dfdb637b233e6f5864d173c0e6142cd1fa2d5910880065",
+      "source": {
+        "kind": "adapted",
+        "reference": "https://github.com/AchrafMez/bloxorz/blob/898188ed31cf31d4ce4c39fec3e3846ed037eee9/levels/level3.txt",
+        "conversion_notes": "data/references/achraf-map-conversion.md"
+      },
+      "notice": "data/references/AchrafMez-LICENSE.txt",
+      "evidence": "data/references/map-bundle-evidence.md#fragile_01",
+      "confidence": "manual_local",
+      "status": {
+        "data": "passed",
+        "engine": "not_run",
+        "replay": "not_run",
+        "solver": "not_run"
+      }
+    },
+    {
+      "id": "fragile_02",
+      "path": "data/maps/prepared/fragile_02.json",
+      "group": "fragile",
+      "difficulty": "hard",
+      "sha256": "52a1d57f1ff29d43b9c192b394da1b4a34600c615faa289a5f57bd927af11c22",
+      "source": {
+        "kind": "adapted",
+        "reference": "https://github.com/AchrafMez/bloxorz/blob/898188ed31cf31d4ce4c39fec3e3846ed037eee9/levels/level7.txt",
+        "conversion_notes": "data/references/achraf-map-conversion.md"
+      },
+      "notice": "data/references/AchrafMez-LICENSE.txt",
+      "evidence": "data/references/map-bundle-evidence.md#fragile_02",
+      "confidence": "manual_local",
+      "status": {
+        "data": "passed",
+        "engine": "not_run",
+        "replay": "not_run",
+        "solver": "not_run"
+      }
+    },
+    {
+      "id": "bridge_01",
+      "path": "data/maps/prepared/bridge_01.json",
+      "group": "bridge",
+      "difficulty": "medium",
+      "sha256": "5193bb461a7428daa4f80e75feaff6d81d77ad2357f0cf220d06f5cfa7d2f2d0",
+      "source": {
+        "kind": "adapted",
+        "reference": "https://github.com/FrankBuss/bloxorz/blob/775d5fa64d77b5d1793ef9e5e3bc9cce56ed5562/Vide/levels.py",
+        "conversion_notes": "data/references/frank-map-conversion.md"
+      },
+      "notice": "data/references/FrankBuss-license.txt",
+      "evidence": "data/references/map-bundle-evidence.md#bridge_01",
+      "confidence": "manual_local",
+      "status": {
+        "data": "passed",
+        "engine": "not_run",
+        "replay": "not_run",
+        "solver": "not_run"
+      }
+    },
+    {
+      "id": "soft_toggle_01",
+      "path": "data/maps/prepared/soft_toggle_01.json",
+      "group": "soft_toggle",
+      "difficulty": "medium",
+      "sha256": "2477fa5f52803460ff8312c48cb6e7cde0f9f450a35bc1c8b2edf5760cba8724",
+      "source": {
+        "kind": "adapted",
+        "reference": "https://github.com/AchrafMez/bloxorz/blob/898188ed31cf31d4ce4c39fec3e3846ed037eee9/levels/level4.txt",
+        "conversion_notes": "data/references/achraf-map-conversion.md"
+      },
+      "notice": "data/references/AchrafMez-LICENSE.txt",
+      "evidence": "data/references/map-bundle-evidence.md#soft_toggle_01",
+      "confidence": "manual_local",
+      "status": {
+        "data": "passed",
+        "engine": "not_run",
+        "replay": "not_run",
+        "solver": "not_run"
+      }
+    },
+    {
+      "id": "soft_toggle_02",
+      "path": "data/maps/prepared/soft_toggle_02.json",
+      "group": "soft_toggle",
+      "difficulty": "hard",
+      "sha256": "6df8ab61461472229b9b67103b9a67023b596fdea2122549668c5855b7edae52",
+      "source": {
+        "kind": "adapted",
+        "reference": "https://github.com/AchrafMez/bloxorz/blob/898188ed31cf31d4ce4c39fec3e3846ed037eee9/levels/level6.txt",
+        "conversion_notes": "data/references/achraf-map-conversion.md"
+      },
+      "notice": "data/references/AchrafMez-LICENSE.txt",
+      "evidence": "data/references/map-bundle-evidence.md#soft_toggle_02",
+      "confidence": "manual_local",
+      "status": {
+        "data": "passed",
+        "engine": "not_run",
+        "replay": "not_run",
+        "solver": "not_run"
+      }
+    },
+    {
+      "id": "heavy_01",
+      "path": "data/maps/prepared/heavy_01.json",
+      "group": "heavy",
+      "difficulty": "medium",
+      "sha256": "ed524df786d5a45de4327eb547efd3bc1b82d27aaa5c486942cd0ec368f71301",
+      "source": {
+        "kind": "adapted",
+        "reference": "https://github.com/AchrafMez/bloxorz/blob/898188ed31cf31d4ce4c39fec3e3846ed037eee9/levels/level5.txt",
+        "conversion_notes": "data/references/achraf-map-conversion.md"
+      },
+      "notice": "data/references/AchrafMez-LICENSE.txt",
+      "evidence": "data/references/map-bundle-evidence.md#heavy_01",
+      "confidence": "manual_local",
+      "status": {
+        "data": "passed",
+        "engine": "not_run",
+        "replay": "not_run",
+        "solver": "not_run"
+      }
+    },
+    {
+      "id": "heavy_02",
+      "path": "data/maps/prepared/heavy_02.json",
+      "group": "heavy",
+      "difficulty": "hard",
+      "sha256": "bf316e8d374073a2db4680b78fd4727b15a9c38ead94241c167ac10125dabae7",
+      "source": {
+        "kind": "adapted",
+        "reference": "https://github.com/AchrafMez/bloxorz/blob/898188ed31cf31d4ce4c39fec3e3846ed037eee9/levels/level10.txt",
+        "conversion_notes": "data/references/achraf-map-conversion.md"
+      },
+      "notice": "data/references/AchrafMez-LICENSE.txt",
+      "evidence": "data/references/map-bundle-evidence.md#heavy_02",
+      "confidence": "manual_local",
+      "status": {
+        "data": "passed",
+        "engine": "not_run",
+        "replay": "not_run",
+        "solver": "not_run"
+      }
+    },
+    {
+      "id": "permanent_open_01",
+      "path": "data/maps/prepared/permanent_open_01.json",
+      "group": "permanent",
+      "difficulty": "hard",
+      "sha256": "ec414b321005d459073f0c17e3e9d3aaa2ca33ced426a698bc72dd5e6745312d",
+      "source": {
+        "kind": "adapted",
+        "reference": "https://github.com/FrankBuss/bloxorz/blob/775d5fa64d77b5d1793ef9e5e3bc9cce56ed5562/Vide/levels.py",
+        "conversion_notes": "data/references/frank-map-conversion.md"
+      },
+      "notice": "data/references/FrankBuss-license.txt",
+      "evidence": "data/references/map-bundle-evidence.md#permanent_open_01",
+      "confidence": "manual_local",
+      "status": {
+        "data": "passed",
+        "engine": "not_run",
+        "replay": "not_run",
+        "solver": "not_run"
+      }
+    },
+    {
+      "id": "permanent_close_01",
+      "path": "data/maps/prepared/permanent_close_01.json",
+      "group": "permanent",
+      "difficulty": "medium",
+      "sha256": "061efc9ed735a294918e9fc7556cad82a2048d61fe22b415cbfb40cc3425ec47",
+      "source": {
+        "kind": "adapted",
+        "reference": "https://github.com/FrankBuss/bloxorz/blob/775d5fa64d77b5d1793ef9e5e3bc9cce56ed5562/Vide/levels.py",
+        "conversion_notes": "data/references/frank-map-conversion.md"
+      },
+      "notice": "data/references/FrankBuss-license.txt",
+      "evidence": "data/references/map-bundle-evidence.md#permanent_close_01",
+      "confidence": "manual_local",
+      "status": {
+        "data": "passed",
+        "engine": "not_run",
+        "replay": "not_run",
+        "solver": "not_run"
+      }
+    },
+    {
+      "id": "split_merge_01",
+      "path": "data/maps/prepared/split_merge_01.json",
+      "group": "split_merge",
+      "difficulty": "medium",
+      "sha256": "d32867d120508c26d643b8395f7aafcbe5d08441ce8b6c4a752875e0eb3fb0b2",
+      "source": {
+        "kind": "adapted",
+        "reference": "https://github.com/FrankBuss/bloxorz/blob/775d5fa64d77b5d1793ef9e5e3bc9cce56ed5562/Vide/levels.py",
+        "conversion_notes": "data/references/frank-map-conversion.md"
+      },
+      "notice": "data/references/FrankBuss-license.txt",
+      "evidence": "data/references/map-bundle-evidence.md#split_merge_01",
+      "confidence": "manual_local",
+      "status": {
+        "data": "passed",
+        "engine": "not_run",
+        "replay": "not_run",
+        "solver": "not_run"
+      }
+    },
+    {
+      "id": "split_merge_02",
+      "path": "data/maps/prepared/split_merge_02.json",
+      "group": "split_merge",
+      "difficulty": "hard",
+      "sha256": "d3c32d97f35785bf096c7c2030bdd2acb807631e318b5dd3623b8dae98bc2304",
+      "source": {
+        "kind": "adapted",
+        "reference": "https://github.com/FrankBuss/bloxorz/blob/775d5fa64d77b5d1793ef9e5e3bc9cce56ed5562/Vide/levels.py",
+        "conversion_notes": "data/references/frank-map-conversion.md"
+      },
+      "notice": "data/references/FrankBuss-license.txt",
+      "evidence": "data/references/map-bundle-evidence.md#split_merge_02",
+      "confidence": "manual_local",
+      "status": {
+        "data": "passed",
+        "engine": "not_run",
+        "replay": "not_run",
+        "solver": "not_run"
+      }
+    },
+    {
+      "id": "combined_01",
+      "path": "data/maps/prepared/combined_01.json",
+      "group": "combined",
+      "difficulty": "hard",
+      "sha256": "4be3878b39afcf4b0f6543cb6a19a1ab87a5a2205dfdeb85b0d364d73ff7152a",
+      "source": {
+        "kind": "adapted",
+        "reference": "https://github.com/FrankBuss/bloxorz/blob/775d5fa64d77b5d1793ef9e5e3bc9cce56ed5562/Vide/levels.py",
+        "conversion_notes": "data/references/frank-map-conversion.md"
+      },
+      "notice": "data/references/FrankBuss-license.txt",
+      "evidence": "data/references/map-bundle-evidence.md#combined_01",
+      "confidence": "manual_local",
+      "status": {
+        "data": "passed",
+        "engine": "not_run",
+        "replay": "not_run",
+        "solver": "not_run"
+      }
+    },
+    {
+      "id": "combined_02",
+      "path": "data/maps/prepared/combined_02.json",
+      "group": "combined",
+      "difficulty": "hard",
+      "sha256": "6b8db0b63676c886b8f0021a8d24dc4fe5f35058bf7e63b50a0939b569b69b41",
+      "source": {
+        "kind": "adapted",
+        "reference": "https://github.com/FrankBuss/bloxorz/blob/775d5fa64d77b5d1793ef9e5e3bc9cce56ed5562/Vide/levels.py",
+        "conversion_notes": "data/references/frank-map-conversion.md"
+      },
+      "notice": "data/references/FrankBuss-license.txt",
+      "evidence": "data/references/map-bundle-evidence.md#combined_02",
+      "confidence": "manual_local",
+      "status": {
+        "data": "passed",
+        "engine": "not_run",
+        "replay": "not_run",
+        "solver": "not_run"
+      }
+    },
+    {
+      "id": "advanced_unsolvable_01",
+      "path": "data/maps/prepared/advanced_unsolvable_01.json",
+      "group": "advanced_unsolvable",
+      "difficulty": "easy",
+      "sha256": "4694347ec1e0ef173df856b2f559df26ec59d963b25847475c5ce6d0682c9de9",
+      "source": {
+        "kind": "original",
+        "reference": "Team-created"
+      },
+      "notice": null,
+      "evidence": "data/references/map-bundle-evidence.md#advanced_unsolvable_01",
+      "confidence": "manual_invariant",
+      "status": {
+        "data": "passed",
+        "engine": "not_run",
+        "replay": "not_run",
+        "solver": "not_run"
+      }
+    }
+  ]
+}
