@@ -4,7 +4,7 @@
 
 Bộ khởi tạo có 4 map dùng chung cho GUI và các solver. Chỉ có `floor`, `void`, `goal`; tất cả ở mức `easy`, `bridges=[]`, `switches=[]`. Đây chưa phải bộ benchmark cuối kỳ: còn cần map fragile, cầu/công tắc, split và nhiều mức khó.
 
-**Trạng thái:** JSON và test dữ liệu đã được chuẩn bị. Lời giải, chu trình và tập trạng thái dưới đây là oracle đối chiếu từ contract/nguồn và rà luật bằng tay; **chưa được load/replay bằng engine thật**, vì repo chưa có loader/engine. Nhãn `expected_solvable` không phải kết quả solver và không được dùng để quyết định status.
+**Trạng thái:** JSON và test dữ liệu đã được chuẩn bị. Lời giải, chu trình và tập trạng thái dưới đây là oracle đối chiếu từ contract/nguồn và rà luật bằng tay; **chưa nghiệm thu replay bằng engine thật**. Snapshot graph ngày 16/10 ghi nhận cả bốn map đã qua `load_map`; lượt kiểm tra ngày 17/10 chỉ kiểm tra dữ liệu và test thành phần TV4. Nhãn `expected_solvable` không phải kết quả solver và không được dùng để quyết định status.
 
 ## Danh mục
 
@@ -68,7 +68,7 @@ Từ repo root, không cần cài thêm thư viện:
 
 ```powershell
 python -m unittest discover -s tests/solvers -p 'test_TV4_maps.py' -v
-python -m unittest discover -s tests/solvers -p 'test_*.py' -v
+python -m unittest discover -s tests/solvers -p 'test_TV4_*.py' -v
 ```
 
 Test map kiểm tra danh mục, layout/start/goal, metadata và kiểu dữ liệu cơ bản, bản sao ví dụ contract, nguồn/ghi chú chuyển đổi/giấy phép và SHA256 dưới đây. Test dùng đường dẫn từ vị trí file, không phụ thuộc working directory. Không chấp nhận chạy 0 test làm bằng chứng đạt.
@@ -79,18 +79,45 @@ Test map kiểm tra danh mục, layout/start/goal, metadata và kiểu dữ li�
 
 ## Phiên bản dữ liệu
 
-Chuẩn bị trên code nền `b08210650ad836d47283806d35682ec92258322d`, Python 3.12.10. Hash SHA256 tính từ byte JSON ngày 15/10/2026:
+Chuẩn bị trên code nền `b08210650ad836d47283806d35682ec92258322d`, Python 3.12.10. Hash SHA256 đối chiếu lại từ byte JSON ngày 17/10/2026 tại HEAD nền `e79f416115ee98513e9b8f037185f66d8f0c8ff1`:
 
 | ID | SHA256 |
 | --- | --- |
-| `basic_01` | `40ded3e094a7ea81290c6c621da529eda59bfb6bacb9ef23d1b2afd253eec759` |
+| `basic_01` | `104bf008099b4a760cf79acdcf29ae9caf0b0d7c9c33df42286d7371f4236e58` |
 | `basic_turn_01` | `aad9c38aae3c630ac3e9d4f36cc1d8a91bf4440505e7082b94a0fda2b95bb2d3` |
 | `basic_cycle_01` | `6054d54a00890ac32d90886e5125e4cd0d80b9312d72e1fd64c1b04c7428f82f` |
 | `basic_unsolvable_01` | `4d515ea5ea56accfe9f4199fea96100eb8d2582df0c63187c81ca8170ab1b6ae` |
 
 Hash khóa bản dữ liệu đã chuẩn bị; chưa tuyên bố bộ map đã nghiệm thu engine. Khi thay map, cập nhật hash và oracle liên quan, chạy lại kiểm tra trước khi thu số liệu. Mọi solver phải dùng cùng file/hash và trạng thái đầu; không gán kết quả của bản cũ cho bản mới.
 
-## Phần chờ engine
+## Kiểm tra dữ liệu và sửa hash ngày 17/10/2026
+
+- Branch: `feature/TV4-search-and-evaluation`; HEAD trước sửa: `e79f416115ee98513e9b8f037185f66d8f0c8ff1`; working tree sạch. HEAD trùng snapshot graph 16/10, không có diff source so với graph lúc bắt đầu.
+- Python 3.12.10. Hai lệnh ở mục kiểm tra dữ liệu được chạy từ repo root, pattern giữ đúng chữ hoa `TV4`, không có test bị skip.
+- Trước sửa: map **6/7 đạt**, TV4 **103/104 đạt** (7 test map nằm trong 104 test TV4). Lỗi duy nhất: `test_map_hashes_are_recorded_in_catalog`, subtest `basic_01`.
+- `basic_01` khớp toàn bộ JSON ví dụ contract qua `test_two_rolls_map_matches_full_contract_example`. Catalog lưu hash byte cũ sau commit `e79f416`; chỉ sửa hash catalog, không đổi JSON hoặc bỏ/nới assertion. Ba hash còn lại khớp.
+- Sau sửa: map **7/7 đạt**, TV4 **104/104 đạt**. Giữ nguyên layout/start/goal, nguồn (3 original, 1 adapted), nhãn kỳ vọng và toàn bộ oracle của bốn map.
+- Ngoài TV4: `.gitignore` hiện có conflict marker, để bên tích hợp xử lý. Theo graph 16/10, integration có hai launch fail và lỗi import controller do thiếu `pygame`; GUI dùng luật/solver tạm, engine nâng cao và kết nối bốn solver chưa hoàn tất. Lượt kiểm tra ngày 17/10 không chạy lại các kiểm tra này, không xem số liệu cũ là baseline mới hoặc nghiệm thu hệ thống.
+
+### Nhóm cơ chế cần bổ sung map
+
+Bốn map hiện có chỉ thuộc nhóm basic (đã đủ 4). Chưa có map cho các nhóm dưới đây; mỗi map bổ sung chỉ tính vào một nhóm chính theo kế hoạch 19/10:
+
+| Nhóm chính còn thiếu | Cần thêm tối thiểu | Mục tiêu thêm | Phân biệt cần có |
+| --- | ---: | ---: | --- |
+| Fragile | 2 | 2 | Nằm được đỡ / đứng rơi, hai vai trò hoặc bố trí khác nhau |
+| Cầu | 1 | 1 | Mở/đóng và witness cấu hình cầu |
+| Soft/toggle | 1 | 2 | Nhấn mới, giữ đè, rời rồi nhấn lại |
+| Heavy | 1 | 2 | Nằm/khối nhỏ không nhấn, UPRIGHT mới nhấn |
+| Permanent | 2 | 2 | Một map đặt mở, một map đặt đóng |
+| Split/merge | 1 | 2 | Tách, SWITCH, active sau sort và nhập |
+| Kết hợp | 2 | 2 | Có cầu/công tắc cùng split/merge |
+| Vô nghiệm nâng cao | 1 | 1 | Phân tích kỳ vọng rõ, chưa coi là chứng minh engine |
+| **Tổng bổ sung** | **11** | **14** | **Cộng 4 basic = tối thiểu 15, mục tiêu 18 map** |
+
+Lượt kiểm tra dữ liệu chưa tiếp nhận hoặc tự thiết kế map mới. Nguồn ngoài cho các nhóm còn thiếu được ghi trong [nhật ký nguồn](../references/README.md).
+
+## Phần chờ nghiệm thu engine/replay
 
 1. TV1 cung cấp đường import thật cho `load_map`, `initial_state`, `transition`, `state_key`, `is_goal`, `successors`, `step_cost`; loader chấp nhận đủ 4 map.
 2. Replay các chuỗi trên, kiểm tra OK/WON, goal khi nằm, full key của chu trình và tổng step_cost; map/state đầu vào không bị sửa. Bộ này chỉ có floor/goal nên mỗi bước hợp lệ có cost 1.
