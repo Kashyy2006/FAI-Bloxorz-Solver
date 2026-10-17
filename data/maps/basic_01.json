@@ -10,15 +10,10 @@
     ["void", "floor", "floor", "floor", "goal", "void", "void"],
     ["void", "void", "void", "void", "void", "void", "void"]
   ],
-<<<<<<< HEAD
-<<<<<<< HEAD
   "start": [1, 1],
   "bridges": [],
   "switches": [],
   "source": {"kind": "original", "reference": "Team-created"},
-=======
-=======
->>>>>>> origin/feature/TV3-solve-button
   "start": [
     1,
     1
@@ -29,11 +24,5 @@
     "kind": "original",
     "reference": "Team-created"
   },
-<<<<<<< HEAD
->>>>>>> origin/feature/TV4-search-and-evaluation
   "expected_solvable": true
 }
-=======
-  "expected_solvable": true
-}
->>>>>>> origin/feature/TV3-solve-button
