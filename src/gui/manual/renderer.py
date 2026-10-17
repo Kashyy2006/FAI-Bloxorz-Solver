@@ -177,6 +177,9 @@ def draw_block(screen, state, camera):
 
 def draw_animated_block(screen, start_state, end_state, action, progress, camera):
     """Rotate the cuboid over its edge while its center follows the roll arc."""
+    if "SPLIT" in (start_state["mode"], end_state["mode"]) or action == "SWITCH":
+        draw_block(screen, end_state, camera)
+        return
     t = progress * progress * (3 - 2 * progress)
     start_row, start_col = _state_center(start_state)
     end_row, end_col = _state_center(end_state)

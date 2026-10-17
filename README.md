@@ -20,3 +20,14 @@ Project Python với GUI Pygame và 4 solver BFS, DFS, UCS, A*. Các thư mục 
 Mỗi thư mục có README riêng mô tả nội dung và người đảm nhận. STT 1-5 thay cho tên thành viên chưa được cung cấp.
 
 Mốc 14/10: nhóm chốt cấu trúc trạng thái, hàm chuyển trạng thái, định dạng map JSON, kết quả solver và hàm chi phí dùng chung. Ghi các đặc tả được nhóm thống nhất vào `docs/contracts/`.
+
+## Chạy bản tích hợp engine nâng cao
+
+```powershell
+python -m src.gui.manual.game
+python -m unittest discover -s tests -t . -v
+```
+
+GUI và bốn solver dùng engine chung. Dùng Tab đổi khối nhỏ; phím 1–4 chọn
+BFS/DFS/UCS/A*. Map advanced_bridge_01 thử cầu/công tắc/fragile;
+advanced_split_01 thử teleport và nhập khối. Cần Python 3.10+ và Pygame.

@@ -124,13 +124,13 @@ class MapValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "integer coordinates"):
             parse_map(data)
 
-    def test_advanced_tiles_are_rejected_at_basic_milestone(self):
+    def test_undeclared_switch_is_rejected(self):
         data = {"schema_version": 1, "id": "advanced", "name": "Future map",
-                "difficulty": "easy", "rows": 1, "cols": 2,
-                "grid": [["soft", "goal"]], "start": [0, 0],
+                "difficulty": "easy", "rows": 1, "cols": 3,
+                "grid": [["floor", "soft", "goal"]], "start": [0, 0],
                 "bridges": [], "switches": [],
                 "source": {"kind": "original", "reference": "test"}}
-        with self.assertRaisesRegex(ValueError, "advanced tiles"):
+        with self.assertRaisesRegex(ValueError, "every switch tile"):
             parse_map(data)
 
 

@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "id": "advanced_split_01",
+  "name": "Split and rejoin",
+  "difficulty": "medium",
+  "rows": 5,
+  "cols": 10,
+  "grid": [
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "goal",
+      "void"
+    ],
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void"
+    ],
+    [
+      "floor",
+      "floor",
+      "floor",
+      "split",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void"
+    ],
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void"
+    ]
+  ],
+  "start": [
+    3,
+    0
+  ],
+  "bridges": [],
+  "switches": [
+    {
+      "id": "s01",
+      "cell": [
+        3,
+        3
+      ],
+      "type": "split",
+      "destinations": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          4
+        ]
+      ],
+      "active_destination": 0
+    }
+  ],
+  "source": {
+    "kind": "original",
+    "reference": "TV1 engine integration fixture"
+  },
+  "expected_solvable": true
+}

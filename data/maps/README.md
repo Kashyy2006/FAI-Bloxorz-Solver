@@ -83,7 +83,7 @@ Chuẩn bị trên code nền `b08210650ad836d47283806d35682ec92258322d`, Python
 
 | ID | SHA256 |
 | --- | --- |
-| `basic_01` | `40ded3e094a7ea81290c6c621da529eda59bfb6bacb9ef23d1b2afd253eec759` |
+| `basic_01` | `104bf008099b4a760cf79acdcf29ae9caf0b0d7c9c33df42286d7371f4236e58` |
 | `basic_turn_01` | `aad9c38aae3c630ac3e9d4f36cc1d8a91bf4440505e7082b94a0fda2b95bb2d3` |
 | `basic_cycle_01` | `6054d54a00890ac32d90886e5125e4cd0d80b9312d72e1fd64c1b04c7428f82f` |
 | `basic_unsolvable_01` | `4d515ea5ea56accfe9f4199fea96100eb8d2582df0c63187c81ca8170ab1b6ae` |
@@ -98,3 +98,10 @@ Hash khóa bản dữ liệu đã chuẩn bị; chưa tuyên bố bộ map đã 
 4. Sau khi API solver hoàn chỉnh, kiểm tra 3 kết quả SOLVED và 1 UNSOLVABLE, rồi ghi ngày/commit/số test của lần nghiệm thu. GUI và benchmark dùng cùng dữ liệu sau đó.
 
 Lượt chuẩn bị có AI hỗ trợ khảo sát nguồn, chuyển dữ liệu, viết test và tài liệu. Chưa chạy benchmark hoặc tạo số liệu hiệu năng; nhóm có thể dùng ghi nhận này khi tổng hợp phụ lục AI.
+
+## Fixture tích hợp nâng cao của TV1
+
+- `advanced_bridge_01.json`: soft toggle, heavy permanent, cầu đóng/mở và fragile. Chuỗi RIGHT × 6 thắng, tổng chi phí 10.
+- `advanced_split_01.json`: tách, chọn khối và nhập ngang. Chuỗi RIGHT × 7 thắng, tổng chi phí 7; có thể dùng Tab đổi khối để thử tay.
+- Đây là map nội bộ phục vụ nghiệm thu engine, chưa thay bộ benchmark cuối kỳ của TV4.
+- Hash basic_01 ở bảng trên đã cập nhật theo file sau merge; layout và metadata không đổi.

@@ -10,6 +10,9 @@ if __package__ in (None, ""):
     __package__ = "src.gui.manual"
 
 import pygame
+from src.engine import (parse_map, initial_state, state_from_dict, state_to_dict,
+                        transition, Status)
+from src.solvers.solve import solve
 
 from .camera import Camera
 from .renderer import draw_animated_block, draw_block, draw_map
@@ -27,58 +30,58 @@ def _load_maps():
         try:
             with path.open(encoding="utf-8") as file:
                 data = json.load(file)
+            parse_map(data)
             grid = data["grid"]
             if (grid and all(isinstance(row, list) for row in grid)
                     and all(len(row) == len(grid[0]) for row in grid)
                     and all(isinstance(cell, str) for row in grid for cell in row)):
                 maps.append((path, data))
-        except (OSError, json.JSONDecodeError, KeyError, TypeError):
+        except (OSError, ValueError, KeyError, TypeError):
             continue
     return maps
 
 
+def _gui_state(model, state):
+    data = state_to_dict(model, state)
+    data["cells"] = [tuple(cell) for cell in data["cells"]]
+    return data
+
+
 def _initial_state(game_map):
-    row, col = game_map.get("start", (1, 1))
-    return {"mode": "UPRIGHT", "cells": [(row, col)], "active": None}
+    model = parse_map(game_map)
+    return _gui_state(model, initial_state(model))
 
 
-def _move(state, action, grid):
-    """Basic Bloxorz movement used until the shared engine is integrated."""
-    mode = state["mode"]
-    cells = state["cells"]
-    dr, dc = {"UP": (-1, 0), "DOWN": (1, 0), "LEFT": (0, -1), "RIGHT": (0, 1)}[action]
-    row, col = cells[0]
-
-    if mode == "UPRIGHT":
-        if action == "UP":
-            result = ("VERTICAL", [(row - 2, col), (row - 1, col)])
-        elif action == "DOWN":
-            result = ("VERTICAL", [(row + 1, col), (row + 2, col)])
-        elif action == "LEFT":
-            result = ("HORIZONTAL", [(row, col - 2), (row, col - 1)])
-        else:
-            result = ("HORIZONTAL", [(row, col + 1), (row, col + 2)])
-    elif mode == "HORIZONTAL":
-        if action == "LEFT":
-            result = ("UPRIGHT", [(row, col - 1)])
-        elif action == "RIGHT":
-            result = ("UPRIGHT", [(row, col + 2)])
-        else:
-            result = (mode, [(r + dr, c + dc) for r, c in cells])
-    else:  # VERTICAL
-        if action == "UP":
-            result = ("UPRIGHT", [(row - 1, col)])
-        elif action == "DOWN":
-            result = ("UPRIGHT", [(row + 2, col)])
-        else:
-            result = (mode, [(r + dr, c + dc) for r, c in cells])
-
-    next_mode, next_cells = result
-    rows, cols = len(grid), len(grid[0])
-    if any(r < 0 or r >= rows or c < 0 or c >= cols or grid[r][c] == "void"
-           for r, c in next_cells):
+def _move(state, action, game_map):
+    """Compatibility GUI adapter; all rules live in the shared engine."""
+    if isinstance(game_map, list):
+        # Legacy callers pass only a basic grid; full gameplay passes map JSON.
+        floor = next(([r, c] for r, row in enumerate(game_map)
+                      for c, tile in enumerate(row) if tile == "floor"), None)
+        game_map = {"schema_version": 1, "id": "legacy_grid", "name": "Legacy grid",
+                    "difficulty": "easy", "rows": len(game_map), "cols": len(game_map[0]),
+                    "grid": game_map, "start": floor, "bridges": [], "switches": [],
+                    "source": {"kind": "original", "reference": "GUI compatibility"}}
+    model = parse_map(game_map)
+    snapshot = {k: state[k] for k in ("mode", "cells", "active")}
+    snapshot["bridges"] = state.get("bridges", {})
+    if not isinstance(snapshot["bridges"], dict):
+        snapshot["bridges"] = dict(zip(model.bridge_ids, snapshot["bridges"]))
+    result = transition(model, state_from_dict(model, snapshot), action)
+    if result.status is Status.LOST:
         return None
-    return {"mode": next_mode, "cells": next_cells, "active": None}
+    if result.status is Status.INVALID:
+        return dict(state)
+    return _gui_state(model, result.next_state)
+
+
+def _visible_grid(game_map, state):
+    grid = [row[:] for row in game_map["grid"]]
+    for bridge in game_map["bridges"]:
+        if not state["bridges"][bridge["id"]]:
+            for row, col in bridge["cells"]:
+                grid[row][col] = "void"
+    return grid
 
 
 def _text(screen, font, value, center, color=(240, 243, 250)):
@@ -119,7 +122,8 @@ def main():
     maps = _load_maps()
     if not maps:
         print(f"No playable map JSON files found in {MAPS_DIR}")
-    solver = SolverController(move_fn=_move)
+    solver = SolverController(move_fn=_move, solve_fn=solve,
+                              supported_actions=("UP", "DOWN", "LEFT", "RIGHT", "SWITCH"))
 
     page = "menu"
     selected_map = 0
@@ -188,11 +192,12 @@ def main():
                         pygame.K_DOWN: "DOWN", pygame.K_s: "DOWN",
                         pygame.K_LEFT: "LEFT", pygame.K_a: "LEFT",
                         pygame.K_RIGHT: "RIGHT", pygame.K_d: "RIGHT",
+                        pygame.K_TAB: "SWITCH",
                     }.get(event.key)
                     if action and motion is None and camera and not camera.rotating:
                         solver.on_manual_move()
                         game_map = maps[selected_map][1]
-                        moved = _move(state, action, game_map["grid"])
+                        moved = _move(state, action, game_map)
                         if moved is None:
                             message = "You fell! Press R to restart, L for levels."
                         else:
@@ -280,7 +285,7 @@ def main():
             ready = motion is None and not message and not camera.rotating
             action = solver.update(dt, ready)
             if action:
-                moved = _move(state, action, maps[selected_map][1]["grid"])
+                moved = _move(state, action, maps[selected_map][1])
                 if moved is None:
                     message = "Replay fell! Press R to restart."
                 else:
@@ -331,7 +336,7 @@ def main():
             _button(screen, font, "Back", (w // 2 - 120, h - 75, 240, 48), mouse)
         elif page == "game" and maps and state and camera:
             game_map = maps[selected_map][1]
-            draw_map(screen, game_map["grid"], camera)
+            draw_map(screen, _visible_grid(game_map, state), camera)
             if motion:
                 draw_animated_block(
                     screen, motion["start"], motion["end"],
@@ -342,7 +347,7 @@ def main():
             _button(screen, small_font, "Levels", (12, 12, 150, 42), mouse)
             _button(screen, small_font, "Restart", (172, 12, 120, 42), mouse)
             solver.draw(screen, small_font)
-            _text(screen, small_font, f"{game_map.get('name', game_map.get('id', 'Level'))}  |  Arrows/WASD move  |  Q/E rotate  |  R restart  |  Esc menu", (w // 2, h - 24))
+            _text(screen, small_font, f"{game_map.get('name', game_map.get('id', 'Level'))}  |  Arrows/WASD move  |  Tab switch cube  |  Q/E rotate  |  R restart  |  Esc menu", (w // 2, h - 24))
             if message:
                 banner = pygame.Surface((w, 66), pygame.SRCALPHA)
                 banner.fill((12, 17, 26, 220))

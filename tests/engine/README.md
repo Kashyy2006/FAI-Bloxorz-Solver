@@ -1,9 +1,8 @@
-# Kiểm thử Engine — Thành viên 1
+# Kiểm thử engine — TV1
 
-`test_basic_engine.py` kiểm tra hình học State, đủ 12 chuyển động khối nguyên, rơi khỏi map, goal/fragile, thứ tự successors, chi phí fragile và lỗi validator JSON.
+- test_basic_engine.py: 12 chuyển động nguyên khối, goal/void/fragile và validator cơ bản.
+- test_advanced_engine.py: cầu/công tắc, toggle/permanent, split/merge, active, events,
+  chi phí, tính bất biến và validator nâng cao.
+- Kiểm thử tích hợp với GUI và cả 4 solver: tests/integration/test_advanced_shared_engine.py.
 
-Chạy từ thư mục gốc project:
-
-```text
-python -m unittest discover -s tests/engine -v
-```
+Chạy từ gốc repo: `python -m unittest discover -s tests -t . -v`.

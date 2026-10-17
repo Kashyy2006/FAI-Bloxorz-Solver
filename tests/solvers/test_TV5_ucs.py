@@ -21,51 +21,23 @@ class FakeSuccessor:
     cost: int = 1
 
 
-@dataclass(frozen=True)
-class FakeMap:
-    fragile_tiles: set = frozenset()
-    soft_switches: set = frozenset()
-    heavy_switches: set = frozenset()
-
 
 def fake_key(state):
     return (state.mode, state.cells, state.active, state.bridges)
 
 
 class TestTV5CostCalculation(unittest.TestCase):
-    """Kiểm thử riêng cho hàm tính chi phí bước đi (calculate_step_cost)."""
-
-    def setUp(self):
-        self.game_map = FakeMap(
-            fragile_tiles={(0, 1), (0, 2)},
-            soft_switches={(1, 1)},
-            heavy_switches={(2, 2)},
-        )
-
-    def test_switch_cost_always_one(self):
-        s1 = FakeState("SPLIT", ((1, 1), (3, 3)), active=0)
-        s2 = FakeState("SPLIT", ((1, 1), (3, 3)), active=1)
-        cost = calculate_step_cost(self.game_map, s1, s2, "SWITCH")
-        self.assertEqual(cost, 1)
-
-    def test_normal_move_cost_is_one(self):
-        s1 = FakeState("UPRIGHT", ((0, 0),))
-        s2 = FakeState("HORIZONTAL", ((0, 0), (1, 0)))
-        cost = calculate_step_cost(self.game_map, s1, s2, "DOWN")
-        self.assertEqual(cost, 1)
-
-    def test_fragile_tiles_cost_formula(self):
-        s1 = FakeState("UPRIGHT", ((0, 0),))
-        s2 = FakeState("HORIZONTAL", ((0, 1), (0, 2)))
-        cost = calculate_step_cost(self.game_map, s1, s2, "RIGHT")
-        self.assertEqual(cost, 5)
-
-    def test_heavy_switch_requires_upright_mode(self):
-        s1 = FakeState("HORIZONTAL", ((2, 0), (2, 1)))
-        s_flat = FakeState("HORIZONTAL", ((2, 1), (2, 2)))
-        self.assertEqual(calculate_step_cost(self.game_map, s1, s_flat, "RIGHT"), 1)
-        s_upright = FakeState("UPRIGHT", ((2, 2),))
-        self.assertEqual(calculate_step_cost(self.game_map, s1, s_upright, "RIGHT"), 2)
+    def test_compatibility_cost_matches_real_engine(self):
+        from src.engine import parse_map, initial_state, transition, step_cost
+        data = {"schema_version": 1, "id": "cost", "name": "cost", "difficulty": "easy",
+                "rows": 1, "cols": 5, "grid": [["floor", "fragile", "floor", "floor", "goal"]],
+                "start": [0, 0], "bridges": [], "switches": [],
+                "source": {"kind": "original", "reference": "test"}}
+        game_map = parse_map(data)
+        before = initial_state(game_map)
+        after = transition(game_map, before, "RIGHT").next_state
+        self.assertEqual(calculate_step_cost(game_map, before, after, "RIGHT"), 3)
+        self.assertEqual(step_cost(game_map, before, "RIGHT", after), 3)
 
 
 class TestTV5UCS(unittest.TestCase):

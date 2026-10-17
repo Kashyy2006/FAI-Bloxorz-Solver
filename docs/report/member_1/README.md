@@ -2,7 +2,7 @@
 
 ## Trạng thái
 
-Ở phiên bản cơ bản, trạng thái là `State(mode, cells, active, bridges)`. Khối nguyên có ba tư thế: đứng (`UPRIGHT`, chiếm một ô), nằm ngang (`HORIZONTAL`, chiếm hai ô kề nhau cùng hàng) hoặc nằm dọc (`VERTICAL`, chiếm hai ô kề nhau cùng cột). Tọa độ là cặp `(row, col)` bắt đầu từ 0; `cells` luôn sắp theo hàng rồi cột. Ở mốc này `active` là `None`, còn `bridges` là tuple rỗng.
+Trạng thái là `State(mode, cells, active, bridges)`. Khối nguyên có ba tư thế: đứng (`UPRIGHT`, chiếm một ô), nằm ngang (`HORIZONTAL`, chiếm hai ô kề nhau cùng hàng) hoặc nằm dọc (`VERTICAL`, chiếm hai ô kề nhau cùng cột). Tọa độ là cặp `(row, col)` bắt đầu từ 0; `cells` luôn sắp theo hàng rồi cột. Khi tách, mode là SPLIT, active xác định khối đang điều khiển. bridges chứa trạng thái các nhóm cầu theo thứ tự ID từ điển; cả hai trường đều tham gia khóa chống lặp.
 
 Map là dữ liệu cố định, không nằm trong trạng thái. Khóa chống lặp là `(mode, cells, active, bridges)`. Trạng thái rơi không được đưa vào không gian tìm kiếm.
 
@@ -22,8 +22,26 @@ Trạng thái thắng khi `mode == UPRIGHT` và ô duy nhất trong `cells` trù
 
 ## Chi phí
 
-Chi phí theo hợp đồng chung là `1 + 2*F + T`: `F` là số ô fragile mới được khối chiếm; `T` là số công tắc soft/heavy vừa kích hoạt. Engine cơ bản chưa có công tắc nên `T = 0`. Bước thường có giá 1; bước chiếm thêm một ô fragile có giá 3. BFS tối ưu số bước, UCS/A* tối ưu tổng chi phí.
+Chi phí theo hợp đồng chung là `1 + 2*F + T`: `F` là số ô fragile mới được khối chiếm; `T` là số công tắc soft/heavy vừa kích hoạt. T được tính cùng logic công tắc vừa nhấn mà engine sử dụng. Bước thường có giá 1; bước chiếm thêm một ô fragile có giá 3. BFS tối ưu số bước, UCS/A* tối ưu tổng chi phí.
 
-## Phạm vi mốc 18/10
+## Cơ chế nâng cao và mô hình trạng thái
 
-Bản cơ bản xử lý map nền, các hướng lăn, tư thế khối, rơi, goal và fragile. Cầu, công tắc, tách/nhập chưa được triển khai; validator từ chối rõ map có tile nâng cao để ngăn kết quả sai. Các cơ chế đó nằm trong đặc tả chung và sẽ bổ sung sau.
+Cầu đỡ khối khi mở, tương đương void khi đóng. Soft được nhấn bởi bất kỳ phần
+khối nào; heavy và split chỉ nhận nguyên khối đứng. Kích hoạt được xác định từ
+trạng thái trước bước và vị trí ngay sau chuyển động. Các tác động toggle/permanent
+được áp dụng theo ID công tắc; engine kiểm tra lại ô đỡ sau thay đổi cầu.
+
+Split chuyển khối đứng tới hai vị trí floor định trước. Một lượt chỉ di chuyển
+khối active; SWITCH đổi lựa chọn và có chi phí 1. Hai khối cạnh nhau theo cạnh
+nhập thành khối ngang/dọc. Cờ cầu và active phải có trong khóa trạng thái vì chúng
+ảnh hưởng đến các hành động và trạng thái kế tiếp. Không cần lưu cờ công tắc đã
+nhấn vì có thể suy ra từ vị trí, mode và map; không cần lưu ô fragile đã vỡ vì
+bước đứng trên đó kết thúc lượt chơi ngay.
+
+## Kiểm chứng tích hợp
+
+Các kiểm thử trong tests/engine bao gồm từng cơ chế và trường hợp nhiều công
+tắc tác động cùng cầu, cầu đóng dưới khối nhỏ, thay đổi active khi sắp xếp,
+teleport/nhập khối và round-trip snapshot. tests/integration/test_advanced_shared_engine.py
+kiểm tra GUI, cả bốn solver, replay, tổng chi phí, timeout/hủy và trạng thái vô nghiệm.
+Các số đo hiệu năng cần được thu riêng trong benchmark; unit test không thay benchmark.

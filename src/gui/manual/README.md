@@ -13,6 +13,9 @@ map và nhạc vẫn được tìm theo thư mục dự án.
 - Cài đặt cho phép chỉnh âm lượng, độ sáng và chuyển giữa chế độ cửa sổ/toàn màn hình.
 - Game tự phát lặp tệp `.mp3`, `.ogg` hoặc `.wav` đầu tiên trong `data/bgm/`. Thanh âm lượng trong Cài đặt điều chỉnh âm lượng nhạc.
 
-Hiện giao diện dùng phần xử lý di chuyển tạm thời vì API engine dùng chung chưa được triển khai. Phần này hỗ trợ di chuyển cơ bản, rơi và xác định ô đích; luật của các ô đặc biệt sẽ được nối với engine khi engine sẵn sàng.
+Giao diện hiện dùng engine chung cho map, di chuyển, fragile, cầu, công tắc và tách/nhập khối.
+Dùng **Tab** đổi khối nhỏ đang điều khiển; vòng trắng đánh dấu khối active.
+Cầu đóng được ẩn khỏi mặt sàn. Solver dùng src/solvers/solve.py và replay lại qua engine.
+Hai map advanced_bridge_01 và advanced_split_01 phục vụ kiểm tra cơ chế nâng cao.
 
 **Phụ trách:** Thành viên 2 (giao diện chơi thủ công).

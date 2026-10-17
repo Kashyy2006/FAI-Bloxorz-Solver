@@ -267,3 +267,11 @@ flowchart TD
     G -->|Không được đỡ| L
     D -->|Va chạm khối nhỏ| I
 ```
+
+## API snapshot và bàn giao triển khai nâng cao
+
+- `validate_state(game_map, state)` xác thực số cờ cầu, hình học và ô đỡ của snapshot sống; sai dữ liệu ném ValueError.
+- `state_to_dict(game_map, state)` và `state_from_dict(game_map, data)` đổi qua lại JSON gồm đúng mode/cells/active/bridges.
+- `GameMap.bridge_ids` là tuple ID sắp từ điển; State.bridges theo đúng thứ tự đó.
+- GUI gọi cùng transition; src/solvers/solve.py điều phối bốn solver với cùng successors và cost.
+- Dùng Tab đổi khối trong GUI để tránh trùng Space điều khiển replay.

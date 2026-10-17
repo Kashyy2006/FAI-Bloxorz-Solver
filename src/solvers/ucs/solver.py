@@ -12,44 +12,53 @@ def reconstruct_actions(parent, action_to, goal_key):
     return actions
 
 
-def _search(game_map, start_state, *, state_key, is_goal, successors):
-    """Uniform Cost Search (Dijkstra's Algorithm variant for state space).
-
-    Trả về (actions, path_cost, expanded_nodes).
-    """
+def _search(game_map, start_state, *, state_key, is_goal, successors,
+            runtime=None, heuristic=None):
+    """Weighted search kernel; default heuristic is zero (UCS)."""
     if is_goal(game_map, start_state):
         return [], 0, 0
-
+    if runtime is not None:
+        runtime.start()
+    check_stop = runtime.check_stop if runtime is not None else lambda: None
+    estimate = heuristic if heuristic is not None else lambda m, s: 0
     start_key = state_key(start_state)
     counter = count()
-    frontier = [(0, next(counter), start_state)]
+    frontier = [(estimate(game_map, start_state), next(counter), 0, start_state)]
     best_cost = {start_key: 0}
     parent = {start_key: None}
     action_to = {}
     expanded_nodes = 0
-    visited = set()
-
+    expanded_cost = {}
     while frontier:
-        cost, _, state = heapq.heappop(frontier)
+        check_stop()
+        _, _, cost, state = heapq.heappop(frontier)
         key = state_key(state)
-        if key in visited:
+        if cost != best_cost[key] or cost >= expanded_cost.get(key, float("inf")):
             continue
-        visited.add(key)
-        if is_goal(game_map, state):
-            return (
-                reconstruct_actions(parent, action_to, key),
-                cost,
-                expanded_nodes,
-            )
+        goal = is_goal(game_map, state)
+        check_stop()
+        if goal:
+            if runtime is not None:
+                runtime.mark_search_stopped()
+            return reconstruct_actions(parent, action_to, key), cost, expanded_nodes
+        expanded_cost[key] = cost
         expanded_nodes += 1
-
-        for successor in successors(game_map, state):
+        if runtime is not None:
+            runtime.metrics.expanded_nodes = expanded_nodes
+        next_states = successors(game_map, state)
+        check_stop()
+        for successor in next_states:
+            check_stop()
             next_state = successor.state
             next_key = state_key(next_state)
             new_cost = cost + successor.cost
-            if next_key not in best_cost or new_cost < best_cost[next_key]:
+            if new_cost < best_cost.get(next_key, float("inf")):
                 best_cost[next_key] = new_cost
                 parent[next_key] = key
                 action_to[next_key] = successor.action
-                heapq.heappush(frontier, (new_cost, next(counter), next_state))
+                priority = new_cost + estimate(game_map, next_state)
+                heapq.heappush(frontier, (priority, next(counter), new_cost, next_state))
+        check_stop()
+    if runtime is not None:
+        runtime.mark_search_stopped()
     return None, None, expanded_nodes

@@ -9,12 +9,11 @@ Usage from the game loop (see src/gui/manual/game.py):
 """
 
 import copy
-import functools
 import math
 
 import pygame
 
-from . import placeholder_solver
+from src.solvers.solve import solve as engine_solve
 from .replay import Replay
 from .result import make_result, validate_result
 from .worker import SolverWorker
@@ -55,12 +54,11 @@ class SolverController:
     def __init__(self, move_fn, solve_fn=None, timeout_s=60.0,
                  supported_actions=("UP", "DOWN", "LEFT", "RIGHT")):
         if solve_fn is None:
-            solve_fn = functools.partial(placeholder_solver.solve, move_fn=move_fn)
+            solve_fn = engine_solve
         self.worker = SolverWorker(solve_fn)
         self.replay = Replay()
         self.timeout_s = timeout_s
-        # The temporary manual GUI cannot execute SWITCH. Enable it explicitly
-        # when the shared engine is connected, rather than crashing during replay.
+        # Callers explicitly enable SWITCH when their input/replay UI supports it.
         self.supported_actions = frozenset(supported_actions)
         self.solving = False
         self.algorithm = None

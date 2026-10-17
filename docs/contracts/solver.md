@@ -115,3 +115,10 @@ Quy ước triển khai theo kế hoạch T4; cần dùng cùng quy tắc khi TV
 - Nếu tracemalloc đã bật trước lượt tìm kiếm, trả ERROR trước đo; không reset/stop phiên ngoài. Chạy đo tuần tự; cách ly tiến trình thuộc worker/benchmark khi tích hợp.
 - Cleanup trong finally; lỗi cleanup không che lỗi gốc. KeyboardInterrupt/SystemExit vẫn truyền ra ngoài sau cleanup.
 - T4 hiện có `_solve_bfs` nội bộ nhận callback/metadata rõ ràng; chưa phải dispatcher solve công khai hoặc bằng chứng validator/engine thật đã chạy.
+
+## Điểm gọi triển khai dùng chung
+
+- `src.solvers.solve.solve` nhận GameMap/State hoặc map JSON/snapshot JSON.
+- `src.engine.rules.step_cost` là công thức chuẩn; `calculate_step_cost` của TV5 chỉ gọi lại, giữ thứ tự tham số cũ.
+- UCS/A* cộng Successor.cost một lần. Mọi thuật toán nhận cùng state_key, is_goal và successors từ engine.
+- A* hiện dùng goal_indicator_v1 để bảo đảm đúng khi có teleport; heuristic mạnh hơn cần chứng minh riêng.

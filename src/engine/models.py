@@ -45,7 +45,13 @@ class State:
             mode = self.mode if isinstance(self.mode, Mode) else Mode(self.mode)
         except ValueError as exc:
             raise ValueError(f"Unknown state mode: {self.mode!r}") from exc
-        cells = tuple(sorted(tuple(cell) for cell in self.cells))
+        try:
+            original_cells = tuple(tuple(cell) for cell in self.cells)
+            if any(len(cell) != 2 or any(type(v) is not int for v in cell) for cell in original_cells):
+                raise ValueError("Each cell coordinate must contain two integers")
+            cells = tuple(sorted(original_cells))
+        except TypeError as exc:
+            raise ValueError("cells must contain integer coordinate pairs") from exc
         if any(len(cell) != 2 or any(type(value) is not int for value in cell) for cell in cells):
             raise ValueError("Each cell coordinate must contain two integers")
         expected_count = 1 if mode is Mode.UPRIGHT else 2
@@ -67,12 +73,13 @@ class State:
                 raise ValueError("Adjacent split cubes must be merged")
             if type(self.active) is not int or self.active not in (0, 1):
                 raise ValueError("SPLIT state active must be 0 or 1")
-        elif self.active is not None:
-            raise ValueError("Non-split states must have active=None")
         if mode is not Mode.SPLIT and self.active is not None:
             raise ValueError("Non-split states must have active=None")
         if any(type(value) is not bool for value in self.bridges):
             raise ValueError("Bridge states must be booleans")
+        if mode is Mode.SPLIT:
+            active_cell = original_cells[self.active]
+            object.__setattr__(self, "active", cells.index(active_cell))
         object.__setattr__(self, "mode", mode)
         object.__setattr__(self, "cells", cells)
         object.__setattr__(self, "bridges", tuple(self.bridges))
