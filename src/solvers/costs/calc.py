@@ -69,38 +69,17 @@ def reverse_bfs_heuristic(game_map, state) -> int:
     key = state_key(state)
     if key in distances:
         return distances[key]
+    # Nếu gặp cầu chưa mở, sử dụng manhattan làm fallback.
     return manhattan_orientation(game_map, state)
-
 
 def manhattan_orientation(game_map, state) -> int:
     """Admissible orientation-aware Manhattan lower bound on remaining actions."""
     goal_row, goal_col = game_map.goal
-    if state.mode is Mode.UPRIGHT:
-        row, col = state.cells[0]
-        return abs(row - goal_row) + abs(col - goal_col)
-
-    if state.mode is Mode.HORIZONTAL:
-        (row, left_col), (_, right_col) = state.cells
-        return (
-            abs(row - goal_row)
-            + min(abs(goal_col - (left_col - 1)),
-                  abs(goal_col - (right_col + 1)))
-            + 1
-        )
-
-    if state.mode is Mode.VERTICAL:
-        (top_row, col), (bottom_row, _) = state.cells
-        return (
-            abs(col - goal_col)
-            + min(abs(goal_row - (top_row - 1)),
-                  abs(goal_row - (bottom_row + 1)))
-            + 1
-        )
-
-    return min(
-        abs(row - goal_row) + abs(col - goal_col)
-        for row, col in state.cells
-    )
+    min_dist = min(abs(row - goal_row) + abs(col - goal_col) for row, col in state.cells)
+    base_steps = (min_dist + 1) // 2
+    if state.mode is not Mode.UPRIGHT and min_dist == 0:
+        return max(4, base_steps)
+    return base_steps
 
 
 def calculate_heuristic(game_map, state) -> int:
