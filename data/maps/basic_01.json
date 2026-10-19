@@ -13,16 +13,6 @@
   "start": [1, 1],
   "bridges": [],
   "switches": [],
-  "source": {"kind": "original", "reference": "Team-created"},
-  "start": [
-    1,
-    1
-  ],
-  "bridges": [],
-  "switches": [],
-  "source": {
-    "kind": "original",
-    "reference": "Team-created"
-  },
+  "source": { "kind": "original", "reference": "Team-created" },
   "expected_solvable": true
 }
