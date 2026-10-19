@@ -6,7 +6,7 @@
 
 ## Lõi BFS độc lập
 
-Đã triển khai lõi tìm kiếm và runtime T4 trên đồ thị giả hữu hạn, không cần engine
+Đã triển khai lõi tìm kiếm và runtime trên đồ thị giả hữu hạn, không cần engine
 hoặc thư viện ngoài. Dùng deque FIFO; membership trong `parent` là visited,
 đánh dấu ngay khi enqueue. Giữ nguyên thứ tự successors, kiểm tra goal khi lấy
 nút ra và trước mở rộng. Dùng lại `reconstruct_actions` của common.
@@ -48,12 +48,12 @@ Không đổi parent khi gặp lại key qua đường rẻ hơn. `expanded_node
 lần gọi successors, không tính goal. Bộ nhớ O(V), thời gian trung bình O(V+E)
 theo số state key/cạnh; không lưu bản sao toàn bộ đường đi cho mỗi nút.
 
-## Lớp bọc kết quả T4
+## Callable công khai
 
 ```python
-from src.solvers.bfs.solver import _solve_bfs
+from src.solvers.bfs.solver import solve_bfs
 
-result = _solve_bfs(
+result = solve_bfs(
     game_map, start_state,
     map_id=map_id, bridge_ids=bridge_ids,
     state_key=state_key, is_goal=is_goal, successors=successors,
@@ -63,11 +63,28 @@ result = _solve_bfs(
 payload = result.to_dict()
 ```
 
-Đây là chữ ký nội bộ thật; ví dụ cần được truyền các biến/callback tương ứng.
+Chữ ký đầy đủ:
+
+```python
+solve_bfs(
+    game_map, start_state, *, map_id, bridge_ids,
+    state_key, is_goal, successors, validate_start_state,
+    timeout_s=60.0, cancel_event=None,
+) -> SolverResult
+```
+
+Các keyword trước `timeout_s` đều bắt buộc; thiếu đối số gây `TypeError` tại
+điểm gọi. Giá trị được truyền nhưng sai hoặc callback ném `Exception` trả
+`SolverResult` với status `ERROR`. `_solve_bfs` được giữ làm alias tương thích.
+Ví dụ trên cần được truyền các biến/callback tương ứng.
 Không giả định thuộc tính của GameMap hay import engine chưa có. Validator
 `validate_start_state(game_map, start_state)` phải ném lỗi có lý do khi snapshot
-sai; T5 thay callback test bằng validator thật của TV1. Bridge IDs là tuple ID
-theo thứ tự từ điển dùng để chuyển tuple bool của State sang object JSON.
+sai và trả bình thường khi hợp lệ; giá trị trả về không được sử dụng. Khi tích
+hợp, cung cấp validator ngữ nghĩa của engine, không dùng callback no-op.
+Bridge IDs là tuple các chuỗi không rỗng, duy nhất, theo thứ tự từ điển của
+map, khớp số bridge bits của State; dùng `()` chỉ khi map thật không có cầu.
+Callable kiểm tra kiểu/độ dài/thứ tự nhưng bên tích hợp phải bảo đảm đúng ID
+của map; không thể suy ra metadata này từ các callback tùy ý.
 
 Lớp bọc xác thực map ID/timeout/event/callback, gọi validator và chuyển snapshot
 trước khi tìm kiếm; không sửa map/state hoặc lấy lại initial state. Kết quả có
@@ -83,8 +100,45 @@ successors và trước kết luận cạn frontier. Deadline đạt đúng time
 `_search(..., runtime=None)` vẫn trả tuple như trước. Nếu tự truyền runtime,
 truyền một `SearchRuntime` mới chưa start và luôn gọi `runtime.finish()` trong
 finally; `_search` khởi động đo sau fast path và chốt timer trước dựng actions.
-Lõi trực tiếp truyền lỗi callback ra ngoài; `_solve_bfs` mới chuyển thành ERROR.
+Lõi trực tiếp truyền lỗi callback ra ngoài; `solve_bfs` mới chuyển thành ERROR.
 Xem [common](../common/README.md) về vòng đời đo và cleanup.
+
+### Ví dụ fixture chạy độc lập
+
+Chạy từ gốc repo. Đây là đồ thị xác định dùng kiểm tra cách gọi, không mô phỏng
+luật cầu/split hoặc xác nhận lời giải Bloxorz:
+
+```python
+import json
+from collections import namedtuple
+from types import SimpleNamespace
+from src.solvers.bfs.solver import solve_bfs
+
+State = namedtuple("State", "mode cells active bridges")
+start = State("SPLIT", ((1, 1), (3, 3)), 0, (True, False))
+switched = start._replace(active=1)
+goal = State("UPRIGHT", ((4, 4),), None, (True, False))
+graph = {
+    start: [SimpleNamespace(action="SWITCH", state=switched, cost=1)],
+    switched: [SimpleNamespace(action="DOWN", state=goal, cost=3)],
+    goal: [],
+}
+
+def validate_start_state(game_map, state):
+    if state not in game_map:
+        raise ValueError("snapshot is not in the fixture graph")
+
+result = solve_bfs(
+    graph, start, map_id="snapshot_fixture", bridge_ids=("b01", "b02"),
+    state_key=tuple, is_goal=lambda game_map, state: state == goal,
+    successors=lambda game_map, state: game_map[state],
+    validate_start_state=validate_start_state,
+)
+assert result.status == "SOLVED"
+assert result.actions == ["SWITCH", "DOWN"]
+assert result.metrics.solution_cost == 4
+print(json.dumps(result.to_dict(), ensure_ascii=False, allow_nan=False))
+```
 
 ### JSON từ một lượt chạy nội bộ thật
 
@@ -123,29 +177,38 @@ dưới đây là của đúng lượt này, không phải benchmark Bloxorz ho�
 
 ```powershell
 python -m unittest discover -s tests/solvers -p 'test_TV4_bfs.py' -v
+python -m unittest discover -s tests/solvers -p 'test_TV4_bfs_contract.py' -v
 python -m unittest discover -s tests/solvers -p 'test_TV4_runtime.py' -v
 python -m unittest discover -s tests/solvers -p 'test_*.py' -v
 ```
 
-Kết quả ngày 15/10/2026, Python 3.12.10: **70/70 test đạt, không skip**,
-gồm 16 BFS, 16 common, 31 runtime/result/tracing và 7 map. Giữ toàn bộ 31 test
-cũ, thêm 39 test cho T4. Test timeout dùng clock giả; ba smoke test dùng
-tracemalloc thật để kiểm tra chạy lặp, cleanup sau lỗi và giữ phiên ngoài.
+Kết quả ngày 17/10/2026, Python 3.12.10: **69/69 test liên quan trực tiếp đạt,
+không skip** = 16 lõi BFS + 5 hợp đồng callable + 17 common + 31 runtime/kết quả.
+Các test runtime/kết quả và smoke test tracemalloc gọi `solve_bfs` công khai;
+test hợp đồng xác nhận alias cũ vẫn trỏ cùng callable. Không xóa hoặc làm yếu
+assertion cũ.
 
-Đã kiểm tra khả năng bắt hồi quy: tạm đổi điều kiện deadline `>=` thành `>`,
-test biên deadline thất bại đúng lý do, rồi khôi phục byte source và chạy suite
-70 test đạt. `git diff --check` đạt. Không có build/GUI entry point để kiểm tra.
-Bao gồm đường ngắn, phá hòa, đường ít bước khác đường rẻ nhất, diamond/chu
-trình/self-loop, vô nghiệm, start đã thắng, cầu, active/SWITCH, các tư thế,
-input bất biến/chạy lại và lỗi từ cả ba callable. Ca diamond có queue spy để
-xác nhận enqueue mỗi key một lần, kể cả hai object khác nhau cùng full key.
+Bao phủ đường ít action khác đường rẻ nhất, parent khi enqueue, chu trình/cạn
+frontier, full key khác cầu/active, snapshot giữa tiến trình và round-trip JSON,
+validator fixture chấp nhận/từ chối snapshot, metadata bắt buộc/sai, năm status,
+metrics, cleanup và input bất biến. Test timeout dùng clock giả; ba smoke test
+dùng tracemalloc thật kiểm tra chạy lặp, cleanup sau lỗi và giữ phiên ngoài.
+Ví dụ fixture ở trên đã chạy độc lập và xuất được JSON chuẩn.
+
+Kiểm tra mở rộng: **140/140 test solver** và **12/12 test engine cơ bản** đạt,
+không skip, qua `unittest discover` riêng cho `tests/solvers` và `tests/engine`.
+Lệnh `python -m unittest discover -s tests/integration -t . -v` ghi nhận 23 mục
+đạt, hai test khởi chạy GUI thất bại và một module controller không nạp được
+do môi trường thiếu `pygame`. Chưa xác nhận GUI hoặc BFS nối engine nâng cao;
+fixture không phải bằng chứng lời giải map thật.
 
 ### Giới hạn và tích hợp
 
-T4 có runtime, kết quả chuẩn và điểm nối validation nội bộ; chưa có API công
-khai `solve(game_map, start_state, algorithm, ...)` hoặc engine thật. T5 cần
+Callable `solve_bfs` có runtime, kết quả chuẩn và callback validation bắt buộc;
+dispatcher chung `solve(game_map, start_state, algorithm, ...)` vẫn do bên tích
+hợp cung cấp. Khi tích hợp cần
 gắn state_key/is_goal/successors/validator, lấy metadata thật và replay trên
-bộ map T3, đối chiếu step_cost và vô nghiệm. TV3 nối worker/GUI và run_id;
+bộ map cơ bản, đối chiếu step_cost và vô nghiệm. TV3 nối worker/GUI và run_id;
 TV5 dùng lại runtime cho UCS/A*. Không tạo vòng BFS thứ hai trong wrapper.
 
 Timeout là hợp tác, không dừng callback đang chặn. Tracemalloc theo tiến trình:

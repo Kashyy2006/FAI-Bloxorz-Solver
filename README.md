@@ -19,6 +19,9 @@ Project Python với GUI Pygame và 4 solver BFS, DFS, UCS, A*. Các thư mục 
 
 Mỗi thư mục có README riêng mô tả nội dung và người đảm nhận. STT 1-5 thay cho tên thành viên chưa được cung cấp.
 
+[Bàn giao BFS/DFS, bộ 18 map và runner](docs/report/member_4/README.md) có
+phiên bản mã, hướng dẫn sử dụng, bằng chứng kiểm tra và các việc cần tích hợp.
+
 Mốc 14/10: nhóm chốt cấu trúc trạng thái, hàm chuyển trạng thái, định dạng map JSON, kết quả solver và hàm chi phí dùng chung. Ghi các đặc tả được nhóm thống nhất vào `docs/contracts/`.
 
 ## Chạy bản tích hợp engine nâng cao

@@ -61,7 +61,7 @@ class TestTV4DFSResult(unittest.TestCase):
             successors=self.successors, validate_start_state=self.validator,
         )
         args.update(overrides)
-        return dfs._solve_dfs(**args)
+        return dfs.solve_dfs(**args)
 
     def payload(self, result, status):
         payload = json.loads(json.dumps(result.to_dict(), allow_nan=False))
@@ -376,7 +376,7 @@ class TestTV4DFSRealTracing(unittest.TestCase):
             validate_start_state=lambda *_: None,
         )
         args.update(overrides)
-        return dfs._solve_dfs(**args)
+        return dfs.solve_dfs(**args)
 
     def test_repeated_solves_release_real_tracing(self):
         self.assertFalse(tracemalloc.is_tracing())

@@ -233,6 +233,13 @@ class TestTV4Common(unittest.TestCase):
         with self.assertRaises(ValueError):
             snapshot_to_dict(replace(state, bridges=(0, True)), ("b01", "b02"))
 
+    def test_snapshot_rejects_empty_or_non_string_bridge_ids(self):
+        state = replace(self.start, bridges=(False,))
+        for bridge_id in ("", " ", 1, False, None):
+            with self.subTest(bridge_id=bridge_id):
+                with self.assertRaisesRegex(ValueError, "bridge_ids"):
+                    snapshot_to_dict(state, (bridge_id,))
+
     def test_empty_path(self):
         start_key = fake_key(self.start)
         self.assertEqual(reconstruct_actions({start_key: None}, {}, start_key), [])

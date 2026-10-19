@@ -1,0 +1,10 @@
+# Dữ liệu nguồn để tái tạo map
+
+Chỉ chứa dữ liệu level, không có thuật toán game hoặc solver. Truy xuất ngày 17/10/2026. Các file `.txt` giữ nguyên byte; `.gitattributes` ngăn Git đổi newline.
+
+- `achraf_level*.txt`: sáu file nguyên byte từ `levels/level*.txt` tại commit [898188ed31cf31d4ce4c39fec3e3846ed037eee9](https://github.com/AchrafMez/bloxorz/tree/898188ed31cf31d4ce4c39fec3e3846ed037eee9/levels), AchrafMez. Giữ [MIT](../AchrafMez-LICENSE.txt); bảng byte/SHA256 nằm ở [nhật ký nguồn](../README.md#nguồn-cho-danh-sách-18-map).
+- `frank_selected.txt`: trích nguyên dòng khai báo/append cho levelsc, levelss, levelre, levelub, levelht, leveltb, leveldw theo thứ tự xuất hiện trong [Vide/levels.py](https://github.com/FrankBuss/bloxorz/blob/775d5fa64d77b5d1793ef9e5e3bc9cce56ed5562/Vide/levels.py), commit `775d5fa64d77b5d1793ef9e5e3bc9cce56ed5562`. File gốc 27.641 byte, SHA256 `5c2773bb4c91126d9ae0be3cb1023b9b3c20d36323d1b9c5f967d51a02550bec`; bản trích 3.880 byte, SHA256 `9fb8af459e8d694ea2f725bd6162f4403a4ef1d0ca9c52667fd88fc53f510cb0`. Giữ [notice](../FrankBuss-license.txt), credit Frank Buss / Damien Clarke, chỉ dùng cho bài học phi thương mại.
+
+Bản trích lấy các node AST gán list rỗng hoặc append literal có tên trong bảy level trên, dùng dòng từ `lineno` đến `end_lineno` của file gốc, nối nguyên thứ tự và giữ whitespace/newline. Không import hoặc chạy file gốc. Đã đối chiếu từng giá trị literal với các lệnh `.push` cùng level trong [Vide/bloxorzlevels.txt](https://github.com/FrankBuss/bloxorz/blob/775d5fa64d77b5d1793ef9e5e3bc9cce56ed5562/Vide/bloxorzlevels.txt), hash `3e3dec961678e2b00d8d2d7cd2ea89aed2f2fd05b9ffb6b0ca1e88f04af5d6a3`. Bản trích là dữ liệu chuyển định dạng, không phải toàn bộ file nguồn nguyên byte.
+
+Các hash được khóa trong kiểm thử; test chạy ngoại tuyến. Xem [ghi chú Achraf](../achraf-map-conversion.md), [ghi chú Frank](../frank-map-conversion.md) và [converter](../convert_maps.py) để tái tạo JSON. Bằng chứng cấu trúc không chứng minh map có lời giải hoặc engine đã xử lý đúng cơ chế.

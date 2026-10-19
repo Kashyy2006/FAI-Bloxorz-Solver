@@ -56,12 +56,12 @@ def _search(game_map, start_state, *, state_key, is_goal, successors, runtime=No
     return None, None, expanded_nodes
 
 
-def _solve_bfs(
+def solve_bfs(
     game_map, start_state, *, map_id, bridge_ids,
     state_key, is_goal, successors, validate_start_state,
     timeout_s=60.0, cancel_event=None,
 ) -> SolverResult:
-    """Internal T4 boundary; T5 supplies real engine callbacks and metadata."""
+    """Solve BFS using caller-supplied engine callbacks and metadata."""
     metrics = SolverMetrics()
     result = SolverResult(
         map_id=None, algorithm="BFS", status="ERROR", start_state=None,
@@ -126,3 +126,6 @@ def _solve_bfs(
         serialization_error = f"result: {type(exc).__name__}: {exc}"
         result.error = f"{result.error}; {serialization_error}" if result.error else serialization_error
     return result
+
+
+_solve_bfs = solve_bfs

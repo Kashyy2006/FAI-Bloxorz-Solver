@@ -12,7 +12,7 @@
 - Chỉ `ERROR` được có `map_id`, `start_state`, `timeout_s` bằng `None` khi trường đó chưa xác thực được. Các trường đã xác thực giữ nguyên. Không chép NaN/Infinity hoặc tự thay bằng snapshot/timeout mặc định.
 - Snapshot helper chỉ chuyển định dạng và kiểm tra sự tương ứng của cầu; validation luật game thuộc engine. `to_dict()` kiểm tra tính nhất quán kết quả, không thay engine validator.
 
-## Runtime T4
+## Runtime tìm kiếm
 
 `runtime.py` cung cấp `validate_timeout(timeout_s)`, `SearchStopped(status)` và:
 
@@ -51,4 +51,4 @@ python -m unittest discover -s tests/solvers -p 'test_TV4_common.py' -v
 python -m unittest discover -s tests/solvers -p 'test_*.py' -v
 ```
 
-Runtime/result có test clock/event/tracer kiểm soát được và smoke test tracemalloc thật. Các đồ thị giả kiểm tra quy tắc solver; chưa xác nhận snapshot theo engine, map/replay hoặc GUI. Xem [BFS](../bfs/README.md) cho điểm nối T5 và kết quả nghiệm thu cuối.
+Runtime/result có test clock/event/tracer kiểm soát được và smoke test tracemalloc thật. Các đồ thị giả kiểm tra quy tắc solver; chưa xác nhận snapshot theo engine, map/replay hoặc GUI. Xem [BFS](../bfs/README.md) cho điểm nối engine và kết quả nghiệm thu cuối.
