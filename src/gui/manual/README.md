@@ -13,6 +13,8 @@ map và nhạc vẫn được tìm theo thư mục dự án.
 - Cài đặt cho phép chỉnh âm lượng, độ sáng và chuyển giữa chế độ cửa sổ/toàn màn hình.
 - Game tự phát lặp tệp `.mp3`, `.ogg` hoặc `.wav` đầu tiên trong `data/bgm/`. Thanh âm lượng trong Cài đặt điều chỉnh âm lượng nhạc.
 
-Hiện giao diện dùng phần xử lý di chuyển tạm thời vì API engine dùng chung chưa được triển khai. Phần này hỗ trợ di chuyển cơ bản, rơi và xác định ô đích; luật của các ô đặc biệt sẽ được nối với engine khi engine sẵn sàng.
+GUI tải và kiểm tra map bằng validator của `src/engine`, đồng thời dùng `initial_state` và `transition` cho di chuyển, thắng và thua. Bản engine hiện tại chỉ nhận `void`, `floor`, `goal`, `fragile` và khối nguyên; map có cầu, công tắc hoặc cơ chế tách khối sẽ bị từ chối cho đến khi engine hỗ trợ đầy đủ.
+
+Khi xoay camera bằng Q/E, các phím mũi tên và WASD được đổi hướng theo góc nhìn.
 
 **Phụ trách:** Thành viên 2 (giao diện chơi thủ công).
