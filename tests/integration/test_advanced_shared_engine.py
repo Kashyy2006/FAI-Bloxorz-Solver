@@ -89,6 +89,34 @@ class SharedAdvancedEngineTest(unittest.TestCase):
                "bridges": {"b01": True, "b02": False}}
         self.assertIsNone(_move(gui, "RIGHT", raw))
 
+    def test_dispatcher_validation_goal_fast_path_and_benchmark_bindings(self):
+        from src.solvers.solve import run_astar, run_bfs, run_dfs, run_ucs
+        map_path = ROOT / "data/maps/basic_01.json"
+        raw = json.loads(map_path.read_text(encoding="utf-8"))
+        m = load_map(map_path)
+        snapshot = state_to_dict(m, initial_state(m))
+        for algo, binding in (("BFS", run_bfs), ("DFS", run_dfs),
+                              ("UCS", run_ucs), ("ASTAR", run_astar)):
+            with self.subTest(algorithm=algo):
+                res = binding(map_path, snapshot, timeout_s=5.0)
+                self.assertEqual(res["status"], "SOLVED")
+                validate_result(res, raw, snapshot, algo, 5.0)
+                # Pre-solved goal state wins over cancel_event with zero metrics.
+                cancel = threading.Event()
+                cancel.set()
+                goal_state = {"mode": "UPRIGHT", "cells": [list(m.goal)],
+                              "active": None, "bridges": {}}
+                goal_res = solve(raw, goal_state, algo, timeout_s=5.0, cancel_event=cancel)
+                self.assertEqual(goal_res["status"], "SOLVED")
+                self.assertEqual(goal_res["actions"], [])
+                self.assertEqual(goal_res["metrics"]["expanded_nodes"], 0)
+                self.assertEqual(goal_res["metrics"]["solution_cost"], 0)
+                # Invalid timeout or bad start state produces valid ERROR result.
+                bad_timeout = solve(raw, snapshot, algo, timeout_s=-1)
+                self.assertEqual(bad_timeout["status"], "ERROR")
+                validate_result(bad_timeout, raw, snapshot, algo, 5.0)
+
 
 if __name__ == "__main__":
     unittest.main()
+

@@ -6,18 +6,27 @@
 
 ## Phạm vi hiện tại
 
+- `test_advanced_shared_engine.py`: kiểm thử tích hợp `src.solvers.solve.solve`
+  và các hàm binding (`run_bfs`, `run_dfs`, `run_ucs`, `run_astar`) cho cả bốn
+  thuật toán trên map cơ bản và nâng cao (cầu, công tắc, fragile, split/merge),
+  đối chiếu chi phí với `step_cost` của engine, kiểm tra hủy/timeout/vô nghiệm
+  và đồng bộ trạng thái GUI-engine.
+- `test_game_launch.py`: khởi chạy điểm vào game ở tiến trình riêng bằng SDL dummy.
 - `test_solver_gui_backend.py`: solver tạm, replay và worker cơ bản.
 - `test_solver_controller.py`: Step liên tiếp, Play/Pause/Stop, reset, thao tác
-  trong animation, dữ liệu sai, render lỗi headless; chạy cả bốn solver tạm từ
-  trạng thái đã di chuyển và phát lại bằng `_move` thật của GUI tới đích; kiểm tra
-  vòng lặp `game.main()` với sự kiện chọn màn, Solve và Pause giữa animation.
+  trong animation, dữ liệu sai, render lỗi headless; chạy cả bốn solver thật từ
+  trạng thái giữa ván (gồm cấu hình cầu và khối tách `SPLIT`/`SWITCH`) và phát
+  lại bằng `_move` thật của GUI tới đích; kiểm tra vòng lặp `game.main()` với
+  sự kiện chọn màn, Solve và Pause giữa animation.
 - `test_solver_worker.py`: thay tác vụ không chạy chồng, chỉ giữ yêu cầu mới nhất,
   hủy tác vụ đang chạy/đang chờ, kết quả cũ, snapshot map/state, lỗi solver.
 - `test_solver_result.py`: JSON/schema, danh tính lượt giải, trạng thái cầu,
-  kiểu/giá trị metrics, độ dài/chi phí lời giải và actions.
+  kiểu/giá trị metrics, độ dài/chi phí lời giải, actions và envelope `ERROR` có
+  trường `null` khi chưa xác thực.
 
-Chạy từ gốc project: `python -m unittest discover -s tests -v`.
+Chạy toàn bộ kiểm thử từ gốc project:
 
-Engine và solver của thành viên 1/4/5 hiện chưa có triển khai trong source này.
-Các test trên chưa chứng minh luật cầu/công tắc/tách khối hoặc tính đúng của
-solver thật; cần bổ sung khi các module đó được bàn giao.
+```console
+python -m unittest discover -s tests -t . -v
+```
+

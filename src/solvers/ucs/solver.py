@@ -20,6 +20,7 @@ def _search(game_map, start_state, *, state_key, is_goal, successors,
     if runtime is not None:
         runtime.start()
     check_stop = runtime.check_stop if runtime is not None else lambda: None
+    check_stop()
     estimate = heuristic if heuristic is not None else lambda m, s: 0
     start_key = state_key(start_state)
     counter = count()

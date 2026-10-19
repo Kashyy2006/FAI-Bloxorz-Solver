@@ -26,7 +26,9 @@ BGM_DIR = ROOT / "data" / "bgm"
 
 def _load_maps():
     maps = []
-    for path in sorted(MAPS_DIR.glob("*.json")):
+    candidates = [*sorted(MAPS_DIR.glob("*.json")),
+                  *sorted((MAPS_DIR / "prepared").glob("*.json"))]
+    for path in candidates:
         try:
             with path.open(encoding="utf-8") as file:
                 data = json.load(file)

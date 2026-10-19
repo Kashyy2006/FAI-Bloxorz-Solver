@@ -52,13 +52,12 @@ def _fmt(value, pattern="{}"):
 
 class SolverController:
     def __init__(self, move_fn, solve_fn=None, timeout_s=60.0,
-                 supported_actions=("UP", "DOWN", "LEFT", "RIGHT")):
+                 supported_actions=("UP", "DOWN", "LEFT", "RIGHT", "SWITCH")):
         if solve_fn is None:
             solve_fn = engine_solve
         self.worker = SolverWorker(solve_fn)
         self.replay = Replay()
         self.timeout_s = timeout_s
-        # Callers explicitly enable SWITCH when their input/replay UI supports it.
         self.supported_actions = frozenset(supported_actions)
         self.solving = False
         self.algorithm = None

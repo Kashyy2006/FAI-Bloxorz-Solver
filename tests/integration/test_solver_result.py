@@ -119,3 +119,15 @@ class ResultTest(unittest.TestCase):
             result = make_result(self.game_map, self.state, "BFS", 60.0, "ERROR", error)
             with self.subTest(error=error), self.assertRaises(ValueError):
                 self.validate(result)
+
+    def test_error_result_allows_null_unvalidated_envelope_fields(self):
+        for field in ("map_id", "start_state", "timeout_s"):
+            with self.subTest(field=field):
+                result = make_result(self.game_map, self.state, "BFS", 60.0, "ERROR", "bad input")
+                result[field] = None
+                self.assertEqual(self.validate(result)[field], None)
+                non_error = make_result(self.game_map, self.state, "BFS", 60.0, "TIMEOUT")
+                non_error[field] = None
+                with self.assertRaises(ValueError):
+                    self.validate(non_error)
+

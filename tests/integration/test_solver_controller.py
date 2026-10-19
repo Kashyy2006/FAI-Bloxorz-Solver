@@ -148,6 +148,7 @@ class ControllerTest(unittest.TestCase):
                 self.assertFalse(self.controller.busy)
 
     def test_unsupported_switch_is_an_error_not_a_replay_crash(self):
+        self.controller.supported_actions = frozenset(("UP", "DOWN", "LEFT", "RIGHT"))
         self.run_command("BFS")
         self.controller.worker.result = solved_result(self.game_map, self.state,
                                                      actions=["SWITCH"])
@@ -356,7 +357,7 @@ class RealSolverReplayTest(unittest.TestCase):
         game_map = load("basic_01.json")
         # Start after a manual move, so solving from the level start would fail
         # the expected length and final-state checks.
-        current = _move(start_of(game_map), "RIGHT", game_map["grid"])
+        current = _move(start_of(game_map), "RIGHT", game_map)
         for algorithm in ("BFS", "DFS", "UCS", "ASTAR"):
             with self.subTest(algorithm=algorithm):
                 controller = SolverController(_move)
@@ -369,7 +370,7 @@ class RealSolverReplayTest(unittest.TestCase):
                         action = controller.update(1, ready=True)
                         if action:
                             emitted.append(action)
-                            state = _move(state, action, game_map["grid"])
+                            state = _move(state, action, game_map)
                             self.assertIsNotNone(state)
                         if not controller.busy:
                             break
@@ -384,6 +385,46 @@ class RealSolverReplayTest(unittest.TestCase):
                 finally:
                     controller.reset()
                     controller.worker._thread.join(3)
+
+    def test_all_algorithms_solve_and_replay_advanced_bridge_and_split_from_mid_game(self):
+        from src.gui.manual.game import _initial_state
+        for filename, manual_moves in (
+            ("advanced_bridge_01.json", ("RIGHT", "RIGHT")),
+            ("advanced_split_01.json", ("RIGHT", "RIGHT", "SWITCH")),
+        ):
+            game_map = load(filename)
+            current = _initial_state(game_map)
+            for move in manual_moves:
+                current = _move(current, move, game_map)
+                self.assertIsNotNone(current)
+            for algorithm in ("BFS", "DFS", "UCS", "ASTAR"):
+                with self.subTest(map=filename, algorithm=algorithm):
+                    controller = SolverController(_move)
+                    try:
+                        controller.run(algorithm, game_map, current)
+                        state = controller.take_restore_state()
+                        self.assertEqual(state, current)
+                        deadline = time.monotonic() + 3
+                        emitted = []
+                        while time.monotonic() < deadline:
+                            action = controller.update(1, ready=True)
+                            if action:
+                                emitted.append(action)
+                                state = _move(state, action, game_map)
+                                self.assertIsNotNone(state)
+                            if not controller.busy:
+                                break
+                            time.sleep(0.001)
+                        self.assertFalse(controller.busy)
+                        self.assertEqual(controller.result["status"], "SOLVED")
+                        self.assertEqual(emitted, controller.result["actions"])
+                        self.assertEqual(state["mode"], "UPRIGHT")
+                        row, col = state["cells"][0]
+                        self.assertEqual(game_map["grid"][row][col], "goal")
+                    finally:
+                        controller.reset()
+                        if controller.worker._thread:
+                            controller.worker._thread.join(3)
 
     def test_error_panel_renders_with_headless_pygame(self):
         pygame.init()
@@ -401,3 +442,4 @@ class RealSolverReplayTest(unittest.TestCase):
             self.assertEqual(controller.result["status"], "ERROR")
         finally:
             pygame.quit()
+
