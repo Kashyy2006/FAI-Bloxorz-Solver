@@ -91,11 +91,11 @@ class WorkerTest(unittest.TestCase):
             return {"status": "CANCELLED", "algorithm": algorithm}
 
         worker = SolverWorker(slow_solve)
-        worker.start({}, {}, "BFS")
+        worker.start(load("basic_01.json"), start_of(load("basic_01.json")), "BFS")
         worker.cancel()
         self.assertEqual(wait_result(worker)["status"], "CANCELLED")
 
-        worker.start({}, {}, "DFS")
+        worker.start(load("basic_01.json"), start_of(load("basic_01.json")), "DFS")
         worker.discard()  # e.g. level changed: result must be ignored
         time.sleep(0.1)
         self.assertIsNone(worker.poll())

@@ -86,7 +86,7 @@
     },
     {
       "id": "fragile_01",
-      "path": "data/maps/prepared/fragile_01.json",
+      "path": "data/maps/fragile_01.json",
       "group": "fragile",
       "difficulty": "medium",
       "sha256": "f0c9f597865d873be0dfdb637b233e6f5864d173c0e6142cd1fa2d5910880065",
@@ -107,7 +107,7 @@
     },
     {
       "id": "fragile_02",
-      "path": "data/maps/prepared/fragile_02.json",
+      "path": "data/maps/fragile_02.json",
       "group": "fragile",
       "difficulty": "hard",
       "sha256": "52a1d57f1ff29d43b9c192b394da1b4a34600c615faa289a5f57bd927af11c22",
@@ -128,7 +128,7 @@
     },
     {
       "id": "bridge_01",
-      "path": "data/maps/prepared/bridge_01.json",
+      "path": "data/maps/bridge_01.json",
       "group": "bridge",
       "difficulty": "medium",
       "sha256": "5193bb461a7428daa4f80e75feaff6d81d77ad2357f0cf220d06f5cfa7d2f2d0",
@@ -149,7 +149,7 @@
     },
     {
       "id": "soft_toggle_01",
-      "path": "data/maps/prepared/soft_toggle_01.json",
+      "path": "data/maps/soft_toggle_01.json",
       "group": "soft_toggle",
       "difficulty": "medium",
       "sha256": "2477fa5f52803460ff8312c48cb6e7cde0f9f450a35bc1c8b2edf5760cba8724",
@@ -170,7 +170,7 @@
     },
     {
       "id": "soft_toggle_02",
-      "path": "data/maps/prepared/soft_toggle_02.json",
+      "path": "data/maps/soft_toggle_02.json",
       "group": "soft_toggle",
       "difficulty": "hard",
       "sha256": "6df8ab61461472229b9b67103b9a67023b596fdea2122549668c5855b7edae52",
@@ -191,7 +191,7 @@
     },
     {
       "id": "heavy_01",
-      "path": "data/maps/prepared/heavy_01.json",
+      "path": "data/maps/heavy_01.json",
       "group": "heavy",
       "difficulty": "medium",
       "sha256": "ed524df786d5a45de4327eb547efd3bc1b82d27aaa5c486942cd0ec368f71301",
@@ -212,7 +212,7 @@
     },
     {
       "id": "heavy_02",
-      "path": "data/maps/prepared/heavy_02.json",
+      "path": "data/maps/heavy_02.json",
       "group": "heavy",
       "difficulty": "hard",
       "sha256": "bf316e8d374073a2db4680b78fd4727b15a9c38ead94241c167ac10125dabae7",
@@ -233,7 +233,7 @@
     },
     {
       "id": "permanent_open_01",
-      "path": "data/maps/prepared/permanent_open_01.json",
+      "path": "data/maps/permanent_open_01.json",
       "group": "permanent",
       "difficulty": "hard",
       "sha256": "ec414b321005d459073f0c17e3e9d3aaa2ca33ced426a698bc72dd5e6745312d",
@@ -254,7 +254,7 @@
     },
     {
       "id": "permanent_close_01",
-      "path": "data/maps/prepared/permanent_close_01.json",
+      "path": "data/maps/permanent_close_01.json",
       "group": "permanent",
       "difficulty": "medium",
       "sha256": "061efc9ed735a294918e9fc7556cad82a2048d61fe22b415cbfb40cc3425ec47",
@@ -275,7 +275,7 @@
     },
     {
       "id": "split_merge_01",
-      "path": "data/maps/prepared/split_merge_01.json",
+      "path": "data/maps/split_merge_01.json",
       "group": "split_merge",
       "difficulty": "medium",
       "sha256": "d32867d120508c26d643b8395f7aafcbe5d08441ce8b6c4a752875e0eb3fb0b2",
@@ -296,7 +296,7 @@
     },
     {
       "id": "split_merge_02",
-      "path": "data/maps/prepared/split_merge_02.json",
+      "path": "data/maps/split_merge_02.json",
       "group": "split_merge",
       "difficulty": "hard",
       "sha256": "d3c32d97f35785bf096c7c2030bdd2acb807631e318b5dd3623b8dae98bc2304",
@@ -317,7 +317,7 @@
     },
     {
       "id": "combined_01",
-      "path": "data/maps/prepared/combined_01.json",
+      "path": "data/maps/combined_01.json",
       "group": "combined",
       "difficulty": "hard",
       "sha256": "4be3878b39afcf4b0f6543cb6a19a1ab87a5a2205dfdeb85b0d364d73ff7152a",
@@ -338,7 +338,7 @@
     },
     {
       "id": "combined_02",
-      "path": "data/maps/prepared/combined_02.json",
+      "path": "data/maps/combined_02.json",
       "group": "combined",
       "difficulty": "hard",
       "sha256": "6b8db0b63676c886b8f0021a8d24dc4fe5f35058bf7e63b50a0939b569b69b41",
@@ -359,7 +359,7 @@
     },
     {
       "id": "advanced_unsolvable_01",
-      "path": "data/maps/prepared/advanced_unsolvable_01.json",
+      "path": "data/maps/advanced_unsolvable_01.json",
       "group": "advanced_unsolvable",
       "difficulty": "easy",
       "sha256": "4694347ec1e0ef173df856b2f559df26ec59d963b25847475c5ce6d0682c9de9",

@@ -297,6 +297,8 @@ class RealSolverReplayTest(unittest.TestCase):
         for pause in (False, True):
             with self.subTest(pause_during_animation=pause):
                 game_map = load("basic_01.json")
+                from src.engine import parse_map
+                game_map = parse_map(game_map)
                 controllers, drawn = [], []
                 frame = 0
 

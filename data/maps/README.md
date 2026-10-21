@@ -2,20 +2,20 @@
 
 **Phụ trách:** Thành viên 4, phối hợp thành viên 1 về schema/engine. Chuẩn bị ngày 15/10/2026 theo [schema v1](../../docs/contracts/map-format.md).
 
-**Dữ liệu đã khóa ngày 17/10/2026:** 4 map basic ở root và **14 map nâng cao trong `prepared/`**, tổng **18 JSON** (14 adapted + 4 original). [Manifest](../map_bundle.json) khóa inventory, nguồn/hash và trạng thái riêng từng map; [hồ sơ kiểm tra](../references/map-bundle-evidence.md) ghi mục đích, witness/phân tích và mức tin cậy. Xem thêm [hash chuyển đổi](#dữ-liệu-đã-chuyển-đổi), [ghi chú Achraf](../references/achraf-map-conversion.md) và [ghi chú Frank](../references/frank-map-conversion.md). Dữ liệu đạt kiểm tra; engine/replay/solver chưa xác nhận, map nâng cao chưa đưa vào menu.
+**Dữ liệu đã khóa ngày 17/10/2026:** 4 map basic và **14 map nâng cao trong `data/maps/`**, tổng **18 JSON** (14 adapted + 4 original). [Manifest](../map_bundle.json) khóa inventory, nguồn/hash và trạng thái riêng từng map; [hồ sơ kiểm tra](../references/map-bundle-evidence.md) ghi mục đích, witness/phân tích và mức tin cậy. Xem thêm [hash chuyển đổi](#dữ-liệu-đã-chuyển-đổi), [ghi chú Achraf](../references/achraf-map-conversion.md) và [ghi chú Frank](../references/frank-map-conversion.md). Dữ liệu đạt kiểm tra; engine/replay/solver chưa xác nhận, GUI nạp các map hợp lệ trực tiếp từ `data/maps/`.
 
-Bộ khởi tạo có 4 map dùng chung cho GUI và các solver. Chỉ có `floor`, `void`, `goal`; tất cả ở mức `easy`, `bridges=[]`, `switches=[]`. Phần nâng cao đã được bổ sung trong prepared; bộ dữ liệu chưa có số đo benchmark cuối kỳ.
+Bộ khởi tạo có 4 map dùng chung cho GUI và các solver. Chỉ có `floor`, `void`, `goal`; tất cả ở mức `easy`, `bridges=[]`, `switches=[]`. Phần nâng cao đã được bổ sung trong `data/maps/`; bộ dữ liệu chưa có số đo benchmark cuối kỳ.
 
 **Trạng thái:** JSON và test dữ liệu đã được chuẩn bị. Lời giải, chu trình và tập trạng thái dưới đây là oracle đối chiếu từ contract/nguồn và rà luật bằng tay; **chưa nghiệm thu replay bằng engine thật**. Lượt kiểm tra ngày 17/10 chỉ kiểm tra dữ liệu và test thành phần TV4. Nhãn `expected_solvable` không phải kết quả solver và không được dùng để quyết định status.
 
 ## Danh mục
 
-| ID / file | Kích thước | Start | Goal | Kỳ vọng có lời giải | Nguồn / vai trò |
-| --- | --- | --- | --- | --- | --- |
-| [basic_01](basic_01.json) | 3 × 7 | [1,1] | [1,4] | true | Ví dụ nội bộ trong contract, hai bước |
-| [basic_turn_01](basic_turn_01.json) | 4 × 4 | [0,2] | [2,3] | true | Chuyển từ map `level_2_2`, đổi hướng và nằm qua goal |
-| [basic_cycle_01](basic_cycle_01.json) | 7 × 9 | [1,1] | [4,7] | true | Nội bộ, chu trình và nhánh phụ |
-| [basic_unsolvable_01](basic_unsolvable_01.json) | 3 × 9 | [1,1] | [1,7] | false | Nội bộ, goal cô lập |
+| ID / file                                       | Kích thước | Start | Goal  | Kỳ vọng có lời giải | Nguồn / vai trò                                      |
+| ----------------------------------------------- | ---------- | ----- | ----- | ------------------- | ---------------------------------------------------- |
+| [basic_01](basic_01.json)                       | 3 × 7      | [1,1] | [1,4] | true                | Ví dụ nội bộ trong contract, hai bước                |
+| [basic_turn_01](basic_turn_01.json)             | 4 × 4      | [0,2] | [2,3] | true                | Chuyển từ map `level_2_2`, đổi hướng và nằm qua goal |
+| [basic_cycle_01](basic_cycle_01.json)           | 7 × 9      | [1,1] | [4,7] | true                | Nội bộ, chu trình và nhánh phụ                       |
+| [basic_unsolvable_01](basic_unsolvable_01.json) | 3 × 9      | [1,1] | [1,7] | false               | Nội bộ, goal cô lập                                  |
 
 Nguồn từng map và nhật ký khảo sát ở [data/references](../references/README.md); map chuyển đổi có [ghi chú riêng](../references/basic_turn_01.md) và giấy phép đi kèm. Map đổi hướng giữ nguyên dữ liệu nguồn 4 × 4, thay cho phương án tự thiết kế trên hình chữ nhật.
 
@@ -31,16 +31,16 @@ Tọa độ `[row, col]` từ 0. Trong các bảng, U/H/V viết tắt cho UPRIG
 
 Chuỗi tham chiếu: `DOWN, RIGHT, UP, LEFT, DOWN, DOWN, RIGHT`.
 
-| Sau hành động | Mode | Cells | Kỳ vọng khi replay |
-| --- | --- | --- | --- |
-| Bắt đầu | U | [[0,2]] | Chưa thắng |
-| DOWN | V | [[1,2],[2,2]] | OK |
-| RIGHT | V | [[1,3],[2,3]] | OK: nằm qua goal, chưa thắng |
-| UP | U | [[0,3]] | OK |
-| LEFT | H | [[0,1],[0,2]] | OK |
-| DOWN | H | [[1,1],[1,2]] | OK |
-| DOWN | H | [[2,1],[2,2]] | OK |
-| RIGHT | U | [[2,3]] | WON |
+| Sau hành động | Mode | Cells         | Kỳ vọng khi replay           |
+| ------------- | ---- | ------------- | ---------------------------- |
+| Bắt đầu       | U    | [[0,2]]       | Chưa thắng                   |
+| DOWN          | V    | [[1,2],[2,2]] | OK                           |
+| RIGHT         | V    | [[1,3],[2,3]] | OK: nằm qua goal, chưa thắng |
+| UP            | U    | [[0,3]]       | OK                           |
+| LEFT          | H    | [[0,1],[0,2]] | OK                           |
+| DOWN          | H    | [[1,1],[1,2]] | OK                           |
+| DOWN          | H    | [[2,1],[2,2]] | OK                           |
+| RIGHT         | U    | [[2,3]]       | WON                          |
 
 Length/cost đề xuất = 7. Test gốc của nguồn cũng ghi độ dài kỳ vọng 7; chưa chạy solver của repo để xác nhận. Hai hành động đầu là witness riêng cho ca goal bị khối nằm chiếm mà `is_goal` vẫn false. Không cần sửa goal hoặc loại ô nào của nguồn.
 
@@ -56,11 +56,11 @@ Mỗi chuỗi trên bắt đầu lại từ initial state. Không nối chuỗi 
 
 Oracle dự kiến gồm đúng 3 state đạt được. Bảng dưới liệt kê đầy đủ 4 hướng từ mỗi state theo luật cơ bản:
 
-| State | UP / DOWN | LEFT | RIGHT |
-| --- | --- | --- | --- |
-| U [[1,1]] | LOST | LOST | H [[1,2],[1,3]] |
-| H [[1,2],[1,3]] | LOST | U [[1,1]] | U [[1,4]] |
-| U [[1,4]] | LOST | H [[1,2],[1,3]] | LOST |
+| State           | UP / DOWN | LEFT            | RIGHT           |
+| --------------- | --------- | --------------- | --------------- |
+| U [[1,1]]       | LOST      | LOST            | H [[1,2],[1,3]] |
+| H [[1,2],[1,3]] | LOST      | U [[1,1]]       | U [[1,4]]       |
+| U [[1,4]]       | LOST      | H [[1,2],[1,3]] | LOST            |
 
 Goal [1,7] nằm ngoài tập trên. Đây là chứng minh theo bố trí và bảng luật, chưa phải bằng chứng engine chạy: khi có engine cần duyệt `successors` đến cạn frontier, đối chiếu tập 3 full key và không có goal. Solver chuẩn phải trả UNSOLVABLE, các trường actions/length/cost là null; timeout không chứng minh vô nghiệm.
 
@@ -83,8 +83,8 @@ Test map kiểm tra danh mục, layout/start/goal, metadata và kiểu dữ li�
 
 Chuẩn bị trên code nền `b08210650ad836d47283806d35682ec92258322d`, Python 3.12.10. Hash SHA256 đối chiếu lại từ byte JSON ngày 17/10/2026 tại HEAD nền `e79f416115ee98513e9b8f037185f66d8f0c8ff1`:
 
-| ID | SHA256 |
-| --- | --- |
+| ID                    | SHA256                                                             |
+| --------------------- | ------------------------------------------------------------------ |
 | `basic_01` | `104bf008099b4a760cf79acdcf29ae9caf0b0d7c9c33df42286d7371f4236e58` |
 | `basic_turn_01` | `aad9c38aae3c630ac3e9d4f36cc1d8a91bf4440505e7082b94a0fda2b95bb2d3` |
 | `basic_cycle_01` | `6054d54a00890ac32d90886e5125e4cd0d80b9312d72e1fd64c1b04c7428f82f` |
@@ -105,17 +105,17 @@ Hash khóa bản dữ liệu đã chuẩn bị; chưa tuyên bố bộ map đã 
 
 Bốn map hiện có chỉ thuộc nhóm basic (đã đủ 4). Chưa có map cho các nhóm dưới đây; mỗi map bổ sung chỉ tính vào một nhóm chính:
 
-| Nhóm chính còn thiếu | Cần thêm tối thiểu | Mục tiêu thêm | Phân biệt cần có |
-| --- | ---: | ---: | --- |
-| Fragile | 2 | 2 | Nằm được đỡ / đứng rơi, hai vai trò hoặc bố trí khác nhau |
-| Cầu | 1 | 1 | Mở/đóng và witness cấu hình cầu |
-| Soft/toggle | 1 | 2 | Nhấn mới, giữ đè, rời rồi nhấn lại |
-| Heavy | 1 | 2 | Nằm/khối nhỏ không nhấn, UPRIGHT mới nhấn |
-| Permanent | 2 | 2 | Một map đặt mở, một map đặt đóng |
-| Split/merge | 1 | 2 | Tách, SWITCH, active sau sort và nhập |
-| Kết hợp | 2 | 2 | Có cầu/công tắc cùng split/merge |
-| Vô nghiệm nâng cao | 1 | 1 | Phân tích kỳ vọng rõ, chưa coi là chứng minh engine |
-| **Tổng bổ sung** | **11** | **14** | **Cộng 4 basic = tối thiểu 15, mục tiêu 18 map** |
+| Nhóm chính còn thiếu | Cần thêm tối thiểu | Mục tiêu thêm | Phân biệt cần có                                          |
+| -------------------- | -----------------: | ------------: | --------------------------------------------------------- |
+| Fragile              |                  2 |             2 | Nằm được đỡ / đứng rơi, hai vai trò hoặc bố trí khác nhau |
+| Cầu                  |                  1 |             1 | Mở/đóng và witness cấu hình cầu                           |
+| Soft/toggle          |                  1 |             2 | Nhấn mới, giữ đè, rời rồi nhấn lại                        |
+| Heavy                |                  1 |             2 | Nằm/khối nhỏ không nhấn, UPRIGHT mới nhấn                 |
+| Permanent            |                  2 |             2 | Một map đặt mở, một map đặt đóng                          |
+| Split/merge          |                  1 |             2 | Tách, SWITCH, active sau sort và nhập                     |
+| Kết hợp              |                  2 |             2 | Có cầu/công tắc cùng split/merge                          |
+| Vô nghiệm nâng cao   |                  1 |             1 | Phân tích kỳ vọng rõ, chưa coi là chứng minh engine       |
+| **Tổng bổ sung**     |             **11** |        **14** | **Cộng 4 basic = tối thiểu 15, mục tiêu 18 map**          |
 
 Lượt kiểm tra dữ liệu chưa tiếp nhận hoặc tự thiết kế map mới. Nguồn ngoài cho các nhóm còn thiếu được ghi trong [nhật ký nguồn](../references/README.md).
 
@@ -127,43 +127,43 @@ Nguồn **A** = AchrafMez, commit `898188ed31cf31d4ce4c39fec3e3846ed037eee9`, MI
 
 ### Danh sách 4 + 14
 
-Mỗi dòng tính đúng một nhóm chính, kể cả khi có cơ chế phụ. Difficulty dưới đây là **dự kiến**, chưa đo solver. 14 ID nâng cao đã có file `data/maps/prepared/<id>.json`, gồm 13 adapted và một original vô nghiệm. Bốn ID basic giữ đường dẫn hiện tại.
+Mỗi dòng tính đúng một nhóm chính, kể cả khi có cơ chế phụ. Difficulty dưới đây là **dự kiến**, chưa đo solver. 14 ID nâng cao đã có file `data/maps/<id>.json`, gồm 13 adapted và một original vô nghiệm. Bốn ID basic giữ đường dẫn hiện tại.
 
-| Bộ | ID | Nguồn / level | Nhóm chính | Difficulty | Chuyển đổi và vai trò kiểm tra |
-| --- | --- | --- | --- | --- | --- |
-| 15 | `basic_01` | Original, ví dụ contract | Basic | easy | Giữ nguyên; hai bước, đứng vào goal |
-| 15 | `basic_turn_01` | Matías `level_2_2`, MIT, nguồn cũ | Basic | easy | Giữ nguyên; đổi hướng, nằm qua goal chưa thắng |
-| 15 | `basic_cycle_01` | Original, nguồn cũ | Basic | easy | Giữ nguyên; chu trình và nhánh phụ |
-| 15 | `basic_unsolvable_01` | Original, nguồn cũ | Basic | easy | Giữ nguyên; goal cô lập, oracle ba state |
-| 15 | `fragile_01` | A `levels/level3.txt` | Fragile | medium | Pad void cuối hàng; giữ fragile; witness nằm được đỡ/đứng rơi |
-| 15 | `fragile_02` | A `levels/level7.txt` | Fragile | hard | Giữ các dải fragile và ô floor xen giữa; bố cục khác `level3`, kiểm bước rời fragile |
-| 15 | `bridge_01` | F 14 `levelub` (210362) | Cầu | medium | Đổi x/y sang row/col; hai nhóm cầu ban đầu đóng, hai heavy toggle điều khiển riêng; kiểm cùng vị trí khác bridge bits |
-| 15 | `soft_toggle_01` | A `levels/level4.txt` | Soft/toggle | medium | Giữ soft A→a, heavy 1→b và cả hai cầu; soft nhấn/rời/nhấn lại; không tính thêm vào nhóm heavy |
-| +3 | `soft_toggle_02` | A `levels/level6.txt` | Soft/toggle | hard | Giữ A/B/C và ba nhóm cầu a/b/c; khác bài hai cầu, kiểm nhiều bridge bits độc lập |
-| 15 | `heavy_01` | A `levels/level5.txt` | Heavy | medium | 0→a; giữ layout, witness nằm không nhấn và UPRIGHT nhấn |
-| +3 | `heavy_02` | A `levels/level10.txt` | Heavy | hard | 0→a và fragile; kiểm trọng lượng công tắc cùng đường fragile, khác bài heavy đơn |
-| 15 | `permanent_open_01` | F 18 `levelsc` (284933) | Permanent | hard | Giữ on/off/toggle; chọn soft [1,7] đặt mở [4,8],[4,9], nhấn lại vẫn mở; giữ các switch khác |
-| 15 | `permanent_close_01` | F 11 `leveldw` (291709) | Permanent | medium | Cầu [0,6],[1,6] ban đầu mở; soft [6,8] đặt đóng, nhấn lại vẫn đóng |
-| 15 | `split_merge_01` | F 8 `levelss` (499707) | Split/merge | medium | Split [4,4]→[[1,10],[7,10]], active_destination=0; tách, SWITCH và nhập theo cạnh |
-| +3 | `split_merge_02` | F 9 `levelre` (074355) | Split/merge | hard | Split [4,13]→[[4,12],[4,2]], active_destination=0; sau sort active=1, đường nối khác `levelss` |
-| 15 | `combined_01` | F 15 `levelht` (098598) | Kết hợp | hard | Giữ soft/heavy, toggle/off, cầu mở/đóng và split [5,7]→[[1,13],[8,1]]; kiểm khối nhỏ không nhấn heavy |
-| 15 | `combined_02` | F 20 `leveltb` (543019) | Kết hợp | hard | Giữ soft toggle/off, cầu và split [4,7]→[[1,13],[7,13]]; khối nhỏ nhấn soft và giữ đè khi đổi điều khiển |
-| 15 | `advanced_unsolvable_01` | Original, JSON và phân tích bên dưới | Vô nghiệm nâng cao | easy | Cầu luôn đóng và soft chỉ đặt đóng; chứng cứ bất biến cầu, khác goal cô lập basic |
+| Bộ  | ID                       | Nguồn / level                        | Nhóm chính         | Difficulty | Chuyển đổi và vai trò kiểm tra                                                                                        |
+| --- | ------------------------ | ------------------------------------ | ------------------ | ---------- | --------------------------------------------------------------------------------------------------------------------- |
+| 15  | `basic_01`               | Original, ví dụ contract             | Basic              | easy       | Giữ nguyên; hai bước, đứng vào goal                                                                                   |
+| 15  | `basic_turn_01`          | Matías `level_2_2`, MIT, nguồn cũ    | Basic              | easy       | Giữ nguyên; đổi hướng, nằm qua goal chưa thắng                                                                        |
+| 15  | `basic_cycle_01`         | Original, nguồn cũ                   | Basic              | easy       | Giữ nguyên; chu trình và nhánh phụ                                                                                    |
+| 15  | `basic_unsolvable_01`    | Original, nguồn cũ                   | Basic              | easy       | Giữ nguyên; goal cô lập, oracle ba state                                                                              |
+| 15  | `fragile_01`             | A `levels/level3.txt`                | Fragile            | medium     | Pad void cuối hàng; giữ fragile; witness nằm được đỡ/đứng rơi                                                         |
+| 15  | `fragile_02`             | A `levels/level7.txt`                | Fragile            | hard       | Giữ các dải fragile và ô floor xen giữa; bố cục khác `level3`, kiểm bước rời fragile                                  |
+| 15  | `bridge_01`              | F 14 `levelub` (210362)              | Cầu                | medium     | Đổi x/y sang row/col; hai nhóm cầu ban đầu đóng, hai heavy toggle điều khiển riêng; kiểm cùng vị trí khác bridge bits |
+| 15  | `soft_toggle_01`         | A `levels/level4.txt`                | Soft/toggle        | medium     | Giữ soft A→a, heavy 1→b và cả hai cầu; soft nhấn/rời/nhấn lại; không tính thêm vào nhóm heavy                         |
+| +3  | `soft_toggle_02`         | A `levels/level6.txt`                | Soft/toggle        | hard       | Giữ A/B/C và ba nhóm cầu a/b/c; khác bài hai cầu, kiểm nhiều bridge bits độc lập                                      |
+| 15  | `heavy_01`               | A `levels/level5.txt`                | Heavy              | medium     | 0→a; giữ layout, witness nằm không nhấn và UPRIGHT nhấn                                                               |
+| +3  | `heavy_02`               | A `levels/level10.txt`               | Heavy              | hard       | 0→a và fragile; kiểm trọng lượng công tắc cùng đường fragile, khác bài heavy đơn                                      |
+| 15  | `permanent_open_01`      | F 18 `levelsc` (284933)              | Permanent          | hard       | Giữ on/off/toggle; chọn soft [1,7] đặt mở [4,8],[4,9], nhấn lại vẫn mở; giữ các switch khác                           |
+| 15  | `permanent_close_01`     | F 11 `leveldw` (291709)              | Permanent          | medium     | Cầu [0,6],[1,6] ban đầu mở; soft [6,8] đặt đóng, nhấn lại vẫn đóng                                                    |
+| 15  | `split_merge_01`         | F 8 `levelss` (499707)               | Split/merge        | medium     | Split [4,4]→[[1,10],[7,10]], active_destination=0; tách, SWITCH và nhập theo cạnh                                     |
+| +3  | `split_merge_02`         | F 9 `levelre` (074355)               | Split/merge        | hard       | Split [4,13]→[[4,12],[4,2]], active_destination=0; sau sort active=1, đường nối khác `levelss`                        |
+| 15  | `combined_01`            | F 15 `levelht` (098598)              | Kết hợp            | hard       | Giữ soft/heavy, toggle/off, cầu mở/đóng và split [5,7]→[[1,13],[8,1]]; kiểm khối nhỏ không nhấn heavy                 |
+| 15  | `combined_02`            | F 20 `leveltb` (543019)              | Kết hợp            | hard       | Giữ soft toggle/off, cầu và split [4,7]→[[1,13],[7,13]]; khối nhỏ nhấn soft và giữ đè khi đổi điều khiển              |
+| 15  | `advanced_unsolvable_01` | Original, JSON và phân tích bên dưới | Vô nghiệm nâng cao | easy       | Cầu luôn đóng và soft chỉ đặt đóng; chứng cứ bất biến cầu, khác goal cô lập basic                                     |
 
 ### Kiểm độ phủ và bộ tối thiểu
 
-| Nhóm chính | Bộ 15 | Bộ 18 | Phân biệt đã dành vai trò |
-| --- | ---: | ---: | --- |
-| Basic | 4 | 4 | Hai bước / đổi hướng / chu trình / vô nghiệm |
-| Fragile | 2 | 2 | Hai bố cục, nằm được đỡ và đứng rơi |
-| Cầu | 1 | 1 | Hai nhóm cầu đóng, mở/đóng độc lập và full bridge key |
-| Soft/toggle | 1 | 2 | Nhấn mới/rời/nhấn lại; giữ đè bằng khối tách ở `combined_02` |
-| Heavy | 1 | 2 | Nằm không nhấn / đứng nhấn; khối nhỏ không nhấn ở `combined_01` |
-| Permanent | 2 | 2 | Đặt mở và đặt đóng, kích hoạt lại không đảo |
-| Split/merge | 1 | 2 | Tách / SWITCH / nhập; ca đảo active nằm ở bộ +3 |
-| Kết hợp | 2 | 2 | Cầu/công tắc cùng split, gồm tương tác khối nhỏ |
-| Vô nghiệm nâng cao | 1 | 1 | Bất biến cầu luôn đóng, không dùng timeout làm chứng minh |
-| **Tổng** | **15** | **18** | Mỗi ID chỉ tính một nhóm chính |
+| Nhóm chính         |  Bộ 15 |  Bộ 18 | Phân biệt đã dành vai trò                                       |
+| ------------------ | -----: | -----: | --------------------------------------------------------------- |
+| Basic              |      4 |      4 | Hai bước / đổi hướng / chu trình / vô nghiệm                    |
+| Fragile            |      2 |      2 | Hai bố cục, nằm được đỡ và đứng rơi                             |
+| Cầu                |      1 |      1 | Hai nhóm cầu đóng, mở/đóng độc lập và full bridge key           |
+| Soft/toggle        |      1 |      2 | Nhấn mới/rời/nhấn lại; giữ đè bằng khối tách ở `combined_02`    |
+| Heavy              |      1 |      2 | Nằm không nhấn / đứng nhấn; khối nhỏ không nhấn ở `combined_01` |
+| Permanent          |      2 |      2 | Đặt mở và đặt đóng, kích hoạt lại không đảo                     |
+| Split/merge        |      1 |      2 | Tách / SWITCH / nhập; ca đảo active nằm ở bộ +3                 |
+| Kết hợp            |      2 |      2 | Cầu/công tắc cùng split, gồm tương tác khối nhỏ                 |
+| Vô nghiệm nâng cao |      1 |      1 | Bất biến cầu luôn đóng, không dùng timeout làm chứng minh       |
+| **Tổng**           | **15** | **18** | Mỗi ID chỉ tính một nhóm chính                                  |
 
 Đủ mọi loại ô và cơ chế trong đề mục 2.5/3.1 của đề bài và contract ở **mức dữ liệu và hồ sơ phân tích tay**. Không đồng nghĩa các witness hoặc engine đã đạt. Ba map +3 thêm tình huống khác biệt cụ thể; không cần thêm basic hoặc nhiều bản cùng một level chỉ để đủ 18.
 
@@ -191,7 +191,7 @@ Blueprint 5 × 10, tọa độ từ 0. `.`=void, F=floor, S=floor+start, G=goal,
 
 Start [1,1], goal [1,7]; b01=[[1,4],[1,5]], initial_open=false; s01 tại [2,3], effect permanent, targets=[b01], open=false. Không fragile, heavy, split hoặc switch khác. `RIGHT, DOWN` dự kiến nhấn soft bằng khối nằm; cầu vẫn đóng.
 
-**Lập luận tay:** b01 ban đầu false và mọi kích hoạt chỉ đặt false, nên luôn là void. Không có teleport. Tập ô đỡ có hai thành phần không nối cạnh: trái (hàng 1–3, cột 1–3) chứa start, phải (hàng 1–3, cột 6–8) chứa goal; mọi nước lăn hợp lệ từ bên trái vẫn ở bên trái. Goal không tới được. Đã hiện thực thành [advanced_unsolvable_01.json](prepared/advanced_unsolvable_01.json) và kiểm dữ liệu. [Hồ sơ bất biến và witness](../references/map-bundle-evidence.md#advanced_unsolvable_01) giữ mức tin cậy manual_invariant; engine/replay/solver đều chưa chạy.
+**Lập luận tay:** b01 ban đầu false và mọi kích hoạt chỉ đặt false, nên luôn là void. Không có teleport. Tập ô đỡ có hai thành phần không nối cạnh: trái (hàng 1–3, cột 1–3) chứa start, phải (hàng 1–3, cột 6–8) chứa goal; mọi nước lăn hợp lệ từ bên trái vẫn ở bên trái. Goal không tới được. Đã hiện thực thành [advanced_unsolvable_01.json](advanced_unsolvable_01.json) và kiểm dữ liệu. [Hồ sơ bất biến và witness](../references/map-bundle-evidence.md#advanced_unsolvable_01) giữ mức tin cậy manual_invariant; engine/replay/solver đều chưa chạy.
 
 ### Loại trùng, dự phòng và bằng chứng kiểm tra
 
@@ -213,32 +213,25 @@ AI hỗ trợ đối chiếu đề bài/contract, chọn map, rà trùng và vi�
 
 Lượt chuẩn bị có AI hỗ trợ khảo sát nguồn, chuyển dữ liệu, viết test và tài liệu. Chưa chạy benchmark hoặc tạo số liệu hiệu năng; nhóm có thể dùng ghi nhận này khi tổng hợp phụ lục AI.
 
-## Fixture tích hợp nâng cao của TV1
-
-- `advanced_bridge_01.json`: soft toggle, heavy permanent, cầu đóng/mở và fragile. Chuỗi RIGHT × 6 thắng, tổng chi phí 10.
-- `advanced_split_01.json`: tách, chọn khối và nhập ngang. Chuỗi RIGHT × 7 thắng, tổng chi phí 7; có thể dùng Tab đổi khối để thử tay.
-- Đây là map nội bộ phục vụ nghiệm thu engine, chưa thay bộ benchmark cuối kỳ của TV4.
-- Hash basic_01 ở bảng trên đã cập nhật theo file sau merge; layout và metadata không đổi.
-
 ## Dữ liệu đã chuyển đổi
 
-Ngày 17/10/2026, chuyển từng lô nhỏ, kiểm dữ liệu draft rồi mới đưa vào `prepared/`. Chỉ là kiểm tra schema/liên kết/đối chiếu nguồn; engine, replay và solver thật **chưa chạy**. Không dùng nhãn khả giải cho các map adapted mới. Bốn basic ở root giữ nguyên.
+Ngày 17/10/2026, chuyển từng lô nhỏ, kiểm dữ liệu draft rồi mới đưa vào `data/maps/`. Chỉ là kiểm tra schema/liên kết/đối chiếu nguồn; engine, replay và solver thật **chưa chạy**. Không dùng nhãn khả giải cho các map adapted mới. Bốn basic ở root giữ nguyên.
 
-| Lô | ID / JSON | Nguồn | Kích thước | SHA256 byte | Dữ liệu | Engine | Replay/solver thật |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | [`fragile_01`](prepared/fragile_01.json) | achraf `level3` | 9 × 17 | `f0c9f597865d873be0dfdb637b233e6f5864d173c0e6142cd1fa2d5910880065` | Đạt | Chưa chạy | Chưa chạy |
-| 1 | [`fragile_02`](prepared/fragile_02.json) | achraf `level7` | 12 × 17 | `52a1d57f1ff29d43b9c192b394da1b4a34600c615faa289a5f57bd927af11c22` | Đạt | Chưa chạy | Chưa chạy |
-| 1 | [`soft_toggle_01`](prepared/soft_toggle_01.json) | achraf `level4` | 6 × 17 | `2477fa5f52803460ff8312c48cb6e7cde0f9f450a35bc1c8b2edf5760cba8724` | Đạt | Chưa chạy | Chưa chạy |
-| 2 | [`soft_toggle_02`](prepared/soft_toggle_02.json) | achraf `level6` | 10 × 17 | `6df8ab61461472229b9b67103b9a67023b596fdea2122549668c5855b7edae52` | Đạt | Chưa chạy | Chưa chạy |
-| 2 | [`heavy_01`](prepared/heavy_01.json) | achraf `level5` | 9 × 17 | `ed524df786d5a45de4327eb547efd3bc1b82d27aaa5c486942cd0ec368f71301` | Đạt | Chưa chạy | Chưa chạy |
-| 2 | [`heavy_02`](prepared/heavy_02.json) | achraf `level10` | 10 × 17 | `bf316e8d374073a2db4680b78fd4727b15a9c38ead94241c167ac10125dabae7` | Đạt | Chưa chạy | Chưa chạy |
-| 3 | [`bridge_01`](prepared/bridge_01.json) | frank `levelub` | 10 × 15 | `5193bb461a7428daa4f80e75feaff6d81d77ad2357f0cf220d06f5cfa7d2f2d0` | Đạt | Chưa chạy | Chưa chạy |
-| 3 | [`permanent_open_01`](prepared/permanent_open_01.json) | frank `levelsc` | 10 × 15 | `ec414b321005d459073f0c17e3e9d3aaa2ca33ced426a698bc72dd5e6745312d` | Đạt | Chưa chạy | Chưa chạy |
-| 3 | [`permanent_close_01`](prepared/permanent_close_01.json) | frank `leveldw` | 10 × 15 | `061efc9ed735a294918e9fc7556cad82a2048d61fe22b415cbfb40cc3425ec47` | Đạt | Chưa chạy | Chưa chạy |
-| 4 | [`split_merge_01`](prepared/split_merge_01.json) | frank `levelss` | 10 × 15 | `d32867d120508c26d643b8395f7aafcbe5d08441ce8b6c4a752875e0eb3fb0b2` | Đạt | Chưa chạy | Chưa chạy |
-| 4 | [`split_merge_02`](prepared/split_merge_02.json) | frank `levelre` | 10 × 15 | `d3c32d97f35785bf096c7c2030bdd2acb807631e318b5dd3623b8dae98bc2304` | Đạt | Chưa chạy | Chưa chạy |
-| 5 | [`combined_01`](prepared/combined_01.json) | frank `levelht` | 10 × 15 | `4be3878b39afcf4b0f6543cb6a19a1ab87a5a2205dfdeb85b0d364d73ff7152a` | Đạt | Chưa chạy | Chưa chạy |
-| 5 | [`combined_02`](prepared/combined_02.json) | frank `leveltb` | 10 × 15 | `6b8db0b63676c886b8f0021a8d24dc4fe5f35058bf7e63b50a0939b569b69b41` | Đạt | Chưa chạy | Chưa chạy |
+| Lô  | ID / JSON                                                | Nguồn            | Kích thước | SHA256 byte                                                        | Dữ liệu | Engine    | Replay/solver thật |
+| --- | -------------------------------------------------------- | ---------------- | ---------- | ------------------------------------------------------------------ | ------- | --------- | ------------------ |
+| 1   | [`fragile_01`](fragile_01.json)                 | achraf `level3`  | 9 × 17     | `f0c9f597865d873be0dfdb637b233e6f5864d173c0e6142cd1fa2d5910880065` | Đạt     | Chưa chạy | Chưa chạy          |
+| 1   | [`fragile_02`](fragile_02.json)                 | achraf `level7`  | 12 × 17    | `52a1d57f1ff29d43b9c192b394da1b4a34600c615faa289a5f57bd927af11c22` | Đạt     | Chưa chạy | Chưa chạy          |
+| 1   | [`soft_toggle_01`](soft_toggle_01.json)         | achraf `level4`  | 6 × 17     | `2477fa5f52803460ff8312c48cb6e7cde0f9f450a35bc1c8b2edf5760cba8724` | Đạt     | Chưa chạy | Chưa chạy          |
+| 2   | [`soft_toggle_02`](soft_toggle_02.json)         | achraf `level6`  | 10 × 17    | `6df8ab61461472229b9b67103b9a67023b596fdea2122549668c5855b7edae52` | Đạt     | Chưa chạy | Chưa chạy          |
+| 2   | [`heavy_01`](heavy_01.json)                     | achraf `level5`  | 9 × 17     | `ed524df786d5a45de4327eb547efd3bc1b82d27aaa5c486942cd0ec368f71301` | Đạt     | Chưa chạy | Chưa chạy          |
+| 2   | [`heavy_02`](heavy_02.json)                     | achraf `level10` | 10 × 17    | `bf316e8d374073a2db4680b78fd4727b15a9c38ead94241c167ac10125dabae7` | Đạt     | Chưa chạy | Chưa chạy          |
+| 3   | [`bridge_01`](bridge_01.json)                   | frank `levelub`  | 10 × 15    | `5193bb461a7428daa4f80e75feaff6d81d77ad2357f0cf220d06f5cfa7d2f2d0` | Đạt     | Chưa chạy | Chưa chạy          |
+| 3   | [`permanent_open_01`](permanent_open_01.json)   | frank `levelsc`  | 10 × 15    | `ec414b321005d459073f0c17e3e9d3aaa2ca33ced426a698bc72dd5e6745312d` | Đạt     | Chưa chạy | Chưa chạy          |
+| 3   | [`permanent_close_01`](permanent_close_01.json) | frank `leveldw`  | 10 × 15    | `061efc9ed735a294918e9fc7556cad82a2048d61fe22b415cbfb40cc3425ec47` | Đạt     | Chưa chạy | Chưa chạy          |
+| 4   | [`split_merge_01`](split_merge_01.json)         | frank `levelss`  | 10 × 15    | `d32867d120508c26d643b8395f7aafcbe5d08441ce8b6c4a752875e0eb3fb0b2` | Đạt     | Chưa chạy | Chưa chạy          |
+| 4   | [`split_merge_02`](split_merge_02.json)         | frank `levelre`  | 10 × 15    | `d3c32d97f35785bf096c7c2030bdd2acb807631e318b5dd3623b8dae98bc2304` | Đạt     | Chưa chạy | Chưa chạy          |
+| 5   | [`combined_01`](combined_01.json)               | frank `levelht`  | 10 × 15    | `4be3878b39afcf4b0f6543cb6a19a1ab87a5a2205dfdeb85b0d364d73ff7152a` | Đạt     | Chưa chạy | Chưa chạy          |
+| 5   | [`combined_02`](combined_02.json)               | frank `leveltb`  | 10 × 15    | `6b8db0b63676c886b8f0021a8d24dc4fe5f35058bf7e63b50a0939b569b69b41` | Đạt     | Chưa chạy | Chưa chạy          |
 
 Đã đối chiếu dữ liệu **trước khi chuyển từng lô**: lô 1 gồm 3 map (đại diện `fragile_01` được kiểm trước), lô 2 gồm 3 map, lô 3 gồm 3 map (đại diện `bridge_01` được kiểm trước), lô 4 và 5 mỗi lô 2 map. Mỗi lần kiểm theo lô chạy **9/9 test chuyển đổi đạt**; sau cùng bổ sung kiểm toàn bộ ánh xạ Achraf, hash/catalog/notes/notice. Không giữ JSON draft chưa đạt trong inventory.
 
@@ -256,9 +249,9 @@ Bộ cuối đã bổ sung map vô nghiệm nâng cao và khóa manifest/độ p
 
 Ngày 17/10/2026, tại HEAD nền `c85494fcac8fa0836e914f0cc7d9f39a4565e78c`, giữ nguyên byte bốn basic và 13 bản chuyển đổi, bổ sung duy nhất fixture original. Tổng 18 map đủ chín nhóm chính theo bảng độ phủ; draft và bản trùng không được tính. [Manifest](../map_bundle.json) chứa đường dẫn từ repo root, source, notice, nhóm, difficulty dự kiến, SHA256, hồ sơ/mức tin cậy và trạng thái riêng từng map. Manifest nằm ngoài thư mục maps để GUI quét JSON root không nhầm thành màn chơi.
 
-| ID / JSON | Nguồn | Kích thước | SHA256 byte | Dữ liệu | Engine | Replay/solver thật |
-| --- | --- | --- | --- | --- | --- | --- |
-| [`advanced_unsolvable_01`](prepared/advanced_unsolvable_01.json) | original, Team-created | 5 × 10 | `4694347ec1e0ef173df856b2f559df26ec59d963b25847475c5ce6d0682c9de9` | Đạt | Chưa chạy | Chưa chạy |
+| ID / JSON                                                        | Nguồn                  | Kích thước | SHA256 byte                                                        | Dữ liệu | Engine    | Replay/solver thật |
+| ---------------------------------------------------------------- | ---------------------- | ---------- | ------------------------------------------------------------------ | ------- | --------- | ------------------ |
+| [`advanced_unsolvable_01`](advanced_unsolvable_01.json) | original, Team-created | 5 × 10     | `4694347ec1e0ef173df856b2f559df26ec59d963b25847475c5ce6d0682c9de9` | Đạt     | Chưa chạy | Chưa chạy          |
 
 [Hồ sơ kiểm tra](../references/map-bundle-evidence.md) ghi nguồn đã xem/lý do tự tạo, witness hoặc phân tích theo từng ID và giới hạn reachability. Nhãn false của fixture mới dựa trên bất biến cầu luôn đóng, chưa phải kết quả solver. Chống trùng kiểm cả tám phép quay/đối xứng, tịnh tiến và padding, giữ hình học/start/goal kể cả khi bỏ khác biệt loại ô phụ.
 
@@ -268,4 +261,3 @@ python -m unittest discover -s tests/solvers -p 'test_TV4_*.py' -v
 ```
 
 Kiểm tra bằng Python 3.12.10: **123/123 test thành phần đạt, không skip**, gồm 8 test bundle mới và 115 test hiện có. Giữ nguyên bảy test bốn map basic; dùng chung assertion schema mà vẫn yêu cầu đúng source adapted và không có nhãn khả giải cho 13 bản chuyển đổi. Không chạy engine, GUI, replay hoặc benchmark; dữ liệu đã khóa không đồng nghĩa luật nâng cao đã được nghiệm thu.
-

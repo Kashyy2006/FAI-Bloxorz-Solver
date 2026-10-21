@@ -26,8 +26,8 @@ from src.engine.models import State
 from src.solvers.common.result import SolverMetrics, SolverResult, snapshot_to_dict
 from src.solvers.common.runtime import validate_timeout
 
-ALGORITHMS = ("BFS", "DFS", "UCS", "ASTAR")
-STATUSES = ("SOLVED", "UNSOLVABLE", "TIMEOUT", "CANCELLED", "ERROR")
+from src.contracts import ALGORITHMS, STATUSES, COST_MODEL
+from src.solvers.common.schema import validate_payload
 METRICS = tuple(field.name for field in fields(SolverMetrics))
 
 
@@ -56,10 +56,7 @@ def _snapshot(raw, bridge_ids):
 def _validate_result(raw, case, algorithm, timeout_s):
     if not isinstance(raw, dict) or set(raw) != {f.name for f in fields(SolverResult)}:
         raise ValueError("SolverResult must have exactly 11 contract fields")
-    if type(raw["schema_version"]) is not int or raw["schema_version"] != 1:
-        raise ValueError("schema_version must be 1")
-    if raw["cost_model"] != "base1_fragile2_switch1_v1":
-        raise ValueError("unexpected cost_model")
+    validate_payload(raw)
     if raw["algorithm"] != algorithm:
         raise ValueError("algorithm does not match the requested run")
     for name, expected in (("map_id", case["map_id"]),
@@ -68,25 +65,10 @@ def _validate_result(raw, case, algorithm, timeout_s):
             raise ValueError(f"{name} does not match the requested run")
     if raw["start_state"] is not None:
         _snapshot(raw["start_state"], tuple(case["start_state"]["bridges"]))
-    if raw["heuristic"] != ("goal_indicator_v1" if algorithm == "ASTAR" else None):
-        raise ValueError("unexpected heuristic")
     metrics = raw["metrics"]
-    if not isinstance(metrics, dict) or set(metrics) != set(METRICS):
+    if set(metrics) != set(METRICS):
         raise ValueError("metrics must have exactly five contract fields")
-    for name in METRICS:
-        value = metrics[name]
-        if name in ("solution_length", "solution_cost") and value is None:
-            continue
-        if name == "search_time_s":
-            if type(value) not in (int, float) or value < 0:
-                raise ValueError(f"invalid {name}")
-        elif type(value) is not int or value < 0:
-            raise ValueError(f"invalid {name}")
     actions = raw["actions"]
-    if actions is not None and (not isinstance(actions, list) or any(
-        action not in ("UP", "DOWN", "LEFT", "RIGHT", "SWITCH") for action in actions
-    )):
-        raise ValueError("invalid actions")
     result = SolverResult(**{
         k: v for k, v in raw.items() if k not in ("schema_version", "cost_model", "metrics")
     }, metrics=SolverMetrics(**metrics)).to_dict()

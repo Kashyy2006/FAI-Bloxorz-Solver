@@ -58,10 +58,9 @@ class TestMapBundle(conversion.MapDataAssertions, unittest.TestCase):
         actual = {
             p.relative_to(ROOT).as_posix() for p in (ROOT / "data/maps").glob("*.json")
         } - engine_fixtures
-        prepared = {p.relative_to(ROOT).as_posix() for p in (ROOT / "data/maps/prepared").glob("*.json")}
-        self.assertEqual(set(paths), actual | prepared)
-        self.assertEqual(len(actual), 4)
-        self.assertEqual(len(prepared), 14)
+        self.assertEqual(set(paths), actual)
+        self.assertEqual(len(actual), 18)
+        self.assertTrue(all(Path(p).parent.as_posix() == "data/maps" for p in paths))
         self.assertEqual(Counter(e["group"] for e in self.entries), GROUPS)
         self.assertFalse(any("drafts" in Path(p).parts for p in paths))
 
@@ -92,7 +91,7 @@ class TestMapBundle(conversion.MapDataAssertions, unittest.TestCase):
                     self.assertTrue(notice.is_file())
                     self.assertIn(notice.name, notes)
                     self.assertIn(entry["id"], notes)
-                    if path.parent.name == "prepared":
+                    if entry["group"] != "basic":
                         self.assertNotIn("expected_solvable", data)
                 else:
                     self.assertIsNone(entry["notice"])
@@ -156,7 +155,7 @@ class TestMapBundle(conversion.MapDataAssertions, unittest.TestCase):
         self.assertNotEqual(key, geometry_key(changed))
 
     def test_original_fixture_matches_closed_bridge_analysis(self):
-        data = json.loads((ROOT / "data/maps/prepared/advanced_unsolvable_01.json").read_text(encoding="utf-8"))
+        data = json.loads((ROOT / "data/maps/advanced_unsolvable_01.json").read_text(encoding="utf-8"))
         codes = {"void": ".", "floor": "F", "goal": "G", "bridge": "b", "soft": "s"}
         self.assertEqual(["".join(codes[t] for t in row) for row in data["grid"]],
                          ["..........", ".FFFbbFGF.", ".FFs..FFF.", ".FFF..FFF.", ".........."])
@@ -167,7 +166,7 @@ class TestMapBundle(conversion.MapDataAssertions, unittest.TestCase):
                                            "effect": {"mode": "permanent", "targets": ["b01"], "open": False}}])
 
     def test_schema_assertions_reject_broken_data(self):
-        data = json.loads((ROOT / "data/maps/prepared/combined_01.json").read_text(encoding="utf-8"))
+        data = json.loads((ROOT / "data/maps/combined_01.json").read_text(encoding="utf-8"))
         for label in ("bool_coordinate", "unknown_target", "duplicate_bridge_cell", "bad_split", "extra_field"):
             bad = copy.deepcopy(data)
             if label == "bool_coordinate":

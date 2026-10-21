@@ -47,10 +47,12 @@ class Replay:
 
     def update(self, dt, ready):
         """Return the next action when it is due and the game is ready for it."""
-        if not self.playing or not ready:
+        if not self.playing:
             return None
-        self._timer += dt
-        if self._timer < BASE_DELAY_S / self.speed:
+        # Count wall time during movement too: delay is start-to-start, not extra
+        # waiting after every animation. Cap it to avoid bursts after a blocked frame.
+        self._timer = min(BASE_DELAY_S / self.speed, self._timer + max(0.0, dt))
+        if not ready or self._timer < BASE_DELAY_S / self.speed:
             return None
         self._timer = 0.0
         return self._next()

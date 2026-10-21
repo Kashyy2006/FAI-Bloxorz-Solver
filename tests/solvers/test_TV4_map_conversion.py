@@ -212,7 +212,7 @@ class MapDataAssertions:
 class TestConvertedMapData(MapDataAssertions, unittest.TestCase):
     def files(self):
         return [ROOT / "data/maps" / stage / f"{map_id}.json"
-                for stage in ("prepared", "drafts") for map_id in EXPECTED_IDS
+                for stage in ("", "drafts") for map_id in EXPECTED_IDS
                 if (ROOT / "data/maps" / stage / f"{map_id}.json").exists()]
 
     def test_existing_conversions_match_sources_and_schema(self):
@@ -266,9 +266,9 @@ class TestConvertedMapData(MapDataAssertions, unittest.TestCase):
             with self.subTest(map_id=path.stem):
                 data = json.loads(path.read_text(encoding="utf-8"))
                 digest = hashlib.sha256(path.read_bytes()).hexdigest()
-                row = next(line for line in catalog.splitlines() if f"[`{path.stem}`](prepared/" in line)
+                row = next(line for line in catalog.splitlines() if f"[`{path.stem}`](" in line)
                 self.assertIn(digest, row)
-                self.assertIn("Đạt | Chưa chạy | Chưa chạy", row)
+                self.assertIn("Đạt | Chưa chạy | Chưa chạy", " | ".join(cell.strip() for cell in row.split("|")))
                 notes = (ROOT / data["source"]["conversion_notes"]).read_text(encoding="utf-8")
                 self.assertIn(f"### `{path.stem}`", notes)
                 self.assertIn(MAPS[path.stem][1], notes)

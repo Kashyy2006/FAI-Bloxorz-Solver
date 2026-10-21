@@ -58,9 +58,34 @@ class HeuristicTest(unittest.TestCase):
         horizontal = State(Mode.HORIZONTAL, ((0, 0), (0, 1)))
         vertical = State(Mode.VERTICAL, ((0, 0), (1, 0)))
 
-        self.assertEqual(manhattan_orientation(game_map, upright), 3)
-        self.assertEqual(manhattan_orientation(game_map, horizontal), 2)
-        self.assertEqual(manhattan_orientation(game_map, vertical), 5)
+        # A roll can move the occupied footprint by up to two cells.
+        self.assertEqual(manhattan_orientation(game_map, upright), 2)
+        self.assertEqual(manhattan_orientation(game_map, horizontal), 1)
+        self.assertEqual(manhattan_orientation(game_map, vertical), 2)
+        from src.solvers.solve import solve
+        for state in (upright, horizontal, vertical):
+            optimal = solve(game_map, state, "UCS")
+            self.assertEqual(optimal["status"], "SOLVED")
+            self.assertLessEqual(manhattan_orientation(game_map, state),
+                                 optimal["metrics"]["solution_cost"])
+
+    def test_dynamic_maps_skip_static_reverse_graph(self):
+        from pathlib import Path
+        from src.engine import load_map, initial_state, transition
+        root = Path(__file__).resolve().parents[2]
+        for name in ("advanced_bridge_01.json", "advanced_split_01.json"):
+            game_map = load_map(root / "data/maps" / name)
+            state = initial_state(game_map)
+            with patch("src.solvers.costs.calc._reverse_bfs_distances",
+                       side_effect=AssertionError("static graph must not run")):
+                self.assertEqual(calculate_heuristic(game_map, state), 1)
+                self.assertEqual(reverse_bfs_heuristic(game_map, state), 1)
+                self.assertEqual(manhattan_orientation(game_map, state), 1)
+                goal = State(Mode.UPRIGHT, (game_map.goal,), bridges=state.bridges)
+                self.assertEqual(calculate_heuristic(game_map, goal), 0)
+                for step in successors(game_map, state):
+                    self.assertLessEqual(calculate_heuristic(game_map, state),
+                                         step.cost + calculate_heuristic(game_map, step.state))
 
     def test_auto_heuristic_uses_reverse_bfs_on_small_map(self):
         game_map = line_map()

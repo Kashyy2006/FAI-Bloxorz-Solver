@@ -215,7 +215,7 @@ class TestBenchmarkInventoryAndOutput(unittest.TestCase):
         self.assertNotEqual(cases[0]["snapshot_sha256"], initial[0]["snapshot_sha256"])
         bundle, _ = _load_cases(ROOT / "data/map_bundle.json", ROOT)
         self.assertEqual(len(bundle), 18)
-        self.assertEqual(sum("prepared" in c["map_path"] for c in bundle), 14)
+        self.assertEqual(sum(Path(c["map_path"]).parent.name == "maps" for c in bundle), 18)
 
     def test_bad_inventory_fails_before_creating_output(self):
         for change in ({"sha256": "0" * 64}, {"id": "wrong"}, {"start_state": None},

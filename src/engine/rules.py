@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from .geometry import movement_pose as _candidate
 from .map_loader import GameMap
 from .models import Action, Mode, State, Status, Successor, TransitionResult
 
@@ -19,49 +20,6 @@ def state_key(state: State) -> tuple:
 def is_goal(game_map: GameMap, state: State) -> bool:
     return state.mode is Mode.UPRIGHT and state.cells[0] == game_map.goal
 
-
-def _candidate(state: State, action: Action) -> tuple[Mode, tuple[tuple[int, int], ...], int | None]:
-    if state.mode is Mode.UPRIGHT:
-        row, col = state.cells[0]
-        moves = {
-            Action.UP: (Mode.VERTICAL, ((row - 2, col), (row - 1, col))),
-            Action.DOWN: (Mode.VERTICAL, ((row + 1, col), (row + 2, col))),
-            Action.LEFT: (Mode.HORIZONTAL, ((row, col - 2), (row, col - 1))),
-            Action.RIGHT: (Mode.HORIZONTAL, ((row, col + 1), (row, col + 2))),
-        }
-        mode, cells = moves[action]
-        return mode, cells, None
-    if state.mode is Mode.HORIZONTAL:
-        row, col = state.cells[0]
-        moves = {
-            Action.UP: (Mode.HORIZONTAL, ((row - 1, col), (row - 1, col + 1))),
-            Action.DOWN: (Mode.HORIZONTAL, ((row + 1, col), (row + 1, col + 1))),
-            Action.LEFT: (Mode.UPRIGHT, ((row, col - 1),)),
-            Action.RIGHT: (Mode.UPRIGHT, ((row, col + 2),)),
-        }
-        mode, cells = moves[action]
-        return mode, cells, None
-    if state.mode is Mode.VERTICAL:
-        row, col = state.cells[0]
-        moves = {
-            Action.UP: (Mode.UPRIGHT, ((row - 1, col),)),
-            Action.DOWN: (Mode.UPRIGHT, ((row + 2, col),)),
-            Action.LEFT: (Mode.VERTICAL, ((row, col - 1), (row + 1, col - 1))),
-            Action.RIGHT: (Mode.VERTICAL, ((row, col + 1), (row + 1, col + 1))),
-        }
-        mode, cells = moves[action]
-        return mode, cells, None
-    assert state.mode is Mode.SPLIT and state.active in (0, 1)
-    row, col = state.cells[state.active]
-    delta = {Action.UP: (-1, 0), Action.DOWN: (1, 0),
-             Action.LEFT: (0, -1), Action.RIGHT: (0, 1)}[action]
-    moved = (row + delta[0], col + delta[1])
-    other = state.cells[1 - state.active]
-    if moved == other:
-        raise ValueError("CUBE_COLLISION")
-    cells = tuple(sorted((moved, other)))
-    active = cells.index(moved)
-    return Mode.SPLIT, cells, active
 
 
 def _support_error(game_map, mode, cells, bridges):
@@ -160,15 +118,9 @@ def transition(game_map: GameMap, state: State, action: str | Action) -> Transit
 
 def step_cost(game_map: GameMap, state: State, action: str | Action,
               next_state: State) -> int:
-    """Canonical cost for an engine-produced OK/WON step: 1 + 2*F + T."""
-    action = action if isinstance(action, Action) else Action(action)
-    if action is Action.SWITCH:
-        return 1
-    mode, cells, _ = _candidate(state, action)
-    triggered = _activated_switches(game_map, state, mode, cells)
-    newly_occupied_fragile = sum(game_map.tile_at(cell) == "fragile"
-                                for cell in set(next_state.cells) - set(state.cells))
-    return 1 + 2 * newly_occupied_fragile + sum(s.type in ("soft", "heavy") for s in triggered)
+    """Compatibility API; costs.calc owns the shared 1 + 2*F + T formula."""
+    from src.solvers.costs.calc import calculate_step_cost
+    return calculate_step_cost(game_map, state, next_state, action)
 
 
 def successors(game_map: GameMap, state: State) -> list[Successor]:

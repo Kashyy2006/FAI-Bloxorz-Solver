@@ -22,12 +22,12 @@ PANEL_W = 250
 TOGGLE_W = 36
 TOGGLE_H = 48
 PANEL_SPRING_RATE = 16.0
-ALGORITHMS = ("BFS", "DFS", "UCS", "ASTAR")
+from src.contracts import ALGORITHMS
 ALGO_LABELS = {"BFS": "1  BFS", "DFS": "2  DFS", "UCS": "3  UCS", "ASTAR": "4  A*"}
 KEYS = {
     pygame.K_1: "BFS", pygame.K_2: "DFS", pygame.K_3: "UCS", pygame.K_4: "ASTAR",
     pygame.K_c: "CANCEL", pygame.K_SPACE: "PLAY", pygame.K_n: "STEP",
-    pygame.K_x: "STOP", pygame.K_f: "SPEED",
+    pygame.K_F1: "ERROR_DETAILS", pygame.K_x: "STOP", pygame.K_f: "SPEED",
 }
 STATUS_COLORS = {
     "SOLVED": (110, 220, 130), "UNSOLVABLE": (240, 170, 90),
@@ -70,6 +70,8 @@ class SolverController:
         self.panel_open = False
         self._panel_progress = 0.0
         self._panel_velocity = 0.0
+        self.error_details_open = False
+        self.error_scroll = 0
 
     # ----- state -----------------------------------------------------------
     @property
@@ -79,6 +81,8 @@ class SolverController:
 
     def reset(self):
         """Call on restart / level change: drop any running solve and replay."""
+        self.error_details_open = False
+        self.error_scroll = 0
         self.worker.discard()
         self.solving = False
         self.algorithm = None
@@ -103,6 +107,8 @@ class SolverController:
 
     # ----- commands --------------------------------------------------------
     def can_run(self, command, ready=True):
+        if command == "ERROR_DETAILS":
+            return bool((self.result or {}).get("error"))
         if command in ALGORITHMS:
             return ready
         if command == "CANCEL":
@@ -120,7 +126,10 @@ class SolverController:
     def run(self, command, game_map, state, ready=True):
         if not self.can_run(command, ready):
             return
-        if command in ALGORITHMS:
+        if command == "ERROR_DETAILS":
+            self.error_details_open = not self.error_details_open
+            self.error_scroll = 0
+        elif command in ALGORITHMS:
             self.reset()
             self.algorithm = command
             self.solving = True
@@ -148,6 +157,8 @@ class SolverController:
             self.replay.cycle_speed()
 
     def handle_key(self, key, game_map, state, ready=True):
+        if self.error_details_open and key != pygame.K_F1:
+            return True
         command = KEYS.get(key)
         if command is None:
             return False
@@ -155,6 +166,9 @@ class SolverController:
         return True
 
     def handle_click(self, pos, screen_size, game_map, state, ready=True):
+        if self.error_details_open:
+            self.error_details_open = False
+            return True
         if self._toggle_rect(*screen_size).collidepoint(pos):
             self.panel_open = not self.panel_open
             return True
@@ -245,6 +259,9 @@ class SolverController:
             buttons.append((cmd, label, pygame.Rect(x + i * (third + 10), y, third, 34)))
         buttons.append(("SPEED", f"F  Speed x{self.replay.speed:g}",
                         pygame.Rect(x, y + 42, PANEL_W - 20, 32)))
+        if (self.result or {}).get("error"):
+            buttons.append(("ERROR_DETAILS", "F1  Error details",
+                            pygame.Rect(x, panel.bottom - 110, PANEL_W - 20, 24)))
         return buttons
 
     def draw(self, screen, font):
@@ -257,6 +274,7 @@ class SolverController:
         label = font.render(">>" if self.panel_open else "<<", True, (240, 243, 250))
         screen.blit(label, label.get_rect(center=toggle.center))
         if self._panel_progress <= 0.0:
+            self._draw_error_details(screen, font)
             return
         panel = self._panel_rect(w, h)
         box = pygame.Surface(panel.size, pygame.SRCALPHA)
@@ -281,6 +299,7 @@ class SolverController:
             surface = font.render(value, True, color)
             screen.blit(surface, (panel.right - 12 - surface.get_width(), y))
             y += 25
+        self._draw_error_details(screen, font)
 
     def _stat_lines(self):
         white = (240, 243, 250)
@@ -304,10 +323,35 @@ class SolverController:
             ("Replay", f"{self.replay.index}/{len(self.replay.actions)}"
              if self.replay.actions else "-", white),
         ]
-        error = (self.result or {}).get("error")
-        if error and not self.solving:
-            lines.append(("Error", str(error)[:22], STATUS_COLORS["ERROR"]))
         return lines
+
+    def scroll_error(self, delta):
+        if not self.error_details_open:
+            return False
+        self.error_scroll = max(0, self.error_scroll - delta * 3)
+        return True
+
+    def _draw_error_details(self, screen, font):
+        if not self.error_details_open:
+            return
+        error = str((self.result or {}).get("error") or "")
+        box = screen.get_rect().inflate(-80, -100)
+        pygame.draw.rect(screen, (20, 27, 40), box, border_radius=9)
+        pygame.draw.rect(screen, STATUS_COLORS["ERROR"], box, 2, border_radius=9)
+        self._text(screen, font, "Solver error | F1/click close | Wheel scroll", (box.x+16, box.y+12))
+        lines = []
+        for paragraph in error.splitlines() or [""]:
+            line = ""
+            for char in paragraph:
+                if line and font.size(line + char)[0] > box.width - 32:
+                    lines.append(line)
+                    line = ""
+                line += char
+            lines.append(line)
+        capacity = max(1, (box.height - 68) // font.get_linesize())
+        self.error_scroll = min(self.error_scroll, max(0, len(lines) - capacity))
+        for index, line in enumerate(lines[self.error_scroll:self.error_scroll+capacity]):
+            self._text(screen, font, line, (box.x+16, box.y+48+index*font.get_linesize()))
 
     @staticmethod
     def _text(screen, font, value, topleft, color=(240, 243, 250)):

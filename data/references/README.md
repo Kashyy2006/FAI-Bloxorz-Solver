@@ -2,7 +2,7 @@
 
 **Phụ trách:** Thành viên 4 ghi nguồn; thành viên 5 tổng hợp tài liệu. Khảo sát ngày **15/10/2026** qua trang repo, GitHub API và nội dung raw tại các commit dưới đây. Chỉ lấy dữ liệu map và giấy phép; không tải/chạy thuật toán giải của nguồn.
 
-**Cập nhật dữ liệu 17/10/2026:** đã chuyển 6 map AchrafMez và 7 map Frank Buss / Damien Clarke vào `data/maps/prepared/` qua 5 lô kiểm tra dữ liệu. Có [dữ liệu nguồn ngoại tuyến](map_sources/README.md), [converter](convert_maps.py), [ghi chú Achraf](achraf-map-conversion.md), [ghi chú Frank](frank-map-conversion.md) và [hash từng map](../maps/README.md#dữ-liệu-đã-chuyển-đổi). Bộ đã khóa **18 map** gồm 4 basic và 14 prepared, có một fixture original vô nghiệm nâng cao. [Manifest](../map_bundle.json) khóa đường dẫn/nguồn/hash/trạng thái; [hồ sơ từng map](map-bundle-evidence.md) ghi mục đích, witness/phân tích, mức tin cậy và khảo sát bổ sung trước khi tự tạo. Chưa xác nhận engine/replay/solver. Các mục khảo sát dưới đây ghi bằng chứng tại thời điểm khảo sát/lựa chọn.
+**Cập nhật dữ liệu 17/10/2026:** đã chuyển 6 map AchrafMez và 7 map Frank Buss / Damien Clarke vào `data/maps/` qua 5 lô kiểm tra dữ liệu. Có [dữ liệu nguồn ngoại tuyến](map_sources/README.md), [converter](convert_maps.py), [ghi chú Achraf](achraf-map-conversion.md), [ghi chú Frank](frank-map-conversion.md) và [hash từng map](../maps/README.md#dữ-liệu-đã-chuyển-đổi). Bộ đã khóa **18 map** gồm 4 basic và 14 prepared, có một fixture original vô nghiệm nâng cao. [Manifest](../map_bundle.json) khóa đường dẫn/nguồn/hash/trạng thái; [hồ sơ từng map](map-bundle-evidence.md) ghi mục đích, witness/phân tích, mức tin cậy và khảo sát bổ sung trước khi tự tạo. Chưa xác nhận engine/replay/solver. Các mục khảo sát dưới đây ghi bằng chứng tại thời điểm khảo sát/lựa chọn.
 
 ## Truy xuất bộ cơ bản
 
@@ -80,7 +80,7 @@ Tọa độ bảng dưới đã đổi thành [row,col]. Nhóm cầu tách theo 
 - Không thêm basic từ A/Matías vì bốn map đang có đủ vai trò. F `levelpp` bị loại nguyên trạng do đích split không phải floor; `leveltw`/`leveldd`/`levelmp`/`levelgv` không chọn vì effect hỗn hợp trên cùng switch. Không gỡ effect khó hoặc đổi nhãn thành original.
 - Các nguồn ooodnakov, Otfried, lm-pcg chưa có quyền tiếp nhận rõ trong hồ sơ khảo sát vẫn không được chọn; không có kết luận mới về giấy phép của chúng.
 - Giữ tối đa hai mở rộng từ cùng nguồn F: `levelkn` → `combined_03`, `levelhg` → `combined_04`, chưa tính vào 18; metadata biểu diễn được bằng schema, đích split là floor/không kề cạnh và khác bộ chính. Chỉ xét sau khi đủ nhóm và bộ chính đạt kiểm tra dữ liệu.
-- Tự thiết kế duy nhất `advanced_unsolvable_01` vì khảo sát không có nguồn vô nghiệm nâng cao đủ căn cứ. [Blueprint và lý do](../maps/README.md#blueprint-original-cho-khoảng-trống-vô-nghiệm-nâng-cao) nằm ngoài map JSON. Đã có [JSON prepared](../maps/prepared/advanced_unsolvable_01.json), kiểm dữ liệu và [hồ sơ bất biến/witness tay](map-bundle-evidence.md#advanced_unsolvable_01); chưa xác minh witness bằng engine.
+- Tự thiết kế duy nhất `advanced_unsolvable_01` vì khảo sát không có nguồn vô nghiệm nâng cao đủ căn cứ. [Blueprint và lý do](../maps/README.md#blueprint-original-cho-khoảng-trống-vô-nghiệm-nâng-cao) nằm ngoài map JSON. Đã có [JSON prepared](../maps/advanced_unsolvable_01.json), kiểm dữ liệu và [hồ sơ bất biến/witness tay](map-bundle-evidence.md#advanced_unsolvable_01); chưa xác minh witness bằng engine.
 
 ### Kiểm tra danh sách lựa chọn
 

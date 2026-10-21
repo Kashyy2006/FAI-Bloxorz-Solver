@@ -32,16 +32,16 @@ State key chứa mode, cells, active và mọi cờ cầu; không chứa g hay l
 
 ## Chi phí thống nhất với TV5
 
-`cost = 1 + 2*F + T`. F đếm fragile mới chiếm ở trạng thái cuối, T đếm
-soft/heavy vừa nhấn sau chuyển động, trước teleport/nhập. step_cost và transition
-cùng dùng _activated_switches; SWITCH giá 1. calculate_step_cost của TV5 chỉ
-chuyển tiếp sang step_cost; UCS/A* cộng Successor.cost một lần.
+`cost = 1 + 2*F + T`. Nguồn chuẩn là `src/solvers/costs/calc.py`.
+`step_cost` chỉ gọi `calculate_step_cost`: F đếm fragile mới chiếm, T đếm
+soft mới chiếm và heavy mới chiếm khi trạng thái cuối đứng thẳng. Tính theo
+trạng thái cuối sau teleport/nhập; khác với sự kiện kích hoạt công tắc.
+SWITCH giá 1. Cả bốn solver cộng Successor.cost một lần.
 
 ## Tích hợp và chạy thử
 
 - GUI gọi engine qua adapter trong src/gui/manual/game.py; Tab đổi khối nhỏ.
-- src/solvers/solve.py điều phối solver thật. A* dùng heuristic cơ sở 0 tại goal,
-  1 ở trạng thái khác (admissible/consistent cả khi có teleport).
+- src/solvers/solve.py điều phối solver thật. A* chọn heuristic theo map và ghi đúng tên chiến lược trong kết quả; xem `src/solvers/costs/README.md`.
 - Map mẫu: data/maps/advanced_bridge_01.json và advanced_split_01.json.
 - Chạy game: `python -m src.gui.manual.game` từ gốc repo.
 - Chạy đủ kiểm thử: `python -m unittest discover -s tests -t . -v`.

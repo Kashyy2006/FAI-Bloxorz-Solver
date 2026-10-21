@@ -52,8 +52,6 @@ class State:
             cells = tuple(sorted(original_cells))
         except TypeError as exc:
             raise ValueError("cells must contain integer coordinate pairs") from exc
-        if any(len(cell) != 2 or any(type(value) is not int for value in cell) for cell in cells):
-            raise ValueError("Each cell coordinate must contain two integers")
         expected_count = 1 if mode is Mode.UPRIGHT else 2
         if len(cells) != expected_count:
             raise ValueError(f"{mode.value} requires {expected_count} cell(s)")

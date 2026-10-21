@@ -24,8 +24,6 @@ class FakeSuccessor:
     cost: int = 1
 
 
-<<<<<<< HEAD
-=======
 @dataclass(frozen=True)
 class FakeMap:
     tiles: dict
@@ -33,26 +31,12 @@ class FakeMap:
     def tile_at(self, cell):
         return self.tiles.get(cell, "floor")
 
->>>>>>> origin/feature/TV5-UCS+A_star_and_cost_calc
 
 def fake_key(state):
     return (state.mode, state.cells, state.active, state.bridges)
 
 
 class TestTV5CostCalculation(unittest.TestCase):
-<<<<<<< HEAD
-    def test_compatibility_cost_matches_real_engine(self):
-        from src.engine import parse_map, initial_state, transition, step_cost
-        data = {"schema_version": 1, "id": "cost", "name": "cost", "difficulty": "easy",
-                "rows": 1, "cols": 5, "grid": [["floor", "fragile", "floor", "floor", "goal"]],
-                "start": [0, 0], "bridges": [], "switches": [],
-                "source": {"kind": "original", "reference": "test"}}
-        game_map = parse_map(data)
-        before = initial_state(game_map)
-        after = transition(game_map, before, "RIGHT").next_state
-        self.assertEqual(calculate_step_cost(game_map, before, after, "RIGHT"), 3)
-        self.assertEqual(step_cost(game_map, before, "RIGHT", after), 3)
-=======
     """Kiểm thử riêng cho hàm tính chi phí bước đi (calculate_step_cost)."""
 
     def setUp(self):
@@ -89,7 +73,6 @@ class TestTV5CostCalculation(unittest.TestCase):
         self.assertEqual(calculate_step_cost(self.game_map, s1, s_flat, "RIGHT"), 1)
         s_upright = FakeState("UPRIGHT", ((2, 2),))
         self.assertEqual(calculate_step_cost(self.game_map, s1, s_upright, "RIGHT"), 2)
->>>>>>> origin/feature/TV5-UCS+A_star_and_cost_calc
 
     def test_reads_fragile_tiles_from_loaded_game_map_grid(self):
         game_map = parse_map({

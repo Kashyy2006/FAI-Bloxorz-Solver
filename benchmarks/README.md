@@ -12,21 +12,20 @@ Chỉ dùng thư viện chuẩn Python, không cần Pygame. Chạy từ gốc r
 python -m benchmarks.run --output benchmarks/results/readiness-check
 ```
 
-Lệnh trên kiểm inventory mặc định `data/map_bundle.json`, gồm 18 map ở cả
-`data/maps/` và `data/maps/prepared/`. Khi chưa truyền binding, runner ghi
+Lệnh trên kiểm inventory mặc định `data/map_bundle.json`, gồm 18 map trong
+`data/maps/`. Khi chưa truyền binding, runner ghi
 72 cặp map/thuật toán vào bảng tình trạng với `missing_binding`, không chạy
 solver và không tạo số đo. Exit code là 1 vì còn mục chưa chạy.
 
 Khi bên tích hợp đã cung cấp module import được, ví dụ
-`integration.benchmark_bindings` có các hàm `run_bfs`/`run_dfs`, dùng:
+`src.solvers.solve` có các hàm `run_bfs`/`run_dfs`, dùng:
 
 ```powershell
-python -m benchmarks.run --inventory data/map_bundle.json --output benchmarks/results/bfs-dfs --algorithms BFS DFS --binding BFS=integration.benchmark_bindings:run_bfs --binding DFS=integration.benchmark_bindings:run_dfs
+python -m benchmarks.run --inventory data/map_bundle.json --output benchmarks/results/bfs-dfs --algorithms BFS DFS --binding BFS=src.solvers.solve:run_bfs --binding DFS=src.solvers.solve:run_dfs
 ```
 
-Module binding trong ví dụ là đầu vào bên tích hợp phải cung cấp, chưa có
-trong repo. Thêm `--binding UCS=module:function` và
-`--binding ASTAR=module:function` khi hai solver sẵn sàng. Thiếu binding
+Module binding trong ví dụ đã có trong repo. Thêm `--binding UCS=src.solvers.solve:run_ucs` và
+`--binding ASTAR=src.solvers.solve:run_astar` để chạy đủ bốn thuật toán. Thiếu binding
 không được thay bằng solver giả. `python benchmarks/run.py ...` cũng được hỗ trợ.
 Đường dẫn map trong inventory được tính từ gốc repo; đổi bằng `--root PATH`
 khi dùng inventory ngoài repo. `--output` phải là thư mục mới để giữ kết quả cũ.
@@ -54,7 +53,7 @@ from benchmarks.run import run_benchmark
 if __name__ == "__main__":
     report = run_benchmark(
         "data/map_bundle.json",
-        {"BFS": "integration.benchmark_bindings:run_bfs"},
+        {"BFS": "src.solvers.solve:run_bfs"},
         "benchmarks/results/bfs",
         algorithms=("BFS",),
     )
@@ -136,3 +135,13 @@ BFS/DFS trên đồ thị fixture, metadata/hash/snapshot, JSON–CSV/status/nul
 trung vị SOLVED, thiếu binding, lỗi callable/import/process, ngắt phiên và
 không ghi đè. Fixture không mô phỏng luật Bloxorz và không xuất thành dữ liệu
 hiệu năng bàn giao. Không thêm dependency hoặc triển khai engine/UCS/A* trong runner.
+
+### Tiền xử lý Reverse BFS
+
+A* dựng đồ thị đảo một lần cho mỗi lượt giải map tĩnh nhỏ, sau khi bắt đầu runtime.
+`search_time_s` và `peak_memory_bytes` bao gồm tiền xử lý; `expanded_nodes` chỉ đếm
+nút mở rộng của A*, không cộng các tư thế duyệt khi dựng heuristic. Kiểm tra hủy/
+timeout trong các vòng dựng đồ thị và BFS ngược; dừng trước tìm kiếm vẫn giữ số đo.
+Không dùng cache từ lượt trước trong solver/benchmark. Cache của helper tra cứu
+heuristic độc lập không được dùng cho các lượt tìm kiếm có đo. Map động và map tĩnh
+lớn không dựng Reverse BFS. Start đã thắng giữ fast path không tiền xử lý.

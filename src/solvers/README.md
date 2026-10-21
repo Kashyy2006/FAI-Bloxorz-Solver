@@ -11,5 +11,5 @@
 `solve(game_map, start_state, algorithm, timeout_s=60.0, cancel_event=None)`
 nhận GameMap/State hoặc map JSON/snapshot, trả dict theo contract. Các tên
 thuật toán là BFS, DFS, UCS, ASTAR; tất cả dùng src.engine.successors.
-UCS và A* dùng chung weighted kernel, A* với goal_indicator_v1. Backend
+UCS và A* có kernel riêng, dùng cùng runtime/JSON boundary. A* ghi đúng tên heuristic đã chọn theo map. Backend
 GUI mặc định gọi điểm này; placeholder_solver chỉ còn là bản tạm lịch sử.

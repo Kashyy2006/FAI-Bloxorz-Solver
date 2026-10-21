@@ -27,7 +27,7 @@ Chạy từ repo root, chọn thư mục đầu ra trống để tái tạo và 
 
 ### `bridge_01` — `levelub`
 
-JSON: [`bridge_01.json`](../maps/prepared/bridge_01.json), 10 × 15, start=[2, 4], goal=[8, 3]; difficulty dự kiến `medium`. Nguồn: [`frank_selected.txt`](map_sources/frank_selected.txt), SHA256 `9fb8af459e8d694ea2f725bd6162f4403a4ef1d0ca9c52667fd88fc53f510cb0`.
+JSON: [`bridge_01.json`](../maps/bridge_01.json), 10 × 15, start=[2, 4], goal=[8, 3]; difficulty dự kiến `medium`. Nguồn: [`frank_selected.txt`](map_sources/frank_selected.txt), SHA256 `9fb8af459e8d694ea2f725bd6162f4403a4ef1d0ca9c52667fd88fc53f510cb0`.
 
 | Cầu | Ô [row,col] | Mở ban đầu |
 | --- | --- | --- |
@@ -43,7 +43,7 @@ Mức bằng chứng: dữ liệu đạt kiểm tra; chưa xác nhận luật/kh
 
 ### `permanent_open_01` — `levelsc`
 
-JSON: [`permanent_open_01.json`](../maps/prepared/permanent_open_01.json), 10 × 15, start=[4, 2], goal=[8, 12]; difficulty dự kiến `hard`. Nguồn: [`frank_selected.txt`](map_sources/frank_selected.txt), SHA256 `9fb8af459e8d694ea2f725bd6162f4403a4ef1d0ca9c52667fd88fc53f510cb0`.
+JSON: [`permanent_open_01.json`](../maps/permanent_open_01.json), 10 × 15, start=[4, 2], goal=[8, 12]; difficulty dự kiến `hard`. Nguồn: [`frank_selected.txt`](map_sources/frank_selected.txt), SHA256 `9fb8af459e8d694ea2f725bd6162f4403a4ef1d0ca9c52667fd88fc53f510cb0`.
 
 | Cầu | Ô [row,col] | Mở ban đầu |
 | --- | --- | --- |
@@ -64,7 +64,7 @@ Mức bằng chứng: dữ liệu đạt kiểm tra; chưa xác nhận luật/kh
 
 ### `permanent_close_01` — `leveldw`
 
-JSON: [`permanent_close_01.json`](../maps/prepared/permanent_close_01.json), 10 × 15, start=[5, 2], goal=[1, 4]; difficulty dự kiến `medium`. Nguồn: [`frank_selected.txt`](map_sources/frank_selected.txt), SHA256 `9fb8af459e8d694ea2f725bd6162f4403a4ef1d0ca9c52667fd88fc53f510cb0`.
+JSON: [`permanent_close_01.json`](../maps/permanent_close_01.json), 10 × 15, start=[5, 2], goal=[1, 4]; difficulty dự kiến `medium`. Nguồn: [`frank_selected.txt`](map_sources/frank_selected.txt), SHA256 `9fb8af459e8d694ea2f725bd6162f4403a4ef1d0ca9c52667fd88fc53f510cb0`.
 
 | Cầu | Ô [row,col] | Mở ban đầu |
 | --- | --- | --- |
@@ -78,7 +78,7 @@ Mức bằng chứng: dữ liệu đạt kiểm tra; chưa xác nhận luật/kh
 
 ### `split_merge_01` — `levelss`
 
-JSON: [`split_merge_01.json`](../maps/prepared/split_merge_01.json), 10 × 15, start=[4, 1], goal=[4, 13]; difficulty dự kiến `medium`. Nguồn: [`frank_selected.txt`](map_sources/frank_selected.txt), SHA256 `9fb8af459e8d694ea2f725bd6162f4403a4ef1d0ca9c52667fd88fc53f510cb0`.
+JSON: [`split_merge_01.json`](../maps/split_merge_01.json), 10 × 15, start=[4, 1], goal=[4, 13]; difficulty dự kiến `medium`. Nguồn: [`frank_selected.txt`](map_sources/frank_selected.txt), SHA256 `9fb8af459e8d694ea2f725bd6162f4403a4ef1d0ca9c52667fd88fc53f510cb0`.
 
 | Cầu | Ô [row,col] | Mở ban đầu |
 | --- | --- | --- |
@@ -92,7 +92,7 @@ Mức bằng chứng: dữ liệu đạt kiểm tra; chưa xác nhận luật/kh
 
 ### `split_merge_02` — `levelre`
 
-JSON: [`split_merge_02.json`](../maps/prepared/split_merge_02.json), 10 × 15, start=[4, 1], goal=[6, 7]; difficulty dự kiến `hard`. Nguồn: [`frank_selected.txt`](map_sources/frank_selected.txt), SHA256 `9fb8af459e8d694ea2f725bd6162f4403a4ef1d0ca9c52667fd88fc53f510cb0`.
+JSON: [`split_merge_02.json`](../maps/split_merge_02.json), 10 × 15, start=[4, 1], goal=[6, 7]; difficulty dự kiến `hard`. Nguồn: [`frank_selected.txt`](map_sources/frank_selected.txt), SHA256 `9fb8af459e8d694ea2f725bd6162f4403a4ef1d0ca9c52667fd88fc53f510cb0`.
 
 | Cầu | Ô [row,col] | Mở ban đầu |
 | --- | --- | --- |
@@ -106,7 +106,7 @@ Mức bằng chứng: dữ liệu đạt kiểm tra; chưa xác nhận luật/kh
 
 ### `combined_01` — `levelht`
 
-JSON: [`combined_01.json`](../maps/prepared/combined_01.json), 10 × 15, start=[8, 1], goal=[8, 12]; difficulty dự kiến `hard`. Nguồn: [`frank_selected.txt`](map_sources/frank_selected.txt), SHA256 `9fb8af459e8d694ea2f725bd6162f4403a4ef1d0ca9c52667fd88fc53f510cb0`.
+JSON: [`combined_01.json`](../maps/combined_01.json), 10 × 15, start=[8, 1], goal=[8, 12]; difficulty dự kiến `hard`. Nguồn: [`frank_selected.txt`](map_sources/frank_selected.txt), SHA256 `9fb8af459e8d694ea2f725bd6162f4403a4ef1d0ca9c52667fd88fc53f510cb0`.
 
 | Cầu | Ô [row,col] | Mở ban đầu |
 | --- | --- | --- |
@@ -127,7 +127,7 @@ Mức bằng chứng: dữ liệu đạt kiểm tra; chưa xác nhận luật/kh
 
 ### `combined_02` — `leveltb`
 
-JSON: [`combined_02.json`](../maps/prepared/combined_02.json), 10 × 15, start=[2, 8], goal=[8, 13]; difficulty dự kiến `hard`. Nguồn: [`frank_selected.txt`](map_sources/frank_selected.txt), SHA256 `9fb8af459e8d694ea2f725bd6162f4403a4ef1d0ca9c52667fd88fc53f510cb0`.
+JSON: [`combined_02.json`](../maps/combined_02.json), 10 × 15, start=[2, 8], goal=[8, 13]; difficulty dự kiến `hard`. Nguồn: [`frank_selected.txt`](map_sources/frank_selected.txt), SHA256 `9fb8af459e8d694ea2f725bd6162f4403a4ef1d0ca9c52667fd88fc53f510cb0`.
 
 | Cầu | Ô [row,col] | Mở ban đầu |
 | --- | --- | --- |
