@@ -68,16 +68,18 @@ def validate_result(raw, game_map, state, algorithm, timeout_s,
         raise ValueError(f"result: missing fields {', '.join(sorted(missing))}")
     if type(raw["schema_version"]) is not int or raw["schema_version"] != 1:
         raise ValueError("schema_version: expected 1")
-    if not isinstance(raw["map_id"], str) or raw["map_id"] != game_map.get("id"):
-        raise ValueError("map_id: does not match the current solve")
-    if raw["algorithm"] != algorithm:
-        raise ValueError("algorithm: does not match the current solve")
     status = raw["status"]
     if not isinstance(status, str) or status not in STATUSES:
         raise ValueError("status: unknown solver status")
-    _number(raw["timeout_s"], "timeout_s", positive=True)
-    if raw["timeout_s"] != timeout_s:
-        raise ValueError("timeout_s: does not match the current solve")
+    if not (status == "ERROR" and raw["map_id"] is None):
+        if not isinstance(raw["map_id"], str) or raw["map_id"] != game_map.get("id"):
+            raise ValueError("map_id: does not match the current solve")
+    if raw["algorithm"] != algorithm:
+        raise ValueError("algorithm: does not match the current solve")
+    if not (status == "ERROR" and raw["timeout_s"] is None):
+        _number(raw["timeout_s"], "timeout_s", positive=True)
+        if raw["timeout_s"] != timeout_s:
+            raise ValueError("timeout_s: does not match the current solve")
     if raw["cost_model"] != COST_MODEL:
         raise ValueError("cost_model: unsupported model")
     heuristic = "goal_indicator_v1" if algorithm == "ASTAR" else None
@@ -85,22 +87,23 @@ def validate_result(raw, game_map, state, algorithm, timeout_s,
         raise ValueError("heuristic: does not match the algorithm contract")
 
     start = raw["start_state"]
-    if not isinstance(start, dict) or set(start) != {"mode", "cells", "active", "bridges"}:
-        raise ValueError("start_state: expected mode, cells, active, bridges")
-    cells = start["cells"]
-    if (not isinstance(cells, list) or not cells
-            or any(not isinstance(cell, list) or len(cell) != 2
-                   or any(type(n) is not int for n in cell) for cell in cells)):
-        raise ValueError("start_state.cells: expected integer coordinate pairs")
-    active = start["active"]
-    if active is not None and (type(active) is not int or active not in (0, 1)):
-        raise ValueError("start_state.active: expected null, 0 or 1")
-    bridges = start["bridges"]
-    if (not isinstance(bridges, dict)
-            or any(not isinstance(k, str) or type(v) is not bool for k, v in bridges.items())):
-        raise ValueError("start_state.bridges: expected an object of boolean flags")
-    if start != state_to_json(game_map, state):
-        raise ValueError("start_state: does not match the current solve snapshot")
+    if not (status == "ERROR" and start is None):
+        if not isinstance(start, dict) or set(start) != {"mode", "cells", "active", "bridges"}:
+            raise ValueError("start_state: expected mode, cells, active, bridges")
+        cells = start["cells"]
+        if (not isinstance(cells, list) or not cells
+                or any(not isinstance(cell, list) or len(cell) != 2
+                       or any(type(n) is not int for n in cell) for cell in cells)):
+            raise ValueError("start_state.cells: expected integer coordinate pairs")
+        active = start["active"]
+        if active is not None and (type(active) is not int or active not in (0, 1)):
+            raise ValueError("start_state.active: expected null, 0 or 1")
+        bridges = start["bridges"]
+        if (not isinstance(bridges, dict)
+                or any(not isinstance(k, str) or type(v) is not bool for k, v in bridges.items())):
+            raise ValueError("start_state.bridges: expected an object of boolean flags")
+        if start != state_to_json(game_map, state):
+            raise ValueError("start_state: does not match the current solve snapshot")
 
     metrics = raw["metrics"]
     names = {"search_time_s", "peak_memory_bytes", "expanded_nodes",

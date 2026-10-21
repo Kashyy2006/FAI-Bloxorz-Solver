@@ -9,7 +9,7 @@
 Từ thư mục gốc project, dùng Python có cài `pygame`:
 
 ```console
-python -m unittest discover -s tests -v
+python -m unittest discover -s tests -t . -v
 ```
 
 Chỉ chạy phần tích hợp GUI solver:
@@ -20,4 +20,6 @@ python -m unittest discover -s tests/integration -t . -v
 
 Các test controller dùng SDL dummy, không mở cửa sổ thật và không cần thiết bị
 âm thanh. Test backend/result/worker không cần khởi tạo Pygame. Các file
-`__init__.py` giúp unittest phát hiện test trong thư mục con.
+`__init__.py` cùng cờ `-t .` giúp `unittest` phát hiện đủ cả ba nhóm `engine`,
+`solvers` và `integration`.
+

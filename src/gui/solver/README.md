@@ -29,9 +29,11 @@
 - Pause/Stop vẫn nhận được khi đang có animation; bắt đầu solve mới phải đợi
   animation kết thúc để snapshot khớp với trạng thái đang hiển thị.
 
-GUI hiện dùng `placeholder_solver` và `_move` tạm, hỗ trợ bốn hướng. `SWITCH` là
-action hợp lệ theo schema nhưng sẽ báo ERROR khi replay chưa hỗ trợ. Khi nối
-engine chung, truyền `supported_actions` bao gồm SWITCH và thực thi replay qua
-engine; chỉ bật cờ này sau khi đường gọi thực thi action đã được tích hợp.
+`SolverController` mặc định gọi hàm điều phối `src.solvers.solve.solve` (hỗ trợ đủ
+bốn thuật toán `BFS`, `DFS`, `UCS`, `ASTAR`) và bật đầy đủ 5 hành động
+`("UP", "DOWN", "LEFT", "RIGHT", "SWITCH")` để giải và phát lại từ trạng thái
+hiện tại (bao gồm cấu hình cầu và hai khối nhỏ khi tách). `placeholder_solver`
+chỉ được giữ lại phục vụ kiểm thử hồi quy độc lập của worker/backend.
 
-Kiểm thử: `python -m unittest discover -s tests -v` (từ thư mục gốc).
+Kiểm thử toàn bộ: `python -m unittest discover -s tests -t . -v` (từ thư mục gốc).
+

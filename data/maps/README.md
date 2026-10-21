@@ -213,14 +213,13 @@ AI hỗ trợ đối chiếu đề bài/contract, chọn map, rà trùng và vi�
 
 Lượt chuẩn bị có AI hỗ trợ khảo sát nguồn, chuyển dữ liệu, viết test và tài liệu. Chưa chạy benchmark hoặc tạo số liệu hiệu năng; nhóm có thể dùng ghi nhận này khi tổng hợp phụ lục AI.
 
-<<<<<<< HEAD
 ## Fixture tích hợp nâng cao của TV1
 
 - `advanced_bridge_01.json`: soft toggle, heavy permanent, cầu đóng/mở và fragile. Chuỗi RIGHT × 6 thắng, tổng chi phí 10.
 - `advanced_split_01.json`: tách, chọn khối và nhập ngang. Chuỗi RIGHT × 7 thắng, tổng chi phí 7; có thể dùng Tab đổi khối để thử tay.
 - Đây là map nội bộ phục vụ nghiệm thu engine, chưa thay bộ benchmark cuối kỳ của TV4.
 - Hash basic_01 ở bảng trên đã cập nhật theo file sau merge; layout và metadata không đổi.
-=======
+
 ## Dữ liệu đã chuyển đổi
 
 Ngày 17/10/2026, chuyển từng lô nhỏ, kiểm dữ liệu draft rồi mới đưa vào `prepared/`. Chỉ là kiểm tra schema/liên kết/đối chiếu nguồn; engine, replay và solver thật **chưa chạy**. Không dùng nhãn khả giải cho các map adapted mới. Bốn basic ở root giữ nguyên.
@@ -269,4 +268,4 @@ python -m unittest discover -s tests/solvers -p 'test_TV4_*.py' -v
 ```
 
 Kiểm tra bằng Python 3.12.10: **123/123 test thành phần đạt, không skip**, gồm 8 test bundle mới và 115 test hiện có. Giữ nguyên bảy test bốn map basic; dùng chung assertion schema mà vẫn yêu cầu đúng source adapted và không có nhãn khả giải cho 13 bản chuyển đổi. Không chạy engine, GUI, replay hoặc benchmark; dữ liệu đã khóa không đồng nghĩa luật nâng cao đã được nghiệm thu.
->>>>>>> origin/feature/TV4-search-and-evaluation
+

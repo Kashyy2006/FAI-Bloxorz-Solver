@@ -51,7 +51,13 @@ class TestMapBundle(conversion.MapDataAssertions, unittest.TestCase):
         self.assertEqual(len({e["id"] for e in self.entries}), 18)
         paths = [e["path"] for e in self.entries]
         self.assertEqual(len(set(paths)), 18)
-        actual = {p.relative_to(ROOT).as_posix() for p in (ROOT / "data/maps").glob("*.json")}
+        engine_fixtures = {
+            "data/maps/advanced_bridge_01.json",
+            "data/maps/advanced_split_01.json",
+        }
+        actual = {
+            p.relative_to(ROOT).as_posix() for p in (ROOT / "data/maps").glob("*.json")
+        } - engine_fixtures
         prepared = {p.relative_to(ROOT).as_posix() for p in (ROOT / "data/maps/prepared").glob("*.json")}
         self.assertEqual(set(paths), actual | prepared)
         self.assertEqual(len(actual), 4)

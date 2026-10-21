@@ -30,7 +30,9 @@ BGM_DIR = ROOT / "data" / "bgm"
 # Nạp các bản đồ hợp lệ bằng validator dùng chung của engine.
 def _load_maps():
     maps = []
-    for path in sorted(MAPS_DIR.glob("*.json")):
+    candidates = [*sorted(MAPS_DIR.glob("*.json")),
+                  *sorted((MAPS_DIR / "prepared").glob("*.json"))]
+    for path in candidates:
         try:
 <<<<<<< HEAD
             with path.open(encoding="utf-8") as file:
