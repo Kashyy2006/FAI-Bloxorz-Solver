@@ -13,13 +13,15 @@ from .settings import (
 )
 
 def darker(color, factor):
+    # Làm tối màu.
     return tuple(int(value * factor) for value in color)
 
 
 def draw_cube(screen, row, col, camera, color, depth,
               elevation=0):
+    # Vẽ một khối lập phương tại ô bản đồ với các mặt có đổ bóng.
 
-    # Tọa độ 4 góc của ô trên bản đồ
+    # Tạo bốn góc của mặt trên quanh tâm ô; mỗi cạnh dài một ô.
     corners = [
         (row - 0.5, col - 0.5),
         (row - 0.5, col + 0.5),
@@ -31,10 +33,10 @@ def draw_cube(screen, row, col, camera, color, depth,
 
     for r, c in corners:
         x, y = camera.project(r, c)
+        # Nâng mặt trên lên theo elevation (đơn vị pixel sau khi scale).
         top.append((x, y - camera.scale(elevation)))
 
-    # Vẽ các mặt bên hướng về phía người xem
-    # dựa trên cạnh nào nằm phía trước.
+    # So độ cao cạnh với tâm ô để chỉ vẽ các mặt bên hướng về người xem.
     _, center_y = camera.project(row, col)
     scaled_elevation = camera.scale(elevation)
 
@@ -65,7 +67,8 @@ def draw_cube(screen, row, col, camera, color, depth,
         screen, (35, 45, 60), top, max(1, round(camera.scale(2)))
     )
 
-def draw_map(screen, grid, camera):
+def draw_map(screen, grid, camera, hidden_cells=()):
+    # Vẽ các ô hợp lệ của bản đồ theo thứ tự chiều sâu.
     tile_colors = {
         "floor": FLOOR_COLOR,
         "goal": GOAL_COLOR,
@@ -81,9 +84,10 @@ def draw_map(screen, grid, camera):
         for col in range(len(grid[row])):
             tile = grid[row][col]
 
-            if tile == "void":
+            if tile == "void" or (row, col) in hidden_cells:
                 continue
 
+            # Lưu y để sắp các ô từ phía sau ra phía trước khi vẽ chồng.
             x, y = camera.project(row, col)
             tiles.append((y, row, col, tile))
 
@@ -97,23 +101,59 @@ def draw_map(screen, grid, camera):
             camera, color, TILE_DEPTH
         )
 
+
+def draw_front_tiles(screen, grid, camera, depth_y, hidden_cells=()):
+    # Vẽ lại các ô ở phía trước khối để tạo hiện tượng che khuất theo chiều sâu.
+    tile_colors = {
+        "floor": FLOOR_COLOR,
+        "goal": GOAL_COLOR,
+        "fragile": FRAGILE_COLOR,
+        "soft": (130, 210, 230),
+        "heavy": (190, 145, 225),
+        "split": (235, 205, 105),
+        "bridge": (115, 190, 175),
+    }
+    front_tiles = []
+    for row, cells in enumerate(grid):
+        for col, tile in enumerate(cells):
+            if tile == "void" or (row, col) in hidden_cells:
+                continue
+            _, tile_y = camera.project(row, col)
+            if tile_y > depth_y:
+                front_tiles.append((tile_y, row, col, tile))
+
+    for _, row, col, tile in sorted(front_tiles):
+        draw_cube(screen, row, col, camera,
+                  tile_colors.get(tile, FLOOR_COLOR), TILE_DEPTH)
+
 def _cross(a, b):
+    # Tính tích có hướng của hai vector ba chiều.
     return (a[1] * b[2] - a[2] * b[1],
             a[2] * b[0] - a[0] * b[2],
             a[0] * b[1] - a[1] * b[0])
 
 
+def _rotate_vector(vector, axis, angle):
+    # Xoay vector quanh trục bằng công thức Rodrigues.
+    cross = _cross(axis, vector)
+    dot = sum(axis[i] * vector[i] for i in range(3))
+    cosine, sine = math.cos(angle), math.sin(angle)
+    return tuple(vector[i] * cosine + cross[i] * sine
+                 + axis[i] * dot * (1 - cosine) for i in range(3))
+
+
 def _draw_prism(screen, camera, center, long_axis, color, length=2.0):
-    """Draw the block as one oriented 3D prism in row/column/height space."""
+    # Vẽ khối dưới dạng lăng trụ 3D theo trục và vị trí cho trước.
     long_len = length / 2
+    # Dựng ba trục vuông góc: trục dài, trục ngang còn lại và trục đứng.
     perp = (-long_axis[1], long_axis[0], 0.0)
-    # Keep a stable horizontal cross axis when the long axis is vertical.
     if abs(perp[0]) + abs(perp[1]) < 1e-6:
         perp = (0.0, 1.0, 0.0)
     third = _cross(long_axis, perp)
     vectors = (long_axis, perp, third)
     half_sizes = (long_len, 0.5, 0.5)
     vertices = {}
+    # Tổ hợp +/- trên ba trục tạo tám đỉnh quanh tâm khối.
     for a in (-1, 1):
         for b in (-1, 1):
             for c in (-1, 1):
@@ -124,6 +164,7 @@ def _draw_prism(screen, camera, center, long_axis, color, length=2.0):
                 x, y = camera.project(point[0], point[1])
                 vertices[(a, b, c)] = (x, y - camera.scale(point[2] * 40))
 
+    # Mỗi mặt lưu bốn đỉnh và độ sáng riêng để tạo khối có chiều sâu.
     faces = [
         ([(-1, -1, -1), (-1, -1, 1), (-1, 1, 1), (-1, 1, -1)], 0.62),
         ([(1, -1, -1), (1, 1, -1), (1, 1, 1), (1, -1, 1)], 0.72),
@@ -132,6 +173,7 @@ def _draw_prism(screen, camera, center, long_axis, color, length=2.0):
         ([(-1, -1, 1), (1, -1, 1), (1, 1, 1), (-1, 1, 1)], 1.0),
         ([(-1, -1, -1), (-1, 1, -1), (1, 1, -1), (1, -1, -1)], 0.42),
     ]
+    # Sắp mặt theo độ cao trung bình để mặt ở xa được vẽ trước.
     polygons = [(sum(p[1] for p in (vertices[v] for v in face)) / 4,
                  [vertices[v] for v in face], shade)
                 for face, shade in faces]
@@ -142,12 +184,14 @@ def _draw_prism(screen, camera, center, long_axis, color, length=2.0):
 
 
 def _state_center(state):
+    # Tính tâm khối từ danh sách các ô đang chiếm.
     cells = state["cells"]
     return (sum(cell[0] for cell in cells) / len(cells),
             sum(cell[1] for cell in cells) / len(cells))
 
 
 def _axis_for_mode(mode):
+    # Lấy vector trục dài tương ứng với tư thế của khối.
     if mode == "HORIZONTAL":
         return (0.0, 1.0, 0.0)
     if mode == "VERTICAL":
@@ -155,7 +199,8 @@ def _axis_for_mode(mode):
     return (0.0, 0.0, 1.0)
 
 
-def draw_block(screen, state, camera):
+def draw_block(screen, state, camera, height_offset=0.0):
+    # Vẽ khối ở tư thế hiện tại, gồm cả trạng thái tách đôi.
     mode = state["mode"]
     cells = state["cells"]
     if mode == "SPLIT":
@@ -171,37 +216,52 @@ def draw_block(screen, state, camera):
         return
 
     row, col = _state_center(state)
-    z = 1.0 if mode == "UPRIGHT" else 0.5
+    z = (1.0 if mode == "UPRIGHT" else 0.5) + height_offset
     _draw_prism(screen, camera, (row, col, z), _axis_for_mode(mode), BLOCK_COLOR)
 
 
 def draw_animated_block(screen, start_state, end_state, action, progress, camera):
+<<<<<<< HEAD
     """Rotate the cuboid over its edge while its center follows the roll arc."""
     if "SPLIT" in (start_state["mode"], end_state["mode"]) or action == "SWITCH":
         draw_block(screen, end_state, camera)
         return
+=======
+    # Vẽ hoạt ảnh khối lăn giữa trạng thái đầu và trạng thái cuối.
+    # Làm mượt tiến độ để khối bắt đầu và kết thúc chuyển động êm.
+>>>>>>> origin/feature/TV2-HuuPhuc-GUI
     t = progress * progress * (3 - 2 * progress)
     start_row, start_col = _state_center(start_state)
     end_row, end_col = _state_center(end_state)
-    row = start_row + (end_row - start_row) * t
-    col = start_col + (end_col - start_col) * t
     start_mode, end_mode = start_state["mode"], end_state["mode"]
 
     if start_mode == "UPRIGHT" and end_mode != "UPRIGHT":
-        direction = {"UP": (-1, 0, 0), "DOWN": (1, 0, 0),
-                     "LEFT": (0, -1, 0), "RIGHT": (0, 1, 0)}[action]
+        # Giữ cạnh đáy làm trục xoay; tâm khối đi theo cung tròn khi khối ngã.
+        dr, dc = {"UP": (-1, 0), "DOWN": (1, 0),
+                  "LEFT": (0, -1), "RIGHT": (0, 1)}[action]
+        roll_axis = (-dc, dr, 0)
+        pivot = (start_row + dr * 0.5, start_col + dc * 0.5, 0.0)
         angle = t * math.pi / 2
-        axis = (direction[0] * math.sin(angle),
-                direction[1] * math.sin(angle), math.cos(angle))
-        z = 0.5 + 0.5 * math.cos(angle)
+        offset = (start_row - pivot[0], start_col - pivot[1], 1.0)
+        rotated = _rotate_vector(offset, roll_axis, angle)
+        row, col, z = (pivot[i] + rotated[i] for i in range(3))
+        axis = _rotate_vector((0.0, 0.0, 1.0), roll_axis, angle)
     elif start_mode != "UPRIGHT" and end_mode == "UPRIGHT":
-        old_axis = _axis_for_mode(start_mode)
+        # Dùng cạnh đầu của khối nằm làm trục xoay khi khối dựng lên.
+        dr, dc = {"UP": (-1, 0), "DOWN": (1, 0),
+                  "LEFT": (0, -1), "RIGHT": (0, 1)}[action]
+        roll_axis = (-dc, dr, 0)
+        pivot = (end_row - dr * 0.5, end_col - dc * 0.5, 0.0)
         angle = t * math.pi / 2
-        axis = (old_axis[0] * math.cos(angle),
-                old_axis[1] * math.cos(angle), math.sin(angle))
-        z = 0.5 + 0.5 * math.sin(angle)
+        offset = (start_row - pivot[0], start_col - pivot[1], 0.5)
+        rotated = _rotate_vector(offset, roll_axis, angle)
+        row, col, z = (pivot[i] + rotated[i] for i in range(3))
+        axis = _rotate_vector(_axis_for_mode(start_mode), roll_axis, angle)
     else:
-        axis = _axis_for_mode(start_mode)
+        # Nếu tư thế không đổi, khối trượt thẳng trên sàn và giữ nguyên trục.
+        row = start_row + (end_row - start_row) * t
+        col = start_col + (end_col - start_col) * t
         z = 0.5
+        axis = _axis_for_mode(start_mode)
 
     _draw_prism(screen, camera, (row, col, z), axis, BLOCK_COLOR)
