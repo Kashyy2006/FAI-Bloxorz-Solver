@@ -7,9 +7,12 @@ from src.engine.map_loader import GameMap
 from src.solvers.astar.solver import _search
 from src.solvers.costs.calc import (
     calculate_heuristic,
+    heuristic_name,
     manhattan_orientation,
+    prepare_heuristic,
     reverse_bfs_heuristic,
 )
+from src.contracts import GOAL_INDICATOR, MANHATTAN
 
 
 def line_map():
@@ -69,23 +72,60 @@ class HeuristicTest(unittest.TestCase):
             self.assertLessEqual(manhattan_orientation(game_map, state),
                                  optimal["metrics"]["solution_cost"])
 
-    def test_dynamic_maps_skip_static_reverse_graph(self):
+    def test_bridge_and_split_maps_skip_static_reverse_graph(self):
         from pathlib import Path
-        from src.engine import load_map, initial_state, transition
+        from src.engine import load_map, initial_state
         root = Path(__file__).resolve().parents[2]
-        for name in ("advanced_bridge_01.json", "advanced_split_01.json"):
+        for name, strategy, expected in (
+            ("advanced_bridge_01.json", MANHATTAN, 5),
+            ("advanced_split_01.json", GOAL_INDICATOR, 1),
+        ):
             game_map = load_map(root / "data/maps" / name)
             state = initial_state(game_map)
             with patch("src.solvers.costs.calc._reverse_bfs_distances",
-                       side_effect=AssertionError("static graph must not run")):
-                self.assertEqual(calculate_heuristic(game_map, state), 1)
-                self.assertEqual(reverse_bfs_heuristic(game_map, state), 1)
-                self.assertEqual(manhattan_orientation(game_map, state), 1)
+                       side_effect=AssertionError("cached static graph must not run")), \
+                 patch("src.solvers.costs.calc._build_reverse_bfs_distances",
+                       side_effect=AssertionError("static graph must not be built")):
+                self.assertEqual(heuristic_name(game_map), strategy)
+                self.assertEqual(calculate_heuristic(game_map, state), expected)
+                self.assertEqual(reverse_bfs_heuristic(game_map, state), expected)
+                self.assertEqual(manhattan_orientation(game_map, state), expected)
+                self.assertEqual(prepare_heuristic(game_map, state)(state), expected)
                 goal = State(Mode.UPRIGHT, (game_map.goal,), bridges=state.bridges)
                 self.assertEqual(calculate_heuristic(game_map, goal), 0)
                 for step in successors(game_map, state):
                     self.assertLessEqual(calculate_heuristic(game_map, state),
                                          step.cost + calculate_heuristic(game_map, step.state))
+
+    def test_manhattan_lying_on_goal_uses_consistent_one_step_bound(self):
+        grid = [["floor"] * 8 for _ in range(8)]
+        grid[4][4] = "goal"
+        game_map = GameMap("goal_bound", "Goal bound", "easy", 8, 8,
+                           tuple(tuple(row) for row in grid), (0, 0), (4, 4))
+        for state in (State(Mode.HORIZONTAL, ((4, 4), (4, 5))),
+                      State(Mode.VERTICAL, ((4, 4), (5, 4)))):
+            self.assertEqual(manhattan_orientation(game_map, state), 1)
+            for edge in successors(game_map, state):
+                self.assertLessEqual(manhattan_orientation(game_map, state),
+                                     edge.cost + manhattan_orientation(game_map, edge.state))
+        self.assertEqual(manhattan_orientation(game_map, State(Mode.UPRIGHT, ((4, 4),))), 0)
+
+    def test_manhattan_is_consistent_on_all_open_board_rolls(self):
+        grid = [["floor"] * 5 for _ in range(5)]
+        grid[2][2] = "goal"
+        game_map = GameMap("consistency", "Consistency", "easy", 5, 5,
+                           tuple(tuple(row) for row in grid), (0, 0), (2, 2))
+        for row in range(5):
+            for col in range(5):
+                states = [State(Mode.UPRIGHT, ((row, col),))]
+                if col < 4:
+                    states.append(State(Mode.HORIZONTAL, ((row, col), (row, col + 1))))
+                if row < 4:
+                    states.append(State(Mode.VERTICAL, ((row, col), (row + 1, col))))
+                for state in states:
+                    for edge in successors(game_map, state):
+                        self.assertLessEqual(manhattan_orientation(game_map, state),
+                                             edge.cost + manhattan_orientation(game_map, edge.state))
 
     def test_auto_heuristic_uses_reverse_bfs_on_small_map(self):
         game_map = line_map()

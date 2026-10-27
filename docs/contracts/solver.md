@@ -14,9 +14,11 @@
 - BFS tối ưu số hành động, gồm SWITCH.
 - UCS/A\* tối ưu tổng chi phí.
 - DFS không bảo đảm tối ưu.
-- Heuristic ban đầu:
-- h(state) = 0 nếu là goal, ngược lại = 1
-- Heuristic admissible và consistent vì mỗi bước có chi phí ≥ 1, kể cả khi có teleport. Nó yếu nên A\* sẽ hoạt động gần UCS. Chỉ thay bằng heuristic mạnh hơn sau khi chứng minh đúng với chi phí, split và teleport.
+- Chọn heuristic cố định cho lượt giải: có split/teleport hoặc bắt đầu SPLIT dùng goal indicator; có cầu/công tắc không split dùng Manhattan; map tĩnh nhỏ dùng Reverse BFS, map tĩnh lớn hơn 1000 tư thế dùng Manhattan.
+- Goal indicator: 0 tại goal, 1 khi chưa thắng; admissible/consistent vì cost >= 1.
+- Manhattan: `ceil(min Manhattan distance / 2)`; khối nằm phủ goal có h=1, không còn h=4. Không áp dụng cận hình học này cho teleport.
+- Reverse BFS xét cạnh đảo của đồ thị tư thế map tĩnh, vẫn giữ luật fragile, đếm hành động; nếu không có khoảng cách ngược thì fallback Manhattan.
+- Trong bộ 18 map: 6 Reverse BFS, 8 Manhattan, 4 goal indicator. Tên JSON giữ tương thích; phải ghi commit/hash nguồn để phân biệt dữ liệu trước/sau `486a584`.
 
 ## 8. API VÀ KẾT QUẢ SOLVER
 
@@ -112,7 +114,7 @@ Quy ước triển khai runtime/kết quả; cần dùng cùng quy tắc khi TV1
 - `src.solvers.solve.solve` nhận GameMap/State hoặc map JSON/snapshot JSON.
 - `src.solvers.costs.calc.calculate_step_cost(game_map, current_state, next_state, action)` là công thức chuẩn được chọn. `src.engine.rules.step_cost(game_map, state, action, next_state)` chỉ chuyển tiếp tham số.
 - UCS/A\* cộng Successor.cost một lần. Mọi thuật toán nhận cùng state_key, is_goal và successors từ engine.
-- A\* dùng goal indicator khi map có cầu/công tắc hoặc trạng thái split; map tĩnh có tối đa 1000 tư thế dùng Reverse BFS, fallback Manhattan khi tư thế không nối tới goal; map tĩnh lớn hơn dùng Manhattan có xét hướng. Khoảng cách Reverse BFS đếm bước, là cận dưới của tổng chi phí vì mỗi bước có cost >= 1.
+- A\* dùng cùng quy tắc heuristic tại mục 7: goal indicator chỉ dành cho split/teleport; cầu/công tắc không split dùng Manhattan. Reverse BFS chỉ dùng cho map tĩnh nhỏ. UCS không gọi heuristic.
 - BFS cung cấp `src.solvers.bfs.solver.solve_bfs`, nhận map/state cùng các keyword bắt buộc `map_id`, `bridge_ids`, `state_key`, `is_goal`, `successors`, `validate_start_state`; `timeout_s=60.0`, `cancel_event=None`. `_solve_bfs` là alias tương thích. Xem [hướng dẫn và ví dụ fixture](../../src/solvers/bfs/README.md). Callable này chưa phải dispatcher chung hoặc bằng chứng validator/engine thật đã chạy.
 
 ## API triển khai và kiểm tra dữ liệu

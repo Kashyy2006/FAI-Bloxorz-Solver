@@ -1,6 +1,6 @@
 # Bloxorz Solver - FAI
 
-Project Python với GUI Pygame và 4 solver BFS, DFS, UCS, A*. Các thư mục làm việc nằm trực tiếp tại gốc project. Chưa cài môi trường hay thư viện.
+Project Python với GUI Pygame và 4 solver BFS, DFS, UCS, A*. Các thư mục làm việc nằm trực tiếp tại gốc project. Môi trường chạy cần Python 3.10+ và Pygame.
 
 | Thư mục | Nội dung | Phụ trách |
 | --- | --- | --- |
@@ -34,3 +34,14 @@ python -m unittest discover -s tests -t . -v
 GUI và bốn solver dùng engine chung. Dùng Tab đổi khối nhỏ; phím 1–4 chọn
 BFS/DFS/UCS/A*. Map advanced_bridge_01 thử cầu/công tắc/fragile;
 advanced_split_01 thử teleport và nhập khối. Cần Python 3.10+ và Pygame.
+
+## Đồng bộ heuristic và số liệu (27/10/2026)
+
+A* dùng Reverse BFS trên 6 map, Manhattan trên 8 map và goal indicator trên 4 map
+của bộ benchmark 18 map. Manhattan có hiệu chỉnh 1 khi nằm phủ goal.
+Xem [quy tắc heuristic](src/solvers/costs/README.md) và
+[phiên benchmark mới](benchmarks/results/2026-10-27-486a584-heuristic-update/README.md).
+
+`dist/Bloxorz.exe` đang là bản đóng gói trước hai thay đổi heuristic `d65e0c4` và
+`486a584`; cần build lại từ source hiện tại nếu muốn dùng cùng phiên bản với số liệu
+mới. Lượt đồng bộ tài liệu/test/benchmark này không cập nhật executable.

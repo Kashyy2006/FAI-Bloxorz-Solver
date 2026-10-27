@@ -2,6 +2,13 @@
 
 **Phụ trách:** Thành viên 4. **Bản thảo và bàn giao:** 17/10/2026.
 
+**Cập nhật 27/10/2026:** phần bàn giao bên dưới là hồ sơ lịch sử ngày 17/10,
+không phải trạng thái tích hợp/số liệu mới nhất. Hiện có binding solver thật;
+A* đã đổi quy tắc chọn heuristic và hiệu chỉnh Manhattan.
+Xem [phiên benchmark đồng bộ](../../../benchmarks/results/2026-10-27-486a584-heuristic-update/README.md)
+để lấy số liệu hiện tại, không dùng thống kê fixture bên dưới làm số liệu game.
+
+
 Đã có bộ 18 map kèm nguồn/hash/hồ sơ, callable BFS/DFS, runtime/kết quả dùng
 chung và runner độc lập. Kiểm tra thành phần đạt **153/153 test, không skip**.
 Chưa có số đo hiệu năng game thật hoặc xác nhận engine/replay trên bộ map;

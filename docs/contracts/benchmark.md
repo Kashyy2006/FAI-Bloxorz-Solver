@@ -6,7 +6,7 @@
 
 | Chỉ số | Định nghĩa |
 | --- | --- |
-| search_time_s | perf_counter từ trước tạo frontier đến khi dừng; không gồm đọc map, GUI, replay, ghi JSON. |
+| search_time_s | perf_counter từ trước tiền xử lý heuristic/tạo frontier đến khi dừng tìm kiếm; không gồm đọc map, GUI, replay, ghi JSON. |
 | expanded_nodes | Số lần gọi successors cho nút hợp lệ; không tính goal/entry lỗi thời. |
 | solution_length | len(actions), gồm SWITCH. |
 | solution_cost | Tổng step_cost của lời giải. |
@@ -30,3 +30,11 @@ Làm rõ mốc đo ngày 15/10/2026: validation/chuyển snapshot ở trước �
 - lượt mỗi status, trung vị thời gian/bộ nhớ/nút/độ dài/chi phí của lượt SOLVED.
 - Biểu đồ lưu tại `benchmarks/charts/`; ghi rõ đơn vị và không coi TIMEOUT
 - là UNSOLVABLE. Nhãn expected_solvable chỉ dùng đối chiếu kiểm thử.
+
+## Đồng bộ heuristic ngày 27/10/2026
+
+Bộ 18 map hiện chọn 6 Reverse BFS, 8 Manhattan và 4 goal indicator cho A*.
+Manhattan dùng hiệu chỉnh 1 cho tư thế nằm phủ goal; dữ liệu trước thay đổi này
+không được gắn nhãn như số liệu của phiên bản mới. Giữ các phiên đo trong các thư
+mục riêng, kèm commit/dirty flag, hash nguồn và metadata heuristic. Chiến lược của
+UCS/BFS/DFS là null. Xem [phiên đồng bộ](../../benchmarks/results/2026-10-27-486a584-heuristic-update/README.md).

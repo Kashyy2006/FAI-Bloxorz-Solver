@@ -22,7 +22,17 @@ Trạng thái thắng khi `mode == UPRIGHT` và ô duy nhất trong `cells` trù
 
 ## Chi phí
 
-Chi phí theo hợp đồng chung là `1 + 2*F + T`: `F` là số ô fragile mới được khối chiếm; `T` là số công tắc soft/heavy vừa kích hoạt. T được tính cùng logic công tắc vừa nhấn mà engine sử dụng. Bước thường có giá 1; bước chiếm thêm một ô fragile có giá 3. BFS tối ưu số bước, UCS/A* tối ưu tổng chi phí.
+Chi phí chuẩn là `1 + 2*F + T`, do `calculate_step_cost` trong `src/solvers/costs/calc.py` cung cấp; `step_cost` của engine chỉ chuyển tiếp. `F` đếm fragile mới chiếm ở trạng thái cuối; `T` đếm soft mới chiếm và heavy mới chiếm khi trạng thái cuối đứng thẳng. Đây là quy ước chi phí, khác với sự kiện kích hoạt trước teleport/nhập. SWITCH có giá 1. BFS tối ưu số hành động; UCS/A* tối ưu tổng cost.
+
+## Heuristic phối hợp với TV5
+
+A* dùng goal indicator cho map có split/teleport hoặc snapshot bắt đầu SPLIT;
+cầu/công tắc không split dùng Manhattan. Map tĩnh nhỏ dùng Reverse BFS có
+fallback Manhattan. Manhattan hiện dùng h=1 khi khối nằm phủ goal, thay cho 4.
+Bộ benchmark 18 map gồm 6 Reverse BFS, 8 Manhattan và 4 goal indicator.
+Xem [đặc tả chi phí/heuristic](../../../src/solvers/costs/README.md) và
+[phiên số liệu mới](../../../benchmarks/results/2026-10-27-486a584-heuristic-update/README.md).
+
 
 ## Cơ chế nâng cao và mô hình trạng thái
 

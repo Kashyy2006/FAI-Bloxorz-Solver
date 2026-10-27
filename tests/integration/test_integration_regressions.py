@@ -102,7 +102,8 @@ class IntegrationRegressionTest(unittest.TestCase):
 
     def test_actual_heuristic_is_accepted_by_gui_and_benchmark(self):
         for filename, expected in (("basic_01.json", REVERSE_BFS),
-                                   ("advanced_bridge_01.json", GOAL_INDICATOR)):
+                                   ("advanced_bridge_01.json", MANHATTAN),
+                                   ("advanced_split_01.json", GOAL_INDICATOR)):
             raw = json.loads((ROOT / "data/maps" / filename).read_text(encoding="utf-8"))
             model = parse_map(raw)
             snapshot = state_to_dict(model, initial_state(model))

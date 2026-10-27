@@ -14,11 +14,36 @@ hoạt công tắc trước teleport/nhập của engine.
 fragile_tiles/soft_switches/heavy_switches hoặc giá trị mặc định che lỗi dữ liệu.
 Cost là chi phí một bước; heuristic là cận dưới chi phí còn lại.
 
-`heuristic_name()` chọn và trả tên chiến lược dùng trong JSON: map động dùng
-`goal_indicator_v1`; map tĩnh nhỏ dùng `reverse_bfs_manhattan_fallback_v1` (khoảng
-cách số bước, fallback Manhattan cho tư thế không nối tới goal); map tĩnh lớn
-hơn 1000 tư thế dùng `manhattan_orientation_v1`. Bắt đầu ở SPLIT giữ goal indicator
-trong cả lượt tìm kiếm, kể cả sau khi nhập khối.
+## Heuristic hiện tại (27/10/2026)
+
+`heuristic_name(game_map, split=False)` chọn một chiến lược cho cả lượt tìm kiếm:
+
+1. Map có ô split/teleport, hoặc snapshot bắt đầu ở SPLIT: `goal_indicator_v1`
+   (0 tại goal, 1 khi chưa thắng). Giữ chiến lược này cả sau khi nhập khối.
+2. Map có cầu/công tắc nhưng không có split: `manhattan_orientation_v1`.
+3. Map tĩnh không có cầu/công tắc/split, tối đa 1000 tư thế nguyên khối theo
+   cách đếm của chương trình: `reverse_bfs_manhattan_fallback_v1`.
+4. Map tĩnh lớn hơn ngưỡng: `manhattan_orientation_v1`.
+
+Manhattan dùng `d = min(abs(r-r_goal) + abs(c-c_goal))` trên các ô khối chiếm,
+`h = ceil(d/2)`. Khi khối lớn nằm phủ goal (`d=0`) thì dùng `h=1`, không còn
+hiệu chỉnh 4 như trước. Goal đứng có h=0. Cận này nhất quán với các bước lăn
+không teleport có chi phí >= 1; map split/teleport dùng goal indicator.
+
+Reverse BFS dùng cạnh đảo của đồ thị tư thế hợp lệ trên map tĩnh, giữ luật fragile,
+đếm mỗi cạnh một hành động. Nếu không có khoảng cách ngược thì fallback Manhattan;
+không phải đợi gặp cầu mới fallback. Cầu/công tắc không teleport được xử lý ngay
+bằng Manhattan, không dựng đồ thị Reverse BFS tĩnh.
+
+| Chiến lược chính | Bộ benchmark 18 map | Tất cả 20 map trong GUI |
+| --- | ---: | ---: |
+| Reverse BFS + fallback Manhattan | 6 | 6 |
+| Manhattan | 8 | 9 |
+| Goal indicator | 4 | 5 |
+
+Tên JSON `manhattan_orientation_v1` được giữ để tương thích. Khi so sánh kết quả,
+phải đối chiếu commit và hash nguồn: cùng tên này trước commit `486a584` có thể
+còn dùng hiệu chỉnh 4. Kết quả A* cũ không đại diện cho công thức/chọn chiến lược mới.
 
 ### Tiền xử lý Reverse BFS
 
