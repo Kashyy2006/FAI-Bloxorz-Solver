@@ -5,7 +5,6 @@ from functools import lru_cache
 from src.engine.models import Mode, State
 from src.engine.rules import state_key, successors
 
-
 def calculate_step_cost(game_map, current_state, next_state, action: str) -> int:
     """Canonical cost: new final cells contribute fragile +2, soft/heavy +1.
 
@@ -30,9 +29,16 @@ def calculate_step_cost(game_map, current_state, next_state, action: str) -> int
 
 _REVERSE_BFS_STATE_LIMIT = 1000
 
+@lru_cache(maxsize=64)
+def _has_split_tile(game_map):
+    return any(
+        game_map.tile_at((row, col)) == "split"
+        for row in range(game_map.rows)
+        for col in range(game_map.cols)
+    )
 
 def _needs_dynamic_heuristic(game_map, state):
-    return bool(game_map.bridges or game_map.switches or state.mode == Mode.SPLIT)
+    return state.mode == Mode.SPLIT or _has_split_tile(game_map)
 
 
 def _goal_indicator(game_map, state):
@@ -109,6 +115,8 @@ def reverse_bfs_heuristic(game_map, state) -> int:
     """Estimate remaining actions using distances from a reverse goal BFS."""
     if _needs_dynamic_heuristic(game_map, state):
         return _goal_indicator(game_map, state)
+    if game_map.bridges or game_map.switches:
+        return manhattan_orientation(game_map, state)
     distances = _reverse_bfs_distances(game_map)
     key = state_key(state)
     if key in distances:
@@ -133,8 +141,11 @@ def heuristic_name(game_map, split=False) -> str:
     """Automatically choose the stronger practical heuristic for this map."""
     # The static reverse graph omits bridge flags and split-cube states.
     # A goal indicator remains admissible/consistent with teleport and cost >= 1.
-    if game_map.bridges or game_map.switches or split:
+    if split or _has_split_tile(game_map):
         return GOAL_INDICATOR
+    
+    if game_map.bridges or game_map.switches:
+        return MANHATTAN
     state_count = 0
     for row in range(game_map.rows):
         for col in range(game_map.cols):
