@@ -132,7 +132,7 @@ def manhattan_orientation(game_map, state) -> int:
     min_dist = min(abs(row - goal_row) + abs(col - goal_col) for row, col in state.cells)
     base_steps = (min_dist + 1) // 2
     if state.mode is not Mode.UPRIGHT and min_dist == 0:
-        return max(4, base_steps)
+        return max(1, base_steps)
     return base_steps
 
 
