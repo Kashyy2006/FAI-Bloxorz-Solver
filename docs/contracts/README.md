@@ -21,7 +21,7 @@ cùng luật engine. Khi thay đổi hợp đồng, cập nhật phiên bản v�
 - So sánh ID theo thứ tự từ điển; công tắc kích hoạt theo cạnh chưa nhấn → nhấn.
 - Từ chối trường JSON ngoài schema. Ví dụ khai báo nâng cao là đoạn minh họa;
   ví dụ basic_01 là map đầy đủ.
-- Chi phí `1 + 2*F + T`; A* ban đầu dùng goal_indicator_v1.
+- Chi phí `1 + 2*F + T`; A* chọn goal indicator cho split/teleport, Manhattan cho cầu/công tắc không split, Reverse BFS cho map tĩnh nhỏ. Xem quy tắc hiện tại trong solver.md.
 
 ## Phần thành viên 1 cần triển khai tiếp
 

@@ -1,0 +1,249 @@
+{
+  "schema_version": 1,
+  "id": "bridge_01",
+  "name": "Bridge 01 (levelub)",
+  "difficulty": "medium",
+  "rows": 10,
+  "cols": 15,
+  "grid": [
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void"
+    ],
+    [
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void"
+    ],
+    [
+      "floor",
+      "bridge",
+      "bridge",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "floor",
+      "bridge",
+      "bridge",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "heavy",
+      "floor",
+      "void"
+    ],
+    [
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "floor",
+      "goal",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void"
+    ],
+    [
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "heavy",
+      "void"
+    ]
+  ],
+  "start": [
+    2,
+    4
+  ],
+  "bridges": [
+    {
+      "id": "b01",
+      "cells": [
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          2
+        ]
+      ],
+      "initial_open": false
+    },
+    {
+      "id": "b02",
+      "cells": [
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          2
+        ]
+      ],
+      "initial_open": false
+    }
+  ],
+  "switches": [
+    {
+      "id": "s01",
+      "cell": [
+        3,
+        12
+      ],
+      "type": "heavy",
+      "effect": {
+        "mode": "toggle",
+        "targets": [
+          "b01"
+        ]
+      }
+    },
+    {
+      "id": "s02",
+      "cell": [
+        9,
+        13
+      ],
+      "type": "heavy",
+      "effect": {
+        "mode": "toggle",
+        "targets": [
+          "b02"
+        ]
+      }
+    }
+  ],
+  "source": {
+    "kind": "adapted",
+    "reference": "https://github.com/FrankBuss/bloxorz/blob/775d5fa64d77b5d1793ef9e5e3bc9cce56ed5562/Vide/levels.py",
+    "conversion_notes": "data/references/frank-map-conversion.md"
+  }
+}

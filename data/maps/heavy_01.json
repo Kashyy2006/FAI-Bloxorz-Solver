@@ -1,0 +1,218 @@
+{
+  "schema_version": 1,
+  "id": "heavy_01",
+  "name": "Heavy 01 (level5)",
+  "difficulty": "medium",
+  "rows": 9,
+  "cols": 17,
+  "grid": [
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void"
+    ],
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "goal",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "heavy",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "bridge",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void"
+    ],
+    [
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void"
+    ],
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void"
+    ]
+  ],
+  "start": [
+    4,
+    2
+  ],
+  "bridges": [
+    {
+      "id": "b01",
+      "cells": [
+        [
+          6,
+          4
+        ]
+      ],
+      "initial_open": false
+    }
+  ],
+  "switches": [
+    {
+      "id": "s01",
+      "cell": [
+        4,
+        10
+      ],
+      "type": "heavy",
+      "effect": {
+        "mode": "toggle",
+        "targets": [
+          "b01"
+        ]
+      }
+    }
+  ],
+  "source": {
+    "kind": "adapted",
+    "reference": "https://github.com/AchrafMez/bloxorz/blob/898188ed31cf31d4ce4c39fec3e3846ed037eee9/levels/level5.txt",
+    "conversion_notes": "data/references/achraf-map-conversion.md"
+  }
+}

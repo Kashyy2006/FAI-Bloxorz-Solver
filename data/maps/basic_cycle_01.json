@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "basic_cycle_01",
+  "name": "Loop and side branch",
+  "difficulty": "easy",
+  "rows": 7,
+  "cols": 9,
+  "grid": [
+    ["void", "void", "void", "void", "void", "void", "void", "void", "void"],
+    ["void", "floor", "floor", "floor", "floor", "floor", "floor", "floor", "void"],
+    ["void", "floor", "floor", "floor", "floor", "floor", "floor", "floor", "void"],
+    ["void", "floor", "floor", "floor", "floor", "floor", "floor", "floor", "void"],
+    ["void", "floor", "floor", "floor", "floor", "floor", "floor", "goal", "void"],
+    ["void", "floor", "floor", "floor", "floor", "floor", "floor", "floor", "void"],
+    ["void", "void", "void", "void", "void", "void", "void", "void", "void"]
+  ],
+  "start": [
+    1,
+    1
+  ],
+  "bridges": [],
+  "switches": [],
+  "source": {
+    "kind": "original",
+    "reference": "Team-created by TV4 on 2026-10-15"
+  },
+  "expected_solvable": true
+}

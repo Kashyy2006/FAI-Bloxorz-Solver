@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "id": "basic_unsolvable_01",
+  "name": "Isolated goal",
+  "difficulty": "easy",
+  "rows": 3,
+  "cols": 9,
+  "grid": [
+    ["void", "void", "void", "void", "void", "void", "void", "void", "void"],
+    ["void", "floor", "floor", "floor", "floor", "void", "void", "goal", "void"],
+    ["void", "void", "void", "void", "void", "void", "void", "void", "void"]
+  ],
+  "start": [
+    1,
+    1
+  ],
+  "bridges": [],
+  "switches": [],
+  "source": {
+    "kind": "original",
+    "reference": "Team-created by TV4 on 2026-10-15"
+  },
+  "expected_solvable": false
+}

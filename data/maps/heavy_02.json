@@ -1,0 +1,237 @@
+{
+  "schema_version": 1,
+  "id": "heavy_02",
+  "name": "Heavy 02 (level10)",
+  "difficulty": "hard",
+  "rows": 10,
+  "cols": 17,
+  "grid": [
+    [
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "fragile",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "void",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "fragile",
+      "fragile",
+      "fragile",
+      "fragile",
+      "floor",
+      "void",
+      "void",
+      "heavy",
+      "fragile",
+      "void",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "goal",
+      "floor",
+      "fragile",
+      "fragile",
+      "fragile",
+      "fragile",
+      "fragile",
+      "fragile",
+      "fragile",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "fragile",
+      "fragile",
+      "fragile",
+      "fragile",
+      "fragile",
+      "fragile",
+      "fragile",
+      "fragile",
+      "fragile",
+      "floor",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "fragile",
+      "fragile",
+      "fragile",
+      "fragile",
+      "fragile",
+      "fragile",
+      "fragile",
+      "floor",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "bridge",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void"
+    ]
+  ],
+  "start": [
+    1,
+    2
+  ],
+  "bridges": [
+    {
+      "id": "b01",
+      "cells": [
+        [
+          9,
+          8
+        ]
+      ],
+      "initial_open": false
+    }
+  ],
+  "switches": [
+    {
+      "id": "s01",
+      "cell": [
+        5,
+        13
+      ],
+      "type": "heavy",
+      "effect": {
+        "mode": "toggle",
+        "targets": [
+          "b01"
+        ]
+      }
+    }
+  ],
+  "source": {
+    "kind": "adapted",
+    "reference": "https://github.com/AchrafMez/bloxorz/blob/898188ed31cf31d4ce4c39fec3e3846ed037eee9/levels/level10.txt",
+    "conversion_notes": "data/references/achraf-map-conversion.md"
+  }
+}

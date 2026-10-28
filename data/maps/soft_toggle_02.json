@@ -1,0 +1,289 @@
+{
+  "schema_version": 1,
+  "id": "soft_toggle_02",
+  "name": "Soft Toggle 02 (level6)",
+  "difficulty": "hard",
+  "rows": 10,
+  "cols": 17,
+  "grid": [
+    [
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "soft",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "bridge",
+      "bridge",
+      "floor",
+      "soft",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "goal",
+      "floor",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void"
+    ],
+    [
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void"
+    ],
+    [
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "bridge",
+      "bridge",
+      "floor",
+      "floor",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void"
+    ],
+    [
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "void",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "floor",
+      "soft",
+      "floor",
+      "floor",
+      "floor",
+      "void",
+      "void"
+    ]
+  ],
+  "start": [
+    0,
+    2
+  ],
+  "bridges": [
+    {
+      "id": "b01",
+      "cells": [
+        [
+          5,
+          8
+        ],
+        [
+          5,
+          9
+        ]
+      ],
+      "initial_open": false
+    },
+    {
+      "id": "b02",
+      "cells": [
+        [
+          8,
+          5
+        ]
+      ],
+      "initial_open": false
+    },
+    {
+      "id": "b03",
+      "cells": [
+        [
+          8,
+          4
+        ]
+      ],
+      "initial_open": false
+    }
+  ],
+  "switches": [
+    {
+      "id": "s01",
+      "cell": [
+        0,
+        11
+      ],
+      "type": "soft",
+      "effect": {
+        "mode": "toggle",
+        "targets": [
+          "b01"
+        ]
+      }
+    },
+    {
+      "id": "s02",
+      "cell": [
+        5,
+        11
+      ],
+      "type": "soft",
+      "effect": {
+        "mode": "toggle",
+        "targets": [
+          "b02"
+        ]
+      }
+    },
+    {
+      "id": "s03",
+      "cell": [
+        9,
+        11
+      ],
+      "type": "soft",
+      "effect": {
+        "mode": "toggle",
+        "targets": [
+          "b03"
+        ]
+      }
+    }
+  ],
+  "source": {
+    "kind": "adapted",
+    "reference": "https://github.com/AchrafMez/bloxorz/blob/898188ed31cf31d4ce4c39fec3e3846ed037eee9/levels/level6.txt",
+    "conversion_notes": "data/references/achraf-map-conversion.md"
+  }
+}
