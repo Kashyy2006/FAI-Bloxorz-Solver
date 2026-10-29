@@ -22,11 +22,11 @@ Bản đóng gói theo `Bloxorz.spec` là một file thực thi, có kèm dữ l
 
 Cần Python 3.10 trở lên. Phiên benchmark gần nhất sử dụng Python 3.12.6.
 
-Mở PowerShell tại thư mục có `README.md`, `src/` và `data/`, sau đó chạy:
+Giải nén bài nộp, mở PowerShell tại thư mục source có `README.md`, `requirements.txt`, `src/` và `data/` (thư mục `Source/` nếu bài nộp được tổ chức theo mẫu), sau đó chạy:
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install pygame
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe -m src.gui.manual.game
 ```
 
@@ -39,6 +39,8 @@ Hai lệnh đầu chỉ cần thực hiện khi chuẩn bị môi trường lầ
 Không cần kích hoạt môi trường ảo khi gọi Python bằng đường dẫn trên. Nếu máy dùng lệnh `py` thay cho `python`, dùng `py -3 -m venv .venv` ở bước tạo môi trường.
 
 Giữ nguyên cấu trúc `src/` và `data/`. Game đọc map JSON trong `data/maps/` và nhạc trong `data/bgm/`.
+
+`requirements.txt` chỉ chứa Pygame, thư viện ngoài cần để chạy game và cả bốn solver. Các thư viện còn lại phục vụ chạy game thuộc thư viện chuẩn Python; PyInstaller chỉ cần khi tự đóng gói lại EXE.
 
 ## 3. Mục tiêu và luật chơi
 
